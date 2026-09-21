@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3B1620">
+<title>AJHA Finance</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#FBF6F3;
+  --surface:#FFFFFF;
+  --surface-2:#F6ECE8;
+  --ink:#2B1B1F;
+  --ink-soft:#7A6469;
+  --line:#EADFDA;
+  --accent:#7A2436;
+  --accent-soft:#F4DCE1;
+  --gold:#A9813F;
+  --gold-soft:#F1E5CE;
+  --success:#3F7A5D;
+  --success-soft:#DFF0E6;
+  --warn:#C4622D;
+  --danger:#A6323A;
+  --danger-soft:#F6DCDE;
+  --radius-s:10px;
+  --radius-m:16px;
+  --radius-l:24px;
+  --shadow:0 8px 24px -12px rgba(43,27,31,.18);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  padding-top:var(--safe-top); padding-bottom:var(--safe-bottom);
+  overscroll-behavior-y:none;
+}
+h1,h2,h3,.display{font-family:'Fraunces',serif; font-weight:600; letter-spacing:-0.01em;}
+button{font-family:inherit;}
+::selection{background:var(--accent-soft);}
+
+#app{display:flex; min-height:100%; flex-direction:column;}
+
+header.topbar{padding:22px 20px 16px; display:flex; align-items:center; gap:12px;}
+header.topbar .greet{font-size:22px;}
+header.topbar .greet small{display:block; font-family:'Inter'; font-size:13px; color:var(--ink-soft); font-weight:500; margin-top:2px;}
+.back-btn{width:40px; height:40px; border-radius:50%; border:none; background:var(--surface-2); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;}
+.back-btn svg{width:20px; height:20px; stroke:var(--ink); fill:none; stroke-width:2;}
+
+main{flex:1; padding:0 20px 100px; overflow-y:auto;}
+.view{display:none; animation:fadeIn .25s ease;}
+.view.active{display:block;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+nav.bottomnav{position:fixed; left:0; right:0; bottom:0; padding-bottom:var(--safe-bottom); background:var(--surface); border-top:1px solid var(--line); display:flex; z-index:40;}
+nav.bottomnav button{flex:1; border:none; background:none; padding:10px 4px 8px; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--ink-soft); font-size:11px; font-weight:600; cursor:pointer;}
+nav.bottomnav button svg{width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.8;}
+nav.bottomnav button.active{color:var(--accent);}
+
+.section-title{font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin:26px 0 12px;}
+.section-title:first-child{margin-top:4px;}
+
+.card{background:var(--surface); border-radius:var(--radius-m); padding:18px; box-shadow:var(--shadow); margin-bottom:12px;}
+
+.kpi-row{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.kpi{background:var(--surface); border-radius:var(--radius-m); padding:16px; box-shadow:var(--shadow);}
+.kpi .label{font-size:12px; color:var(--ink-soft); font-weight:600;}
+.kpi .value{font-family:'Fraunces',serif; font-size:22px; font-weight:600; margin-top:4px;}
+.kpi.warn .value{color:var(--warn);}
+.kpi.danger .value{color:var(--danger);}
+.kpi.success .value{color:var(--success);}
+.kpi .sub{font-size:11px; color:var(--ink-soft); margin-top:2px;}
+
+.hero{background:linear-gradient(155deg,var(--accent),#5A1727); color:#fff; border-radius:var(--radius-l); padding:22px; box-shadow:var(--shadow); margin-bottom:18px;}
+.hero .label{font-size:12px; opacity:.75; font-weight:600; text-transform:uppercase; letter-spacing:.05em;}
+.hero .value{font-family:'Fraunces',serif; font-size:34px; margin-top:6px;}
+.hero .foot{font-size:12px; opacity:.8; margin-top:10px; display:flex; gap:14px;}
+
+.list-item{display:flex; align-items:center; gap:12px; background:var(--surface); border-radius:var(--radius-m); padding:14px 14px; box-shadow:var(--shadow); margin-bottom:10px;}
+.list-item.clickable{cursor:pointer;}
+.list-item .stripe{width:4px; align-self:stretch; border-radius:4px; background:var(--accent); flex-shrink:0;}
+.list-item .main{flex:1; min-width:0;}
+.list-item .title{font-weight:600; font-size:15px;}
+.list-item .meta{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+.list-item .right{text-align:right; font-size:14px; font-weight:700; white-space:nowrap;}
+.list-item .right.in{color:var(--success);}
+.list-item .right.out{color:var(--danger);}
+.badge{display:inline-block; font-size:11px; font-weight:700; padding:3px 8px; border-radius:20px;}
+.badge.ok{background:var(--success-soft); color:var(--success);}
+.badge.pending{background:var(--gold-soft); color:var(--gold);}
+.badge.late{background:var(--danger-soft); color:var(--danger);}
+
+.empty{text-align:center; padding:40px 20px; color:var(--ink-soft);}
+.empty .display{font-size:17px; color:var(--ink); margin-bottom:6px;}
+
+.tabs{display:flex; gap:8px; margin-bottom:16px; overflow-x:auto;}
+.tabs button{border:1px solid var(--line); background:var(--surface); color:var(--ink-soft); padding:8px 14px; border-radius:20px; font-size:13px; font-weight:600; white-space:nowrap; cursor:pointer;}
+.tabs button.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+
+.nav-fab{flex:1; position:relative; top:-18px; border:none; background:none; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;}
+.nav-fab .circle{width:52px; height:52px; border-radius:50%; background:var(--accent); box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center; transition:opacity .2s, box-shadow .2s;}
+.nav-fab .circle svg{stroke:#fff; width:24px; height:24px; stroke-width:2; fill:none;}
+.nav-fab.disabled{pointer-events:none;}
+.nav-fab.disabled .circle{opacity:.32; box-shadow:none;}
+
+.sheet-overlay{position:fixed; inset:0; background:rgba(43,27,31,.42); z-index:80; display:none; align-items:flex-end; justify-content:center;}
+#sheetConfirm{z-index:200;}
+.sheet-overlay.open{display:flex;}
+.sheet{background:var(--surface); width:100%; max-width:520px; border-radius:24px 24px 0 0; padding:18px 20px calc(24px + var(--safe-bottom)); max-height:88vh; overflow-y:auto; animation:slideUp .22s ease;}
+@keyframes slideUp{from{transform:translateY(24px); opacity:.6;} to{transform:none; opacity:1;}}
+.sheet .handle{width:36px; height:4px; background:var(--line); border-radius:4px; margin:2px auto 14px;}
+.sheet h3{margin:0 0 16px; font-size:19px;}
+
+.field{margin-bottom:14px;}
+.field label{display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:6px;}
+.field input,.field select,.field textarea{width:100%; border:1px solid var(--line); background:var(--surface-2); border-radius:var(--radius-s); padding:12px 12px; font-size:15px; color:var(--ink); font-family:inherit;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--accent); outline-offset:1px;}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+
+.seg{display:flex; border:1px solid var(--line); border-radius:12px; overflow:hidden; margin-bottom:14px;}
+.seg button{flex:1; border:none; background:var(--surface); padding:11px; font-weight:700; font-size:13.5px; color:var(--ink-soft); cursor:pointer;}
+.seg button.active.in{background:var(--success-soft); color:var(--success);}
+.seg button.active.out{background:var(--danger-soft); color:var(--danger);}
+
+.btn{width:100%; border:none; padding:14px; border-radius:14px; font-weight:700; font-size:15px; cursor:pointer;}
+.btn.primary{background:var(--accent); color:#fff;}
+.btn.ghost{background:var(--surface-2); color:var(--ink);}
+.btn-row{display:flex; gap:10px; margin-top:6px;}
+.btn-row .btn{flex:1;}
+
+.action-row{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
+.chip-btn{flex:1; min-width:110px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); padding:9px 6px; border-radius:10px; font-size:12.5px; font-weight:700; cursor:pointer;}
+.chip-btn.on-success{color:var(--success); border-color:var(--success-soft); background:var(--success-soft);}
+.icon-btn{width:32px; height:32px; border-radius:9px; border:1px solid var(--line); background:var(--surface-2); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; flex:0 0 auto; padding:0;}
+.icon-btn svg{width:16px; height:16px; stroke:var(--ink-soft); fill:none; stroke-width:2;}
+.icon-btn.danger{background:var(--danger-soft); border-color:var(--danger-soft);}
+.icon-btn.danger svg{stroke:var(--danger);}
+.icon-row{display:flex; gap:8px; margin-top:10px;}
+.cobranca-check{width:20px; height:20px; accent-color:var(--accent); flex-shrink:0; margin-top:2px; cursor:pointer;}
+.list-item.selecionavel{align-items:flex-start;}
+#lockScreen{
+  position:fixed; inset:0; z-index:500; display:none;
+  align-items:center; justify-content:center; padding:24px;
+  background:linear-gradient(165deg,var(--accent),#3B1220);
+}
+.lock-card{max-width:340px; width:100%; text-align:center; color:#fff;}
+.lock-icon{
+  width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,.14);
+  display:flex; align-items:center; justify-content:center; margin:0 auto 18px;
+}
+.lock-icon svg{width:28px; height:28px; stroke:#fff; fill:none; stroke-width:1.8;}
+.delete-link{display:block; width:100%; text-align:center; background:none; border:none; color:var(--danger); font-size:13px; font-weight:600; padding:14px 0 2px; cursor:pointer;}
+
+.toast{position:fixed; left:50%; bottom:calc(96px + var(--safe-bottom)); transform:translateX(-50%); background:var(--ink); color:#fff; padding:11px 18px; border-radius:30px; font-size:13.5px; z-index:100; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; max-width:88vw; text-align:center;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
+
+.client-header{display:flex; align-items:center; gap:14px; margin-bottom:18px;}
+.client-header .avatar{width:52px; height:52px; border-radius:50%; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:20px; font-weight:600; flex-shrink:0;}
+.client-header .name{font-size:19px; font-weight:600;}
+.client-header .phone{font-size:13px; color:var(--ink-soft);}
+
+.notice{background:var(--gold-soft); color:#6B5122; border-radius:var(--radius-m); padding:14px 16px; font-size:13px; line-height:1.5; margin-bottom:16px;}
+
+@media (min-width:560px){
+  main, header.topbar{max-width:560px; margin:0 auto; width:100%;}
+  nav.bottomnav{max-width:560px; margin:0 auto;}
+}
+</style>
+</head>
+<body>
+
+<div id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-icon">
+      <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3" stroke-linecap="round"/></svg>
+    </div>
+    <div class="display" style="font-size:20px; margin-bottom:6px;">App bloqueado</div>
+    <p style="color:rgba(255,255,255,.78); font-size:13.5px; margin:0 0 22px;">Use a biometria ou o PIN do seu celular pra continuar.</p>
+    <button class="btn primary" id="btnDesbloquear" style="background:#fff; color:var(--accent);">Desbloquear</button>
+  </div>
+</div>
+
+<div id="app">
+
+  <header class="topbar">
+    <button class="back-btn" id="btnBack" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="greet" id="headerGreetBlock">
+      <span id="greetText">Olá</span>
+      <small id="greetDate"></small>
+    </div>
+    <div id="headerTitle" class="greet" style="display:none"></div>
+  </header>
+
+  <main>
+
+    <section class="view active" id="view-dashboard">
+      <div class="hero">
+        <div class="label">Saldo total em caixa</div>
+        <div class="value" id="kpiSaldoMes">R$ 0,00</div>
+        <div class="foot"><span id="kpiEntradasMes">Entradas do mês: R$ 0,00</span><span id="kpiSaidasMes">Saídas do mês: R$ 0,00</span></div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi warn">
+          <div class="label">A receber</div>
+          <div class="value" id="kpiAReceber">R$ 0,00</div>
+          <div class="sub" id="kpiAReceberSub">0 cobrança(s) em aberto</div>
+        </div>
+        <div class="kpi danger">
+          <div class="label">Inadimplência</div>
+          <div class="value" id="kpiInadim">R$ 0,00</div>
+          <div class="sub" id="kpiInadimSub">0 cliente(s) em atraso</div>
+        </div>
+      </div>
+
+      <div class="section-title">Clientes em atraso</div>
+      <div id="dashInadim"></div>
+    </section>
+
+    <section class="view" id="view-vendas">
+      <div class="section-title" style="margin-top:4px">Vendas</div>
+      <div class="tabs" id="vendasTabs">
+        <button data-vendas="mes" class="active">Este mês</button>
+        <button data-vendas="tudo">Tudo</button>
+      </div>
+      <div id="vendasList"></div>
+    </section>
+
+    <section class="view" id="view-caixa">
+      <div class="section-title" style="margin-top:4px">Caixa</div>
+      <div class="tabs" id="caixaTabs">
+        <button data-caixa="mes" class="active">Este mês</button>
+        <button data-caixa="tudo">Tudo</button>
+      </div>
+      <button class="btn ghost" id="btnTransferir" style="margin-bottom:14px">⇄ Transferir entre contas</button>
+      <div id="caixaList"></div>
+    </section>
+
+    <section class="view" id="view-contas">
+      <div class="section-title" style="margin-top:4px">Contas</div>
+      <div id="contasList"></div>
+    </section>
+
+    <section class="view" id="view-clientes">
+      <div class="section-title" style="margin-top:4px">Clientes</div>
+      <div class="field" style="margin-bottom:16px">
+        <input type="text" id="buscaCliente" placeholder="Buscar cliente...">
+      </div>
+      <div id="clientesList"></div>
+    </section>
+
+    <section class="view" id="view-ficha">
+      <div class="client-header">
+        <div class="avatar" id="fichaAvatar">—</div>
+        <div>
+          <div class="name" id="fichaNome">—</div>
+          <div class="phone" id="fichaTelefone">—</div>
+        </div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi warn">
+          <div class="label">Em aberto</div>
+          <div class="value" id="fichaEmAberto">R$ 0,00</div>
+        </div>
+        <div class="kpi success">
+          <div class="label">Já pago</div>
+          <div class="value" id="fichaPago">R$ 0,00</div>
+        </div>
+      </div>
+      <div class="btn-row" style="margin:16px 0">
+        <button class="btn ghost" id="btnEditarCliente">Editar cliente</button>
+        <button class="btn primary" id="btnNovaCobranca">+ Nova cobrança</button>
+      </div>
+      <div class="section-title" style="margin-top:6px">Pacotes / mensalidades</div>
+      <div id="fichaContratos"></div>
+      <button class="btn ghost" id="btnNovoContrato" style="margin-bottom:8px">+ Novo pacote / mensalidade</button>
+
+      <div class="section-title">Histórico de cobranças</div>
+      <button class="btn primary" id="btnCobrarSelecionadas" style="display:none; margin-bottom:12px">Cobrar selecionadas no WhatsApp</button>
+      <div id="fichaTitulos"></div>
+    </section>
+
+    <section class="view" id="view-ajustes">
+      <div class="notice">Os dados ficam salvos só neste celular. Faça o backup de vez em quando (abaixo) pra não correr o risco de perder tudo se apagar o navegador ou trocar de aparelho.</div>
+
+      <div class="section-title" style="margin-top:4px">Serviços (catálogo de preços)</div>
+      <div id="servicosList"></div>
+      <button class="btn ghost" id="btnNovoServico" style="margin-top:8px">+ Novo serviço</button>
+
+      <div class="section-title">Dados do negócio</div>
+      <div class="card">
+        <div class="field">
+          <label>Nome do negócio</label>
+          <input type="text" id="cfgNomeSalao" placeholder="Ex: Studio Bella, Oficina do João, Consultório...">
+        </div>
+        <div class="field">
+          <label>WhatsApp para cobrança (DDI+DDD+número)</label>
+          <input type="text" id="cfgWhats" placeholder="5599999999999">
+        </div>
+        <div class="field">
+          <label>Conta padrão para recebimentos</label>
+          <select id="cfgContaPadrao"></select>
+        </div>
+        <button class="btn primary" id="btnSalvarConfig">Salvar</button>
+      </div>
+
+      <div class="section-title">Segurança</div>
+      <div class="card" id="cardSeguranca">
+        <p style="font-size:13px; color:var(--ink-soft); margin:0 0 14px; line-height:1.5;">Peça a mesma biometria ou PIN que já desbloqueia o celular toda vez que o app for aberto.</p>
+        <button class="btn primary" id="btnAtivarBiometria">Ativar bloqueio por biometria/PIN</button>
+        <button class="btn ghost" id="btnDesativarBiometria" style="display:none">Desativar bloqueio</button>
+      </div>
+
+      <div class="section-title">Backup</div>
+      <div class="card">
+        <button class="btn ghost" id="btnExport" style="margin-bottom:10px">Exportar backup (JSON)</button>
+        <button class="btn ghost" id="btnImport">Importar backup (JSON)</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none">
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottomnav">
+    <button data-view="dashboard" class="active">
+      <svg viewBox="0 0 24 24"><path d="M4 12l8-7 8 7M6 10v9h12v-9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Início
+    </button>
+    <button data-view="vendas">
+      <svg viewBox="0 0 24 24"><path d="M6 8V6a4 4 0 118 0v2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 8h11l.8 12H3.7z" stroke-linejoin="round"/></svg>
+      Vendas
+    </button>
+    <button data-view="caixa">
+      <svg viewBox="0 0 24 24"><path d="M3 10h18M6 15h4M3 6h18v13H3z"/></svg>
+      Caixa
+    </button>
+    <button class="nav-fab disabled" id="fabPrimary">
+      <span class="circle">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+      </span>
+    </button>
+    <button data-view="contas">
+      <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4" stroke-linecap="round"/><path d="M6 7l6-4 6 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Contas
+    </button>
+    <button data-view="clientes">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-4 4-6 7-6s5.8 2 7 6"/></svg>
+      Clientes
+    </button>
+    <button data-view="ajustes">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.6-2-3.4-2.3.9a7 7 0 00-2-1.2L14 3h-4l-.6 2.5a7 7 0 00-2 1.2l-2.3-.9-2 3.4 2 1.6A7 7 0 005 12a7 7 0 00.1 1.2l-2 1.6 2 3.4 2.3-.9c.6.5 1.3.9 2 1.2L10 21h4l.6-2.5c.7-.3 1.4-.7 2-1.2l2.3.9 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>
+      Ajustes
+    </button>
+  </nav>
+
+</div>
+
+<div class="sheet-overlay" id="sheetCliente">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="sheetClienteTitle">Novo cliente</h3>
+    <input type="hidden" id="clienteId">
+    <div class="field">
+      <label>Nome</label>
+      <input type="text" id="clienteNome" placeholder="Nome completo">
+    </div>
+    <div class="field">
+      <label>WhatsApp</label>
+      <input type="text" id="clienteTelefone" placeholder="5599999999999">
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarCliente">Cancelar</button>
+      <button class="btn primary" id="btnSalvarCliente">Salvar</button>
+    </div>
+    <button class="delete-link" id="btnExcluirCliente" style="display:none">Excluir este cliente</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetCobranca">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Nova cobrança</h3>
+    <div class="field">
+      <label>Serviço (opcional — preenche o valor)</label>
+      <select id="cobServico"><option value="">Cobrança avulsa</option></select>
+    </div>
+    <div class="field">
+      <label>Descrição</label>
+      <input type="text" id="cobDescricao" placeholder="Ex: Corte de cabelo, Consultoria, Aula particular...">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input type="number" id="cobValor" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label>Vencimento</label>
+        <input type="date" id="cobVencimento">
+      </div>
+    </div>
+    <div class="field">
+      <label>Já foi pago?</label>
+      <select id="cobPago">
+        <option value="nao">Ainda não</option>
+        <option value="sim">Sim, pago na hora</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarCobranca">Cancelar</button>
+      <button class="btn primary" id="btnSalvarCobranca">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetServico">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="sheetServicoTitle">Novo serviço</h3>
+    <input type="hidden" id="servicoId">
+    <div class="field">
+      <label>Nome</label>
+      <input type="text" id="servicoNome" placeholder="Ex: Corte de cabelo, Consultoria, Aula particular...">
+    </div>
+    <div class="field">
+      <label>Preço (R$)</label>
+      <input type="number" id="servicoPreco" step="0.01" min="0">
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarServico">Cancelar</button>
+      <button class="btn primary" id="btnSalvarServico">Salvar</button>
+    </div>
+    <button class="delete-link" id="btnExcluirServico" style="display:none">Excluir este serviço</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetContrato">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Novo pacote / mensalidade</h3>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="ctTipo">
+        <option value="sessoes">Pacote de sessões</option>
+        <option value="mensalidade">Mensalidade fixa</option>
+      </select>
+    </div>
+    <div class="field" id="ctSessoesField">
+      <label>Quantidade de sessões</label>
+      <input type="number" id="ctSessoes" min="1" value="10">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label id="ctValorLabel">Valor da parcela (R$)</label>
+        <input type="number" id="ctValor" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label>Dia de vencimento</label>
+        <input type="number" id="ctDiaVenc" min="1" max="28" value="10">
+      </div>
+    </div>
+    <div class="field">
+      <label>Descrição (aparece nas cobranças)</label>
+      <input type="text" id="ctDescricao" placeholder="Ex: Pacote 10 sessões, plano mensal de consultoria...">
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarContrato">Cancelar</button>
+      <button class="btn primary" id="btnSalvarContrato">Criar</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetVenda">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Registrar venda</h3>
+    <div class="field">
+      <label>Cliente</label>
+      <select id="vdCliente"><option value="">Venda avulsa (sem cliente)</option></select>
+    </div>
+    <div class="field">
+      <label>Serviço (opcional — preenche o valor)</label>
+      <select id="vdServico"><option value="">Descrição livre</option></select>
+    </div>
+    <div class="field">
+      <label>Descrição</label>
+      <input type="text" id="vdDescricao" placeholder="Ex: Corte de cabelo, Consultoria, Aula particular...">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input type="number" id="vdValor" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label id="vdDataLabel">Data</label>
+        <input type="date" id="vdData">
+      </div>
+    </div>
+    <div class="field" id="vdPagoField">
+      <label>Já foi pago?</label>
+      <select id="vdPago">
+        <option value="sim">Sim, pago na hora</option>
+        <option value="nao">Ainda não (fica em aberto)</option>
+      </select>
+    </div>
+    <div class="field" id="vdContaField">
+      <label>Conta que recebeu</label>
+      <select id="vdConta"></select>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarVenda">Cancelar</button>
+      <button class="btn primary" id="btnSalvarVenda">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetConfirm">
+  <div class="sheet" style="max-width:380px">
+    <div class="handle"></div>
+    <h3 id="confirmTitle">Confirmar</h3>
+    <p id="confirmMessage" style="color:var(--ink-soft); font-size:14px; line-height:1.5; margin:-8px 0 18px;"></p>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnConfirmCancelar">Cancelar</button>
+      <button class="btn primary" id="btnConfirmOk" style="background:var(--danger)">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetEditarVenda">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Editar venda</h3>
+    <div class="field">
+      <label>Descrição</label>
+      <input type="text" id="evDescricao">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input type="number" id="evValor" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label id="evDataLabel">Data</label>
+        <input type="date" id="evData">
+      </div>
+    </div>
+    <div class="field" id="evContaField">
+      <label>Conta que recebeu</label>
+      <select id="evConta"></select>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarEditarVenda">Cancelar</button>
+      <button class="btn primary" id="btnSalvarEdicaoVenda">Salvar</button>
+    </div>
+    <button class="delete-link" id="btnExcluirVenda">Excluir esta venda</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetMovimentacao">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="sheetMovTitle">Nova movimentação</h3>
+    <input type="hidden" id="movId">
+    <div class="seg" id="movSeg">
+      <button type="button" class="active in" data-tipo="entrada">Entrada</button>
+      <button type="button" data-tipo="saida">Saída</button>
+    </div>
+    <div class="field">
+      <label>Descrição</label>
+      <input type="text" id="movDescricao" placeholder="Ex: Compra de materiais, despesa com transporte...">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input type="number" id="movValor" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="movData">
+      </div>
+    </div>
+    <div class="field">
+      <label>Conta</label>
+      <select id="movConta"></select>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarMov">Cancelar</button>
+      <button class="btn primary" id="btnSalvarMov">Salvar</button>
+    </div>
+    <button class="delete-link" id="btnExcluirMov" style="display:none">Excluir esta movimentação</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetTransferencia">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Transferir entre contas</h3>
+    <div class="field">
+      <label>De</label>
+      <select id="trfOrigem"></select>
+    </div>
+    <div class="field">
+      <label>Para</label>
+      <select id="trfDestino"></select>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input type="number" id="trfValor" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="trfData">
+      </div>
+    </div>
+    <div class="field">
+      <label>Observação (opcional)</label>
+      <input type="text" id="trfDescricao" placeholder="Ex: Reforço de caixa">
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarTrf">Cancelar</button>
+      <button class="btn primary" id="btnSalvarTrf">Transferir</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetConta">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="sheetContaTitle">Nova conta</h3>
+    <input type="hidden" id="contaId">
+    <div class="field">
+      <label>Nome</label>
+      <input type="text" id="contaNomeInput" placeholder="Ex: Caixa, Banco, Nubank, Carteira">
+    </div>
+    <div class="field">
+      <label>Saldo inicial (R$)</label>
+      <input type="number" id="contaSaldoInicial" step="0.01" value="0">
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarConta">Cancelar</button>
+      <button class="btn primary" id="btnSalvarConta">Salvar</button>
+    </div>
+    <button class="delete-link" id="btnExcluirConta" style="display:none">Excluir esta conta</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   PERSISTÊNCIA 100% LOCAL (localStorage) — sem login, sem nuvem.
+   Os dados ficam só neste navegador/celular. Use "Exportar backup"
+   periodicamente (aba Ajustes) para não correr risco de perder tudo.
+   ============================================================ */
+const LS_KEY = 'salao_dados_v1';
+let state = {
+  clientes: [],
+  servicos: [],
+  titulos: [],
+  contratos: [],
+  movimentacoes: [],
+  contas: [],
+  config: { nomeSalao: '', whatsapp: '' }
+};
+let currentClienteId = null;
+let selecionadosCobranca = [];
+let caixaFiltro = 'mes';
+let vendasFiltro = 'mes';
+
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function fmtMoney(v){ return (v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function fmtDateBR(iso){ if(!iso) return ''; const p=iso.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function diffDias(iso){ const a=new Date(iso+'T00:00:00'); const b=new Date(todayISO()+'T00:00:00'); return Math.round((b-a)/86400000); }
+function uidGen(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+function saveCache(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){ toast('Não foi possível salvar. Espaço do navegador cheio?'); } }
+function loadCache(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      state = Object.assign({}, state, parsed);
+      state.config = Object.assign({nomeSalao:'', whatsapp:''}, parsed.config||{});
+    }
+  }catch(e){ console.error('Falha ao ler dados salvos', e); }
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+}
+const sheetConfirm = document.getElementById('sheetConfirm');
+let confirmCallback = null;
+function askConfirm(message, onConfirm, okLabel){
+  document.getElementById('confirmMessage').textContent = message;
+  document.getElementById('btnConfirmOk').textContent = okLabel || 'Excluir';
+  confirmCallback = onConfirm;
+  sheetConfirm.classList.add('open');
+}
+document.getElementById('btnConfirmCancelar').onclick = function(){
+  sheetConfirm.classList.remove('open');
+  confirmCallback = null;
+};
+document.getElementById('btnConfirmOk').onclick = function(){
+  const cb = confirmCallback;
+  sheetConfirm.classList.remove('open');
+  confirmCallback = null;
+  if(cb) cb();
+};
+function clienteById(id){ return state.clientes.find(function(x){return x.id===id;}); }
+function clienteNome(id){ const c = clienteById(id); return c? c.nome : '—'; }
+function clienteFone(id){ const c = clienteById(id); return c? c.telefone : ''; }
+function iniciais(nome){ return (nome||'?').trim().split(/\s+/).slice(0,2).map(function(p){return p[0].toUpperCase();}).join(''); }
+function contaById(id){ return state.contas.find(function(x){return x.id===id;}); }
+function contaNome(id){ const c = contaById(id); return c? c.nome : '—'; }
+function iconEditBtn(attrs){
+  return '<button class="icon-btn" '+attrs+' title="Editar"><svg viewBox="0 0 24 24"><path d="M12 20h9" stroke-linecap="round"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke-linejoin="round"/></svg></button>';
+}
+function iconDeleteBtn(attrs){
+  return '<button class="icon-btn danger" '+attrs+' title="Excluir"><svg viewBox="0 0 24 24"><path d="M4 7h16" stroke-linecap="round"/><path d="M9 7V4h6v3M6 7l1 13a2 2 0 002 2h6a2 2 0 002-2l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg></button>';
+}
+function excluirVenda(tipo, id){
+  if(tipo==='titulo'){
+    const t = state.titulos.find(function(x){return x.id===id;});
+    if(!t) return;
+    const mov = state.movimentacoes.find(function(m){return m.tituloId===t.id;});
+    if(mov) deleteDoc('movimentacoes', mov.id);
+    deleteDoc('titulos', id);
+  } else {
+    deleteDoc('movimentacoes', id);
+  }
+  toast('Venda excluída.');
+}
+function contaPadraoId(){
+  const configurada = state.config.contaPadraoId;
+  if(configurada && contaById(configurada)) return configurada;
+  return state.contas.length ? state.contas[0].id : null;
+}
+function contaSaldo(contaId){
+  const conta = contaById(contaId);
+  if(!conta) return 0;
+  let saldo = Number(conta.saldoInicial||0);
+  state.movimentacoes.forEach(function(m){
+    if(m.tipo==='entrada' && m.contaId===contaId) saldo += Number(m.valor||0);
+    else if(m.tipo==='saida' && m.contaId===contaId) saldo -= Number(m.valor||0);
+    else if(m.tipo==='transferencia'){
+      if(m.contaOrigemId===contaId) saldo -= Number(m.valor||0);
+      if(m.contaDestinoId===contaId) saldo += Number(m.valor||0);
+    }
+  });
+  return saldo;
+}
+function saldoTotalContas(){ return state.contas.reduce(function(s,c){ return s + contaSaldo(c.id); }, 0); }
+function garantirContaPadrao(){
+  if(state.contas.length===0){
+    const id = uidGen();
+    state.contas.push({id:id, nome:'Caixa', saldoInicial:0, criadoEm: Date.now()});
+    state.movimentacoes.forEach(function(m){ if(!m.contaId && m.tipo!=='transferencia') m.contaId = id; });
+    saveCache();
+  }
+}
+
+/* ---------------- "Banco de dados" local ---------------- */
+function addDoc(col, data){
+  const obj = Object.assign({id: uidGen(), criadoEm: Date.now()}, data);
+  state[col].push(obj);
+  saveCache();
+  renderAll();
+  return obj.id;
+}
+function setDoc(col, id, data){
+  const arr = state[col];
+  const idx = arr.findIndex(function(x){return x.id===id;});
+  if(idx>=0) arr[idx] = Object.assign({}, arr[idx], data);
+  saveCache();
+  renderAll();
+}
+function deleteDoc(col, id){
+  const arr = state[col];
+  const idx = arr.findIndex(function(x){return x.id===id;});
+  if(idx>=0) arr.splice(idx,1);
+  saveCache();
+  renderAll();
+}
+
+/* ---------------- SEGURANÇA (biometria/PIN via WebAuthn) ---------------- */
+const BIO_KEY = 'salao_biometria_id';
+function randomBytes(len){ const arr = new Uint8Array(len); crypto.getRandomValues(arr); return arr; }
+function bufToBase64(buf){ return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))); }
+function base64ToBuf(b64){ const bin = atob(b64); const arr = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i); return arr; }
+async function plataformaSuportaBiometria(){
+  if(!window.PublicKeyCredential || !PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) return false;
+  try{ return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(); }catch(e){ return false; }
+}
+function biometriaAtiva(){ return !!localStorage.getItem(BIO_KEY); }
+async function renderSeguranca(){
+  const suportado = await plataformaSuportaBiometria();
+  const btnAtivar = document.getElementById('btnAtivarBiometria');
+  const btnDesativar = document.getElementById('btnDesativarBiometria');
+  if(!suportado){
+    document.getElementById('cardSeguranca').innerHTML = '<p style="font-size:13px; color:var(--ink-soft); margin:0; line-height:1.5;">Seu navegador ou celular não oferece biometria/PIN para apps web. O app segue funcionando normalmente, só sem essa trava extra.</p>';
+    return;
+  }
+  const ativa = biometriaAtiva();
+  btnAtivar.style.display = ativa ? 'none' : 'block';
+  btnDesativar.style.display = ativa ? 'block' : 'none';
+}
+document.getElementById('btnAtivarBiometria').onclick = async function(){
+  try{
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge: randomBytes(32),
+        rp: { name: 'AJHA Finance' },
+        user: { id: randomBytes(16), name: 'usuario-local', displayName: 'Usuário' },
+        pubKeyCredParams: [{type:'public-key', alg:-7}, {type:'public-key', alg:-257}],
+        authenticatorSelection: { authenticatorAttachment:'platform', userVerification:'required' },
+        timeout: 60000
+      }
+    });
+    localStorage.setItem(BIO_KEY, bufToBase64(cred.rawId));
+    toast('Bloqueio ativado.');
+    renderSeguranca();
+  }catch(err){
+    toast('Não foi possível ativar. Tente de novo.');
+  }
+};
+document.getElementById('btnDesativarBiometria').onclick = function(){
+  askConfirm('Desativar o bloqueio por biometria/PIN?', function(){
+    localStorage.removeItem(BIO_KEY);
+    toast('Bloqueio desativado.');
+    renderSeguranca();
+  }, 'Desativar');
+};
+async function desbloquear(){
+  const credId = localStorage.getItem(BIO_KEY);
+  if(!credId){ document.getElementById('lockScreen').style.display='none'; return; }
+  try{
+    await navigator.credentials.get({
+      publicKey: {
+        challenge: randomBytes(32),
+        allowCredentials: [{ id: base64ToBuf(credId), type:'public-key' }],
+        userVerification:'required',
+        timeout: 60000
+      }
+    });
+    document.getElementById('lockScreen').style.display='none';
+  }catch(err){
+    toast('Não foi possível desbloquear. Tente de novo.');
+  }
+}
+document.getElementById('btnDesbloquear').onclick = desbloquear;
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden && biometriaAtiva()){
+    document.getElementById('lockScreen').style.display = 'flex';
+  }
+});
+
+/* ---------------- INICIALIZAÇÃO ---------------- */
+function setGreeting(){
+  const h = new Date().getHours();
+  const saud = h<12?'Bom dia':(h<18?'Boa tarde':'Boa noite');
+  const nome = (state.config.nomeSalao||'').trim();
+  document.getElementById('greetText').textContent = nome ? (saud+', '+nome) : saud;
+  document.getElementById('greetDate').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long', day:'2-digit', month:'long'});
+}
+loadCache();
+garantirContaPadrao();
+document.getElementById('cfgNomeSalao').value = state.config.nomeSalao||'';
+document.getElementById('cfgWhats').value = state.config.whatsapp||'';
+setGreeting();
+renderAll();
+renderSeguranca();
+if(biometriaAtiva()){
+  document.getElementById('lockScreen').style.display = 'flex';
+}
+
+/* ---------------- NAVEGAÇÃO ---------------- */
+document.querySelectorAll('nav.bottomnav button[data-view]').forEach(function(btn){
+  btn.onclick = function(){ switchView(btn.dataset.view); };
+});
+function switchView(name){
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('nav.bottomnav button[data-view]').forEach(function(b){ b.classList.toggle('active', b.dataset.view===name); });
+  document.getElementById('fabPrimary').classList.toggle('disabled', name==='dashboard');
+  showHeaderDefault();
+  renderAll();
+}
+function showHeaderDefault(){
+  document.getElementById('headerGreetBlock').style.display='block';
+  document.getElementById('headerTitle').style.display='none';
+  document.getElementById('btnBack').style.display='none';
+}
+function openFicha(clienteId){
+  currentClienteId = clienteId;
+  selecionadosCobranca = [];
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.getElementById('view-ficha').classList.add('active');
+  document.querySelectorAll('nav.bottomnav button').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('headerGreetBlock').style.display='none';
+  document.getElementById('headerTitle').style.display='block';
+  document.getElementById('headerTitle').textContent='Ficha do cliente';
+  document.getElementById('btnBack').style.display='flex';
+  document.getElementById('fabPrimary').classList.add('disabled');
+  renderFicha();
+}
+document.getElementById('btnBack').onclick = function(){ switchView('clientes'); };
+
+document.getElementById('fabPrimary').onclick = function(){
+  const active = document.querySelector('.view.active').id;
+  if(active==='view-clientes') openClienteSheet();
+  else if(active==='view-vendas') openVendaSheet();
+  else if(active==='view-caixa') openMovimentacaoSheet();
+  else if(active==='view-contas') openContaSheet();
+  else if(active==='view-ajustes') openServicoSheet();
+};
+
+function renderAll(){
+  renderDashboard();
+  renderVendas();
+  renderCaixa();
+  renderClientes();
+  renderServicos();
+  renderContas();
+  if(currentClienteId && document.getElementById('view-ficha').classList.contains('active')) renderFicha();
+  atualizarSelects();
+}
+
+/* ================= DASHBOARD ================= */
+function renderDashboard(){
+  const mesAtual = todayISO().slice(0,7);
+  const movMes = state.movimentacoes.filter(function(m){ return m.data.slice(0,7)===mesAtual; });
+  const entradasMes = movMes.filter(function(m){return m.tipo==='entrada';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
+  const saidasMes = movMes.filter(function(m){return m.tipo==='saida';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
+  document.getElementById('kpiSaldoMes').textContent = fmtMoney(saldoTotalContas());
+  document.getElementById('kpiEntradasMes').textContent = 'Entradas do mês: '+fmtMoney(entradasMes);
+  document.getElementById('kpiSaidasMes').textContent = 'Saídas do mês: '+fmtMoney(saidasMes);
+
+  const pendentes = state.titulos.filter(function(t){return t.status==='pendente';});
+  const totalPendente = pendentes.reduce(function(s,t){return s+Number(t.valor||0);},0);
+  document.getElementById('kpiAReceber').textContent = fmtMoney(totalPendente);
+  document.getElementById('kpiAReceberSub').textContent = pendentes.length+' cobrança(s) em aberto';
+
+  const atrasados = pendentes.filter(function(t){ return diffDias(t.vencimento) > 0; });
+  const totalAtraso = atrasados.reduce(function(s,t){return s+Number(t.valor||0);},0);
+  const porCliente = {};
+  atrasados.forEach(function(t){ porCliente[t.clienteId] = (porCliente[t.clienteId]||0) + Number(t.valor||0); });
+  const clientesAtrasoIds = Object.keys(porCliente);
+  document.getElementById('kpiInadim').textContent = fmtMoney(totalAtraso);
+  document.getElementById('kpiInadimSub').textContent = clientesAtrasoIds.length+' cliente(s) em atraso';
+
+  const box = document.getElementById('dashInadim');
+  if(clientesAtrasoIds.length===0){
+    box.innerHTML = '<div class="empty"><div class="display">Tudo em dia 🎉</div>Nenhum cliente com pagamento atrasado.</div>';
+  } else {
+    const ordenado = clientesAtrasoIds.sort(function(a,b){return porCliente[b]-porCliente[a];});
+    box.innerHTML = ordenado.map(function(cid){
+      return '<div class="list-item clickable" data-cliente="'+cid+'">'
+        +'<div class="stripe" style="background:var(--danger)"></div>'
+        +'<div class="main"><div class="title">'+clienteNome(cid)+'</div><div class="meta">Em atraso</div></div>'
+        +'<div class="right out">'+fmtMoney(porCliente[cid])+'</div></div>';
+    }).join('');
+    box.querySelectorAll('[data-cliente]').forEach(function(el){
+      el.onclick = function(){ openFicha(el.dataset.cliente); };
+    });
+  }
+}
+
+/* ================= VENDAS ================= */
+document.querySelectorAll('#vendasTabs button').forEach(function(btn){
+  btn.onclick = function(){
+    vendasFiltro = btn.dataset.vendas;
+    document.querySelectorAll('#vendasTabs button').forEach(function(b){ b.classList.toggle('active', b===btn); });
+    renderVendas();
+  };
+});
+function renderVendas(){
+  const box = document.getElementById('vendasList');
+  if(!box) return;
+  const mesAtual = todayISO().slice(0,7);
+
+  // vendas para clientes cadastrados (viram título, pago ou pendente)
+  let itens = state.titulos.map(function(t){
+    return {
+      data: t.status==='pago' ? (t.pagoEm||t.vencimento) : t.vencimento,
+      descricao: t.descricao,
+      clienteId: t.clienteId,
+      valor: t.valor,
+      status: t.status,
+      vencimento: t.vencimento,
+      ordenar: t.criadoEm||0,
+      tipo: 'titulo',
+      id: t.id
+    };
+  });
+  // vendas avulsas sem cliente (só viram movimentação)
+  state.movimentacoes.filter(function(m){ return m.origem==='venda'; }).forEach(function(m){
+    itens.push({data:m.data, descricao:m.descricao, clienteId:null, valor:m.valor, status:'pago', vencimento:m.data, ordenar:m.criadoEm||0, tipo:'movimentacao', id:m.id});
+  });
+
+  if(vendasFiltro==='mes') itens = itens.filter(function(i){ return i.data.slice(0,7)===mesAtual; });
+  itens.sort(function(a,b){ return b.data.localeCompare(a.data) || b.ordenar-a.ordenar; });
+
+  if(itens.length===0){
+    box.innerHTML = '<div class="empty"><div class="display">Nenhuma venda</div>Toque no + pra registrar a primeira venda do período.</div>';
+    return;
+  }
+  box.innerHTML = itens.map(function(i){
+    const dias = i.status==='pendente' ? diffDias(i.vencimento) : 0;
+    const atrasado = i.status==='pendente' && dias>0;
+    const badge = i.status==='pago' ? '<span class="badge ok">Pago</span>' : (atrasado ? '<span class="badge late">'+dias+'d atraso</span>' : '<span class="badge pending">A vencer</span>');
+    const quem = i.clienteId ? clienteNome(i.clienteId) : 'Venda avulsa';
+    const verCliente = i.clienteId ? ('<button class="chip-btn" data-vercliente="'+i.clienteId+'">Ver cliente</button>') : '';
+    const icones = iconEditBtn('data-editar-tipo="'+i.tipo+'" data-editar-id="'+i.id+'"')
+      + iconDeleteBtn('data-excluir-tipo="'+i.tipo+'" data-excluir-id="'+i.id+'"');
+    return '<div class="list-item">'
+      +'<div class="stripe" style="background:'+(i.status==='pago'?'var(--success)':(atrasado?'var(--danger)':'var(--gold)'))+'"></div>'
+      +'<div class="main"><div class="title">'+i.descricao+'</div><div class="meta">'+quem+' · '+fmtDateBR(i.data)+' · '+badge+'</div>'
+      +(verCliente ? '<div class="action-row">'+verCliente+'</div>' : '')+'</div>'
+      +'<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;"><div class="right">'+fmtMoney(i.valor)+'</div><div class="icon-row" style="margin-top:0">'+icones+'</div></div></div>';
+  }).join('');
+  box.querySelectorAll('[data-vercliente]').forEach(function(el){
+    el.onclick = function(){ openFicha(el.dataset.vercliente); };
+  });
+  box.querySelectorAll('[data-editar-id]').forEach(function(el){
+    el.onclick = function(){ openEditarVendaSheet(el.dataset.editarTipo, el.dataset.editarId); };
+  });
+  box.querySelectorAll('[data-excluir-id]').forEach(function(el){
+    el.onclick = function(){
+      const tipo = el.dataset.excluirTipo, id = el.dataset.excluirId;
+      askConfirm('Excluir esta venda? Essa ação não pode ser desfeita.', function(){ excluirVenda(tipo, id); });
+    };
+  });
+}
+
+/* ================= CAIXA ================= */
+document.querySelectorAll('#caixaTabs button').forEach(function(btn){
+  btn.onclick = function(){
+    caixaFiltro = btn.dataset.caixa;
+    document.querySelectorAll('#caixaTabs button').forEach(function(b){ b.classList.toggle('active', b===btn); });
+    renderCaixa();
+  };
+});
+function renderCaixa(){
+  const mesAtual = todayISO().slice(0,7);
+  let list = state.movimentacoes.slice();
+  if(caixaFiltro==='mes') list = list.filter(function(m){ return m.data.slice(0,7)===mesAtual; });
+  list.sort(function(a,b){ return b.data.localeCompare(a.data) || (b.criadoEm||0)-(a.criadoEm||0); });
+
+  const box = document.getElementById('caixaList');
+  if(list.length===0){
+    box.innerHTML = '<div class="empty"><div class="display">Nenhuma movimentação</div>Toque no + para lançar uma entrada ou saída.</div>';
+    return;
+  }
+  box.innerHTML = list.map(function(m){
+    if(m.tipo==='transferencia'){
+      return '<div class="list-item">'
+        +'<div class="stripe" style="background:var(--gold)"></div>'
+        +'<div class="main"><div class="title">'+contaNome(m.contaOrigemId)+' → '+contaNome(m.contaDestinoId)+'</div><div class="meta">'+fmtDateBR(m.data)+(m.descricao ? ' · '+m.descricao : '')+'</div>'
+        +'<div class="icon-row">'+iconDeleteBtn('data-excluir-transf="'+m.id+'"')+'</div></div>'
+        +'<div class="right">'+fmtMoney(m.valor)+'</div></div>';
+    }
+    const acoes = m.origem==='manual' ? ('<div class="icon-row">'+iconEditBtn('data-editar-mov="'+m.id+'"')+iconDeleteBtn('data-excluir-mov="'+m.id+'"')+'</div>') : '';
+    return '<div class="list-item">'
+      +'<div class="stripe" style="background:'+(m.tipo==='entrada'?'var(--success)':'var(--danger)')+'"></div>'
+      +'<div class="main"><div class="title">'+m.descricao+'</div><div class="meta">'+fmtDateBR(m.data)+' · '+contaNome(m.contaId)+(m.clienteId ? ' · '+clienteNome(m.clienteId) : '')+'</div>'+acoes+'</div>'
+      +'<div class="right '+(m.tipo==='entrada'?'in':'out')+'">'+(m.tipo==='entrada'?'+ ':'- ')+fmtMoney(m.valor)+'</div></div>';
+  }).join('');
+  box.querySelectorAll('[data-editar-mov]').forEach(function(el){
+    el.onclick = function(){ openMovimentacaoSheet(el.dataset.editarMov); };
+  });
+  box.querySelectorAll('[data-excluir-mov]').forEach(function(el){
+    el.onclick = function(){
+      const id = el.dataset.excluirMov;
+      askConfirm('Excluir esta movimentação? Essa ação não pode ser desfeita.', function(){
+        deleteDoc('movimentacoes', id);
+        toast('Movimentação excluída.');
+      });
+    };
+  });
+  box.querySelectorAll('[data-excluir-transf]').forEach(function(el){
+    el.onclick = function(){
+      const id = el.dataset.excluirTransf;
+      askConfirm('Excluir esta transferência? Essa ação não pode ser desfeita.', function(){
+        deleteDoc('movimentacoes', id);
+        toast('Transferência excluída.');
+      });
+    };
+  });
+}
+
+const sheetMov = document.getElementById('sheetMovimentacao');
+let movTipoAtual = 'entrada';
+document.querySelectorAll('#movSeg button').forEach(function(btn){
+  btn.onclick = function(){
+    movTipoAtual = btn.dataset.tipo;
+    document.querySelectorAll('#movSeg button').forEach(function(b){ b.classList.remove('active','in','out'); });
+    btn.classList.add('active', movTipoAtual==='entrada'?'in':'out');
+  };
+});
+function openMovimentacaoSheet(id){
+  if(state.contas.length===0){ toast('Cadastre uma conta na aba Contas antes.'); return; }
+  const editando = !!id;
+  document.getElementById('movId').value = id||'';
+  document.getElementById('sheetMovTitle').textContent = editando ? 'Editar movimentação' : 'Nova movimentação';
+  document.getElementById('btnExcluirMov').style.display = editando ? 'block' : 'none';
+
+  const m = editando ? state.movimentacoes.find(function(x){return x.id===id;}) : null;
+  movTipoAtual = m ? m.tipo : 'entrada';
+  document.querySelectorAll('#movSeg button').forEach(function(b){ b.classList.remove('active','in','out'); });
+  document.querySelector('#movSeg button[data-tipo="'+movTipoAtual+'"]').classList.add('active', movTipoAtual==='entrada'?'in':'out');
+  document.getElementById('movDescricao').value = m ? m.descricao : '';
+  document.getElementById('movValor').value = m ? m.valor : '';
+  document.getElementById('movData').value = m ? m.data : todayISO();
+  document.getElementById('movConta').value = m ? m.contaId : contaPadraoId();
+  sheetMov.classList.add('open');
+}
+document.getElementById('btnCancelarMov').onclick = function(){ sheetMov.classList.remove('open'); };
+document.getElementById('btnSalvarMov').onclick = function(){
+  const id = document.getElementById('movId').value;
+  const descricao = document.getElementById('movDescricao').value.trim();
+  const valor = Number(document.getElementById('movValor').value)||0;
+  const data = document.getElementById('movData').value || todayISO();
+  const contaId = document.getElementById('movConta').value;
+  if(!descricao || !valor){ toast('Preencha descrição e valor.'); return; }
+  if(!contaId){ toast('Selecione a conta.'); return; }
+  if(id){
+    setDoc('movimentacoes', id, {tipo:movTipoAtual, descricao:descricao, valor:valor, data:data, contaId:contaId});
+    toast('Movimentação atualizada.');
+  } else {
+    addDoc('movimentacoes', {tipo:movTipoAtual, descricao:descricao, valor:valor, data:data, contaId:contaId, origem:'manual'});
+    toast('Movimentação lançada.');
+  }
+  sheetMov.classList.remove('open');
+};
+document.getElementById('btnExcluirMov').onclick = function(){
+  const id = document.getElementById('movId').value;
+  if(!id) return;
+  askConfirm('Excluir esta movimentação? Essa ação não pode ser desfeita.', function(){
+    deleteDoc('movimentacoes', id);
+    sheetMov.classList.remove('open');
+    toast('Movimentação excluída.');
+  });
+};
+
+/* ---------------- Transferência entre contas ---------------- */
+const sheetTrf = document.getElementById('sheetTransferencia');
+document.getElementById('btnTransferir').onclick = function(){
+  if(state.contas.length<2){ toast('Cadastre pelo menos 2 contas para transferir.'); return; }
+  document.getElementById('trfValor').value='';
+  document.getElementById('trfDescricao').value='';
+  document.getElementById('trfData').value = todayISO();
+  sheetTrf.classList.add('open');
+};
+document.getElementById('btnCancelarTrf').onclick = function(){ sheetTrf.classList.remove('open'); };
+document.getElementById('btnSalvarTrf').onclick = function(){
+  const origem = document.getElementById('trfOrigem').value;
+  const destino = document.getElementById('trfDestino').value;
+  const valor = Number(document.getElementById('trfValor').value)||0;
+  const data = document.getElementById('trfData').value || todayISO();
+  const descricao = document.getElementById('trfDescricao').value.trim();
+  if(!origem || !destino){ toast('Selecione as duas contas.'); return; }
+  if(origem===destino){ toast('Escolha contas diferentes.'); return; }
+  if(!valor){ toast('Informe o valor.'); return; }
+  addDoc('movimentacoes', {tipo:'transferencia', contaOrigemId:origem, contaDestinoId:destino, valor:valor, data:data, descricao:descricao});
+  sheetTrf.classList.remove('open');
+  toast('Transferência registrada.');
+};
+
+/* ---------------- Registrar venda (com ou sem cliente) ---------------- */
+const sheetVenda = document.getElementById('sheetVenda');
+function openVendaSheet(){
+  if(state.contas.length===0){ toast('Cadastre uma conta na aba Contas antes.'); return; }
+  document.getElementById('vdCliente').value='';
+  document.getElementById('vdServico').value='';
+  document.getElementById('vdDescricao').value='';
+  document.getElementById('vdValor').value='';
+  document.getElementById('vdData').value = todayISO();
+  document.getElementById('vdPago').value='sim';
+  document.getElementById('vdConta').value = contaPadraoId();
+  atualizarCamposVenda();
+  sheetVenda.classList.add('open');
+}
+document.getElementById('btnCancelarVenda').onclick = function(){ sheetVenda.classList.remove('open'); };
+document.getElementById('vdServico').onchange = function(e){
+  const s = state.servicos.find(function(x){return x.id===e.target.value;});
+  if(s){ document.getElementById('vdDescricao').value = s.nome; document.getElementById('vdValor').value = s.preco; }
+};
+document.getElementById('vdCliente').onchange = atualizarCamposVenda;
+document.getElementById('vdPago').onchange = atualizarCamposVenda;
+function atualizarCamposVenda(){
+  const temCliente = !!document.getElementById('vdCliente').value;
+  const pagoSel = document.getElementById('vdPago');
+  if(!temCliente){
+    pagoSel.value = 'sim';
+    pagoSel.disabled = true;
+  } else {
+    pagoSel.disabled = false;
+  }
+  document.getElementById('vdPagoField').style.display = temCliente ? 'block' : 'none';
+  document.getElementById('vdContaField').style.display = pagoSel.value==='sim' ? 'block' : 'none';
+  document.getElementById('vdDataLabel').textContent = pagoSel.value==='sim' ? 'Data' : 'Vencimento';
+}
+document.getElementById('btnSalvarVenda').onclick = function(){
+  const clienteId = document.getElementById('vdCliente').value;
+  const descricao = document.getElementById('vdDescricao').value.trim();
+  const valor = Number(document.getElementById('vdValor').value)||0;
+  const data = document.getElementById('vdData').value || todayISO();
+  const pago = document.getElementById('vdPago').value==='sim';
+  const contaId = document.getElementById('vdConta').value;
+  if(!descricao || !valor){ toast('Preencha descrição e valor.'); return; }
+  if(pago && !contaId){ toast('Selecione a conta que recebeu.'); return; }
+
+  if(!clienteId){
+    // Venda avulsa: sempre paga na hora, vira só uma entrada no caixa
+    addDoc('movimentacoes', {tipo:'entrada', descricao:descricao, valor:valor, data:data, contaId:contaId, origem:'venda'});
+    toast('Venda registrada.');
+  } else if(pago){
+    const tituloId = addDoc('titulos', {clienteId:clienteId, origemTipo:'avulso', descricao:descricao, valor:valor, vencimento:data, status:'pago', pagoEm:data});
+    addDoc('movimentacoes', {tipo:'entrada', descricao: descricao+' — '+clienteNome(clienteId), valor:valor, data:data, contaId:contaId, origem:'titulo', tituloId:tituloId, clienteId:clienteId});
+    toast('Venda registrada e paga.');
+  } else {
+    addDoc('titulos', {clienteId:clienteId, origemTipo:'avulso', descricao:descricao, valor:valor, vencimento:data, status:'pendente'});
+    toast('Venda lançada como cobrança em aberto.');
+  }
+  sheetVenda.classList.remove('open');
+};
+
+/* ---------------- Editar / excluir venda ---------------- */
+const sheetEditarVenda = document.getElementById('sheetEditarVenda');
+let editVendaTipo = null;
+let editVendaId = null;
+function openEditarVendaSheet(tipo, id){
+  editVendaTipo = tipo;
+  editVendaId = id;
+  const contaField = document.getElementById('evContaField');
+  if(tipo==='titulo'){
+    const t = state.titulos.find(function(x){return x.id===id;});
+    if(!t) return;
+    document.getElementById('evDescricao').value = t.descricao;
+    document.getElementById('evValor').value = t.valor;
+    if(t.status==='pago'){
+      document.getElementById('evData').value = t.pagoEm||t.vencimento;
+      document.getElementById('evDataLabel').textContent = 'Data do pagamento';
+      contaField.style.display = 'block';
+      const mov = state.movimentacoes.find(function(m){return m.tituloId===t.id;});
+      document.getElementById('evConta').value = mov ? mov.contaId : (contaPadraoId()||'');
+    } else {
+      document.getElementById('evData').value = t.vencimento;
+      document.getElementById('evDataLabel').textContent = 'Vencimento';
+      contaField.style.display = 'none';
+    }
+  } else {
+    const m = state.movimentacoes.find(function(x){return x.id===id;});
+    if(!m) return;
+    document.getElementById('evDescricao').value = m.descricao;
+    document.getElementById('evValor').value = m.valor;
+    document.getElementById('evData').value = m.data;
+    document.getElementById('evDataLabel').textContent = 'Data';
+    contaField.style.display = 'block';
+    document.getElementById('evConta').value = m.contaId||'';
+  }
+  sheetEditarVenda.classList.add('open');
+}
+document.getElementById('btnSalvarEdicaoVenda').onclick = function(){
+  const descricao = document.getElementById('evDescricao').value.trim();
+  const valor = Number(document.getElementById('evValor').value)||0;
+  const data = document.getElementById('evData').value;
+  if(!descricao || !valor || !data){ toast('Preencha descrição, valor e data.'); return; }
+
+  if(editVendaTipo==='titulo'){
+    const t = state.titulos.find(function(x){return x.id===editVendaId;});
+    if(t.status==='pago'){
+      const contaId = document.getElementById('evConta').value;
+      setDoc('titulos', t.id, {descricao:descricao, valor:valor, pagoEm:data});
+      const mov = state.movimentacoes.find(function(m){return m.tituloId===t.id;});
+      if(mov) setDoc('movimentacoes', mov.id, {descricao: descricao+' — '+clienteNome(t.clienteId), valor:valor, data:data, contaId:contaId});
+    } else {
+      setDoc('titulos', t.id, {descricao:descricao, valor:valor, vencimento:data});
+    }
+  } else {
+    const contaId = document.getElementById('evConta').value;
+    setDoc('movimentacoes', editVendaId, {descricao:descricao, valor:valor, data:data, contaId:contaId});
+  }
+  sheetEditarVenda.classList.remove('open');
+  toast('Venda atualizada.');
+};
+document.getElementById('btnCancelarEditarVenda').onclick = function(){ sheetEditarVenda.classList.remove('open'); };
+document.getElementById('btnExcluirVenda').onclick = function(){
+  askConfirm('Excluir esta venda? Essa ação não pode ser desfeita.', function(){
+    if(editVendaTipo==='titulo'){
+      const t = state.titulos.find(function(x){return x.id===editVendaId;});
+      const mov = state.movimentacoes.find(function(m){return m.tituloId===t.id;});
+      if(mov) deleteDoc('movimentacoes', mov.id);
+      deleteDoc('titulos', editVendaId);
+    } else {
+      deleteDoc('movimentacoes', editVendaId);
+    }
+    sheetEditarVenda.classList.remove('open');
+    toast('Venda excluída.');
+  });
+};
+
+/* ================= CLIENTES (lista) ================= */
+function clienteEmAberto(clienteId){
+  return state.titulos.filter(function(t){return t.clienteId===clienteId && t.status==='pendente';}).reduce(function(s,t){return s+Number(t.valor||0);},0);
+}
+function clienteAtrasado(clienteId){
+  return state.titulos.some(function(t){return t.clienteId===clienteId && t.status==='pendente' && diffDias(t.vencimento)>0;});
+}
+function renderClientes(){
+  const busca = (document.getElementById('buscaCliente').value||'').toLowerCase();
+  const list = state.clientes
+    .filter(function(c){return c.nome.toLowerCase().includes(busca);})
+    .sort(function(a,b){return a.nome.localeCompare(b.nome);});
+  const box = document.getElementById('clientesList');
+  if(list.length===0){
+    box.innerHTML = '<div class="empty"><div class="display">Nenhum cliente</div>Toque no + para cadastrar.</div>';
+    return;
+  }
+  box.innerHTML = list.map(function(c){
+    const atrasado = clienteAtrasado(c.id);
+    const aberto = clienteEmAberto(c.id);
+    const badge = atrasado ? '<span class="badge late">Em atraso</span>' : (aberto>0 ? '<span class="badge pending">A receber</span>' : '<span class="badge ok">Em dia</span>');
+    const icones = iconEditBtn('data-editar-cliente="'+c.id+'"') + iconDeleteBtn('data-excluir-cliente="'+c.id+'"');
+    return '<div class="list-item clickable" data-id="'+c.id+'">'
+      +'<div class="stripe" style="background:'+(atrasado?'var(--danger)':'var(--accent)')+'"></div>'
+      +'<div class="main"><div class="title">'+c.nome+'</div><div class="meta">'+(c.telefone||'sem telefone')+'</div></div>'
+      +'<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;"><div class="right">'+badge+'</div><div class="icon-row" style="margin-top:0">'+icones+'</div></div></div>';
+  }).join('');
+  box.querySelectorAll('.list-item').forEach(function(item){
+    item.onclick = function(){ openFicha(item.dataset.id); };
+  });
+  box.querySelectorAll('[data-editar-cliente]').forEach(function(el){
+    el.onclick = function(e){ e.stopPropagation(); openClienteSheet(el.dataset.editarCliente); };
+  });
+  box.querySelectorAll('[data-excluir-cliente]').forEach(function(el){
+    el.onclick = function(e){
+      e.stopPropagation();
+      const id = el.dataset.excluirCliente;
+      if(!clienteEhExcluivel(id)){
+        toast('Não dá pra excluir: este cliente tem vendas, cobranças ou pacotes vinculados.');
+        return;
+      }
+      askConfirm('Excluir este cliente? Essa ação não pode ser desfeita.', function(){
+        deleteDoc('clientes', id);
+        if(currentClienteId===id) currentClienteId=null;
+        toast('Cliente excluído.');
+      });
+    };
+  });
+}
+document.getElementById('buscaCliente').oninput = renderClientes;
+
+const sheetCliente = document.getElementById('sheetCliente');
+function openClienteSheet(id){
+  document.getElementById('sheetClienteTitle').textContent = id ? 'Editar cliente' : 'Novo cliente';
+  document.getElementById('clienteId').value = id||'';
+  const c = id ? clienteById(id) : null;
+  document.getElementById('clienteNome').value = c ? c.nome : '';
+  document.getElementById('clienteTelefone').value = c ? c.telefone : '';
+  document.getElementById('btnExcluirCliente').style.display = id ? 'block' : 'none';
+  sheetCliente.classList.add('open');
+}
+document.getElementById('btnEditarCliente').onclick = function(){ openClienteSheet(currentClienteId); };
+document.getElementById('btnCancelarCliente').onclick = function(){ sheetCliente.classList.remove('open'); };
+document.getElementById('btnSalvarCliente').onclick = function(){
+  const id = document.getElementById('clienteId').value;
+  const nome = document.getElementById('clienteNome').value.trim();
+  const telefone = document.getElementById('clienteTelefone').value.trim();
+  if(!nome){ toast('Informe o nome.'); return; }
+  const data = {nome:nome, telefone:telefone};
+  if(id){ setDoc('clientes', id, data); toast('Cliente atualizado.'); }
+  else{ addDoc('clientes', data); toast('Cliente cadastrado.'); }
+  sheetCliente.classList.remove('open');
+};
+function clienteEhExcluivel(id){
+  const temTitulo = state.titulos.some(function(t){return t.clienteId===id;});
+  const temContrato = state.contratos.some(function(ct){return ct.clienteId===id;});
+  const temMov = state.movimentacoes.some(function(m){return m.clienteId===id;});
+  return !temTitulo && !temContrato && !temMov;
+}
+document.getElementById('btnExcluirCliente').onclick = function(){
+  const id = document.getElementById('clienteId').value;
+  if(!id) return;
+  if(!clienteEhExcluivel(id)){
+    toast('Não dá pra excluir: este cliente tem vendas, cobranças ou pacotes vinculados.');
+    return;
+  }
+  askConfirm('Excluir este cliente? Essa ação não pode ser desfeita.', function(){
+    deleteDoc('clientes', id);
+    sheetCliente.classList.remove('open');
+    toast('Cliente excluído.');
+    if(currentClienteId===id){ currentClienteId=null; switchView('clientes'); }
+  });
+};
+
+/* ================= FICHA DO CLIENTE ================= */
+function renderFicha(){
+  const c = clienteById(currentClienteId);
+  if(!c){ switchView('clientes'); return; }
+  document.getElementById('fichaAvatar').textContent = iniciais(c.nome);
+  document.getElementById('fichaNome').textContent = c.nome;
+  document.getElementById('fichaTelefone').textContent = c.telefone || 'sem telefone';
+
+  const titulosCliente = state.titulos.filter(function(t){return t.clienteId===c.id;}).sort(function(a,b){return b.vencimento.localeCompare(a.vencimento);});
+  const emAberto = titulosCliente.filter(function(t){return t.status==='pendente';}).reduce(function(s,t){return s+Number(t.valor||0);},0);
+  const pago = titulosCliente.filter(function(t){return t.status==='pago';}).reduce(function(s,t){return s+Number(t.valor||0);},0);
+  document.getElementById('fichaEmAberto').textContent = fmtMoney(emAberto);
+  document.getElementById('fichaPago').textContent = fmtMoney(pago);
+
+  const boxTit = document.getElementById('fichaTitulos');
+  if(titulosCliente.length===0){
+    boxTit.innerHTML = '<div class="empty"><div class="display">Sem cobranças</div>Use "+ Nova cobrança" para lançar o primeiro atendimento.</div>';
+  } else {
+    boxTit.innerHTML = titulosCliente.map(function(t){
+      const dias = diffDias(t.vencimento);
+      const atrasado = t.status==='pendente' && dias>0;
+      const badge = t.status==='pago' ? '<span class="badge ok">Pago</span>' : (atrasado ? '<span class="badge late">'+dias+'d atraso</span>' : '<span class="badge pending">A vencer</span>');
+      const acoesPendente = t.status==='pendente' ? ('<button class="chip-btn on-success" data-pagar="'+t.id+'">Marcar como pago</button>'+(atrasado ? '<button class="chip-btn" data-cobrar="'+t.id+'">Cobrar no WhatsApp</button>' : '')) : '';
+      const acoes = acoesPendente ? ('<div class="action-row">'+acoesPendente+'</div>') : '';
+      const icones = '<div class="icon-row">'+iconEditBtn('data-editar-titulo="'+t.id+'"')+iconDeleteBtn('data-excluir-titulo="'+t.id+'"')+'</div>';
+      const checkbox = atrasado ? ('<input type="checkbox" class="cobranca-check" data-check="'+t.id+'"'+(selecionadosCobranca.indexOf(t.id)>-1?' checked':'')+'>') : '';
+      return '<div class="list-item'+(atrasado?' selecionavel':'')+'">'
+        +checkbox
+        +'<div class="stripe" style="background:'+(t.status==='pago'?'var(--success)':(atrasado?'var(--danger)':'var(--gold)'))+'"></div>'
+        +'<div class="main"><div class="title">'+t.descricao+'</div><div class="meta">Vence '+fmtDateBR(t.vencimento)+' · '+badge+'</div>'+acoes+icones+'</div>'
+        +'<div class="right">'+fmtMoney(t.valor)+'</div></div>';
+    }).join('');
+  }
+  selecionadosCobranca = selecionadosCobranca.filter(function(id){ return titulosCliente.some(function(t){return t.id===id && t.status==='pendente' && diffDias(t.vencimento)>0;}); });
+  atualizarBotaoCobrarSelecionadas();
+  boxTit.querySelectorAll('[data-check]').forEach(function(cb){
+    cb.onchange = function(){
+      const id = cb.dataset.check;
+      const idx = selecionadosCobranca.indexOf(id);
+      if(cb.checked){ if(idx===-1) selecionadosCobranca.push(id); }
+      else if(idx>-1){ selecionadosCobranca.splice(idx,1); }
+      atualizarBotaoCobrarSelecionadas();
+    };
+  });
+  boxTit.querySelectorAll('[data-pagar]').forEach(function(btn){
+    btn.onclick = function(){
+      const t = state.titulos.find(function(x){return x.id===btn.dataset.pagar;});
+      setDoc('titulos', t.id, {status:'pago', pagoEm: todayISO()});
+      addDoc('movimentacoes', {
+        tipo:'entrada', descricao: t.descricao+' — '+clienteNome(t.clienteId),
+        valor:t.valor, data: todayISO(), origem:'titulo', tituloId:t.id, clienteId:t.clienteId, contaId: contaPadraoId()
+      });
+      toast('Pagamento registrado.');
+    };
+  });
+  boxTit.querySelectorAll('[data-cobrar]').forEach(function(btn){
+    btn.onclick = function(){
+      const t = state.titulos.find(function(x){return x.id===btn.dataset.cobrar;});
+      cobrarWhatsApp(t);
+    };
+  });
+  boxTit.querySelectorAll('[data-editar-titulo]').forEach(function(btn){
+    btn.onclick = function(){ openEditarVendaSheet('titulo', btn.dataset.editarTitulo); };
+  });
+  boxTit.querySelectorAll('[data-excluir-titulo]').forEach(function(btn){
+    btn.onclick = function(){
+      const id = btn.dataset.excluirTitulo;
+      askConfirm('Excluir esta venda? Essa ação não pode ser desfeita.', function(){ excluirVenda('titulo', id); });
+    };
+  });
+
+  const contratosCliente = state.contratos.filter(function(ct){return ct.clienteId===c.id;});
+  const boxCt = document.getElementById('fichaContratos');
+  if(contratosCliente.length===0){
+    boxCt.innerHTML = '<div class="empty" style="padding:20px"><div class="display" style="font-size:15px">Nenhum pacote ativo</div></div>';
+  } else {
+    boxCt.innerHTML = contratosCliente.map(function(ct){
+      const progresso = ct.tipo==='sessoes' ? ((ct.sessoesUsadas||0)+'/'+ct.sessoesTotal+' sessões') : 'Mensalidade fixa';
+      const acaoMensal = ct.tipo==='mensalidade' ? ('<div class="action-row"><button class="chip-btn" data-gerar-mensal="'+ct.id+'">Gerar cobrança do mês</button></div>') : '';
+      return '<div class="list-item">'
+        +'<div class="stripe" style="background:var(--gold)"></div>'
+        +'<div class="main"><div class="title">'+ct.descricao+'</div><div class="meta">'+progresso+'</div>'+acaoMensal+'</div>'
+        +'<div class="right">'+fmtMoney(ct.valorParcela)+'</div></div>';
+    }).join('');
+    boxCt.querySelectorAll('[data-gerar-mensal]').forEach(function(btn){
+      btn.onclick = function(){ gerarMensalidade(btn.dataset.gerarMensal); };
+    });
+  }
+}
+function cobrarWhatsApp(t){
+  const fone = (clienteFone(t.clienteId)||'').replace(/\D/g,'');
+  const dias = diffDias(t.vencimento);
+  const nomeSalao = state.config.nomeSalao || 'nosso negócio';
+  const msg = 'Olá, '+clienteNome(t.clienteId)+'! Aqui é do '+nomeSalao+'. Identificamos que o pagamento de "'+t.descricao+'" ('+fmtMoney(t.valor)+'), com vencimento em '+fmtDateBR(t.vencimento)+', ainda está em aberto ('+dias+' dia(s)). Pode nos ajudar a regularizar? 🙂';
+  const url = fone ? ('https://wa.me/'+fone+'?text='+encodeURIComponent(msg)) : ('https://wa.me/?text='+encodeURIComponent(msg));
+  window.open(url, '_blank');
+}
+function atualizarBotaoCobrarSelecionadas(){
+  const btn = document.getElementById('btnCobrarSelecionadas');
+  if(!btn) return;
+  if(selecionadosCobranca.length>0){
+    btn.style.display = 'block';
+    btn.textContent = 'Cobrar '+selecionadosCobranca.length+' selecionada'+(selecionadosCobranca.length>1?'s':'')+' no WhatsApp';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+document.getElementById('btnCobrarSelecionadas').onclick = function(){
+  const titulos = selecionadosCobranca.map(function(id){ return state.titulos.find(function(t){return t.id===id;}); }).filter(Boolean);
+  if(titulos.length===0) return;
+  const c = clienteById(currentClienteId);
+  const fone = (c.telefone||'').replace(/\D/g,'');
+  const nomeSalao = state.config.nomeSalao || 'nosso negócio';
+  const linhas = titulos.map(function(t){ return '• '+t.descricao+' — '+fmtMoney(t.valor)+' (venceu '+fmtDateBR(t.vencimento)+')'; }).join('\n');
+  const total = titulos.reduce(function(s,t){return s+Number(t.valor||0);},0);
+  const msg = 'Olá, '+c.nome+'! Aqui é do '+nomeSalao+'. Identificamos os seguintes valores em aberto:\n'+linhas+'\nTotal: '+fmtMoney(total)+'. Pode nos ajudar a regularizar? 🙂';
+  const url = fone ? ('https://wa.me/'+fone+'?text='+encodeURIComponent(msg)) : ('https://wa.me/?text='+encodeURIComponent(msg));
+  window.open(url, '_blank');
+};
+
+const sheetCobranca = document.getElementById('sheetCobranca');
+document.getElementById('btnNovaCobranca').onclick = function(){
+  document.getElementById('cobServico').value='';
+  document.getElementById('cobDescricao').value='';
+  document.getElementById('cobValor').value='';
+  document.getElementById('cobVencimento').value = todayISO();
+  document.getElementById('cobPago').value='nao';
+  sheetCobranca.classList.add('open');
+};
+document.getElementById('cobServico').onchange = function(e){
+  const s = state.servicos.find(function(x){return x.id===e.target.value;});
+  if(s){ document.getElementById('cobDescricao').value = s.nome; document.getElementById('cobValor').value = s.preco; }
+};
+document.getElementById('btnCancelarCobranca').onclick = function(){ sheetCobranca.classList.remove('open'); };
+document.getElementById('btnSalvarCobranca').onclick = function(){
+  const descricao = document.getElementById('cobDescricao').value.trim();
+  const valor = Number(document.getElementById('cobValor').value)||0;
+  const vencimento = document.getElementById('cobVencimento').value || todayISO();
+  const jaPago = document.getElementById('cobPago').value==='sim';
+  if(!descricao || !valor){ toast('Preencha descrição e valor.'); return; }
+  const status = jaPago ? 'pago' : 'pendente';
+  const tituloData = {clienteId: currentClienteId, origemTipo:'avulso', descricao:descricao, valor:valor, vencimento:vencimento, status:status};
+  if(jaPago) tituloData.pagoEm = todayISO();
+  const tituloId = addDoc('titulos', tituloData);
+  if(jaPago){
+    addDoc('movimentacoes', {
+      tipo:'entrada', descricao: descricao+' — '+clienteNome(currentClienteId),
+      valor:valor, data: todayISO(), origem:'titulo', tituloId:tituloId, clienteId: currentClienteId, contaId: contaPadraoId()
+    });
+  }
+  sheetCobranca.classList.remove('open');
+  toast('Cobrança lançada.');
+};
+
+const sheetContrato = document.getElementById('sheetContrato');
+document.getElementById('btnNovoContrato').onclick = function(){
+  document.getElementById('ctTipo').value='sessoes';
+  toggleContratoTipo();
+  sheetContrato.classList.add('open');
+};
+document.getElementById('ctTipo').onchange = toggleContratoTipo;
+function toggleContratoTipo(){
+  const tipo = document.getElementById('ctTipo').value;
+  document.getElementById('ctSessoesField').style.display = tipo==='sessoes' ? 'block':'none';
+  document.getElementById('ctValorLabel').textContent = tipo==='sessoes' ? 'Valor por sessão (R$)' : 'Valor da mensalidade (R$)';
+}
+document.getElementById('btnCancelarContrato').onclick = function(){ sheetContrato.classList.remove('open'); };
+document.getElementById('btnSalvarContrato').onclick = function(){
+  const tipo = document.getElementById('ctTipo').value;
+  const sessoesTotal = Number(document.getElementById('ctSessoes').value)||0;
+  const valorParcela = Number(document.getElementById('ctValor').value)||0;
+  const diaVenc = Number(document.getElementById('ctDiaVenc').value)||10;
+  const descricao = document.getElementById('ctDescricao').value.trim() || (tipo==='sessoes'?'Pacote de sessões':'Mensalidade');
+  if(!valorParcela){ toast('Informe o valor.'); return; }
+
+  const contratoId = addDoc('contratos', {
+    clienteId: currentClienteId, tipo:tipo, descricao:descricao, valorParcela:valorParcela,
+    sessoesTotal: tipo==='sessoes'?sessoesTotal:null,
+    sessoesUsadas: 0, diaVencimento: diaVenc, ativo:true
+  });
+
+  if(tipo==='sessoes'){
+    const hoje = new Date();
+    for(let i=0;i<sessoesTotal;i++){
+      const venc = new Date(hoje.getFullYear(), hoje.getMonth()+i, diaVenc);
+      addDoc('titulos', {
+        clienteId: currentClienteId, origemTipo:'contrato', origemId: contratoId,
+        descricao: descricao+' (parcela '+(i+1)+'/'+sessoesTotal+')',
+        valor: valorParcela, vencimento: venc.toISOString().slice(0,10), status:'pendente'
+      });
+    }
+  } else {
+    const hoje = new Date();
+    const venc = new Date(hoje.getFullYear(), hoje.getMonth(), diaVenc);
+    addDoc('titulos', {
+      clienteId: currentClienteId, origemTipo:'contrato', origemId: contratoId,
+      descricao: descricao+' ('+venc.toLocaleDateString('pt-BR',{month:'long'})+')',
+      valor: valorParcela, vencimento: venc.toISOString().slice(0,10), status:'pendente'
+    });
+  }
+  sheetContrato.classList.remove('open');
+  toast('Pacote criado e cobranças geradas.');
+};
+function gerarMensalidade(contratoId){
+  const c = state.contratos.find(function(x){return x.id===contratoId;});
+  if(!c) return;
+  const mesAtual = todayISO().slice(0,7);
+  const jaGerado = state.titulos.some(function(t){return t.origemId===contratoId && t.vencimento.slice(0,7)===mesAtual;});
+  if(jaGerado){ toast('A cobrança deste mês já foi gerada.'); return; }
+  const hoje = new Date();
+  const venc = new Date(hoje.getFullYear(), hoje.getMonth(), c.diaVencimento||10);
+  addDoc('titulos', {
+    clienteId: c.clienteId, origemTipo:'contrato', origemId: contratoId,
+    descricao: c.descricao+' ('+venc.toLocaleDateString('pt-BR',{month:'long'})+')',
+    valor: c.valorParcela, vencimento: venc.toISOString().slice(0,10), status:'pendente'
+  });
+  toast('Cobrança do mês gerada.');
+}
+
+/* ================= CONTAS (Ajustes) ================= */
+function renderContas(){
+  const box = document.getElementById('contasList');
+  if(!box) return;
+  if(state.contas.length===0){
+    box.innerHTML = '<div class="empty"><div class="display">Nenhuma conta cadastrada</div>Cadastre "Caixa", "Banco" etc. pra separar o dinheiro.</div>';
+    return;
+  }
+  box.innerHTML = state.contas.map(function(c){
+    const saldo = contaSaldo(c.id);
+    const icones = iconEditBtn('data-editar-conta="'+c.id+'"') + iconDeleteBtn('data-excluir-conta="'+c.id+'"');
+    return '<div class="list-item">'
+      +'<div class="stripe" style="background:var(--gold)"></div>'
+      +'<div class="main"><div class="title">'+c.nome+'</div><div class="meta">Saldo inicial: '+fmtMoney(c.saldoInicial)+'</div></div>'
+      +'<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;"><div class="right '+(saldo<0?'out':'in')+'">'+fmtMoney(saldo)+'</div><div class="icon-row" style="margin-top:0">'+icones+'</div></div></div>';
+  }).join('');
+  box.querySelectorAll('[data-editar-conta]').forEach(function(el){
+    el.onclick = function(){ openContaSheet(el.dataset.editarConta); };
+  });
+  box.querySelectorAll('[data-excluir-conta]').forEach(function(el){
+    el.onclick = function(){
+      const id = el.dataset.excluirConta;
+      if(!contaEhExcluivel(id)){
+        toast('Não dá pra excluir: essa conta tem movimentações ou saldo diferente de zero.');
+        return;
+      }
+      askConfirm('Excluir esta conta? Essa ação não pode ser desfeita.', function(){
+        deleteDoc('contas', id);
+        toast('Conta excluída.');
+      });
+    };
+  });
+}
+const sheetConta = document.getElementById('sheetConta');
+function openContaSheet(id){
+  document.getElementById('sheetContaTitle').textContent = id ? 'Editar conta' : 'Nova conta';
+  document.getElementById('contaId').value = id||'';
+  const c = id ? contaById(id) : null;
+  document.getElementById('contaNomeInput').value = c? c.nome : '';
+  document.getElementById('contaSaldoInicial').value = c? c.saldoInicial : 0;
+  document.getElementById('btnExcluirConta').style.display = id ? 'block' : 'none';
+  sheetConta.classList.add('open');
+}
+document.getElementById('btnCancelarConta').onclick = function(){ sheetConta.classList.remove('open'); };
+document.getElementById('btnSalvarConta').onclick = function(){
+  const id = document.getElementById('contaId').value;
+  const nome = document.getElementById('contaNomeInput').value.trim();
+  const saldoInicial = Number(document.getElementById('contaSaldoInicial').value)||0;
+  if(!nome){ toast('Informe o nome da conta.'); return; }
+  const data = {nome:nome, saldoInicial:saldoInicial};
+  if(id){ setDoc('contas', id, data); toast('Conta atualizada.'); }
+  else{ addDoc('contas', data); toast('Conta cadastrada.'); }
+  sheetConta.classList.remove('open');
+};
+function contaEhExcluivel(id){
+  const usada = state.movimentacoes.some(function(m){
+    return m.contaId===id || m.contaOrigemId===id || m.contaDestinoId===id;
+  });
+  return !usada && Math.abs(contaSaldo(id)) < 0.005;
+}
+document.getElementById('btnExcluirConta').onclick = function(){
+  const id = document.getElementById('contaId').value;
+  if(!id) return;
+  if(!contaEhExcluivel(id)){
+    toast('Não dá pra excluir: essa conta tem movimentações ou saldo diferente de zero.');
+    return;
+  }
+  askConfirm('Excluir esta conta? Essa ação não pode ser desfeita.', function(){
+    deleteDoc('contas', id);
+    sheetConta.classList.remove('open');
+    toast('Conta excluída.');
+  });
+};
+
+/* ================= SERVIÇOS (Ajustes) ================= */
+function renderServicos(){
+  const box = document.getElementById('servicosList');
+  if(state.servicos.length===0){
+    box.innerHTML = '<div class="empty"><div class="display">Nenhum serviço cadastrado</div>Cadastre os serviços mais usados para agilizar as cobranças.</div>';
+    return;
+  }
+  box.innerHTML = state.servicos.map(function(s){
+    const icones = iconEditBtn('data-editar-servico="'+s.id+'"') + iconDeleteBtn('data-excluir-servico="'+s.id+'"');
+    return '<div class="list-item">'
+      +'<div class="stripe" style="background:var(--gold)"></div>'
+      +'<div class="main"><div class="title">'+s.nome+'</div></div>'
+      +'<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;"><div class="right">'+fmtMoney(s.preco)+'</div><div class="icon-row" style="margin-top:0">'+icones+'</div></div></div>';
+  }).join('');
+  box.querySelectorAll('[data-editar-servico]').forEach(function(el){
+    el.onclick = function(){ openServicoSheet(el.dataset.editarServico); };
+  });
+  box.querySelectorAll('[data-excluir-servico]').forEach(function(el){
+    el.onclick = function(){
+      const id = el.dataset.excluirServico;
+      askConfirm('Excluir este serviço? Essa ação não pode ser desfeita.', function(){
+        deleteDoc('servicos', id);
+        toast('Serviço excluído.');
+      });
+    };
+  });
+}
+document.getElementById('btnNovoServico').onclick = function(){ openServicoSheet(); };
+
+const sheetServico = document.getElementById('sheetServico');
+function openServicoSheet(id){
+  document.getElementById('sheetServicoTitle').textContent = id ? 'Editar serviço' : 'Novo serviço';
+  document.getElementById('servicoId').value = id||'';
+  const s = id ? state.servicos.find(function(x){return x.id===id;}) : null;
+  document.getElementById('servicoNome').value = s? s.nome : '';
+  document.getElementById('servicoPreco').value = s? s.preco : '';
+  document.getElementById('btnExcluirServico').style.display = id ? 'block' : 'none';
+  sheetServico.classList.add('open');
+}
+document.getElementById('btnCancelarServico').onclick = function(){ sheetServico.classList.remove('open'); };
+document.getElementById('btnExcluirServico').onclick = function(){
+  const id = document.getElementById('servicoId').value;
+  if(!id) return;
+  askConfirm('Excluir este serviço? Essa ação não pode ser desfeita.', function(){
+    deleteDoc('servicos', id);
+    sheetServico.classList.remove('open');
+    toast('Serviço excluído.');
+  });
+};
+document.getElementById('btnSalvarServico').onclick = function(){
+  const id = document.getElementById('servicoId').value;
+  const nome = document.getElementById('servicoNome').value.trim();
+  const preco = Number(document.getElementById('servicoPreco').value)||0;
+  if(!nome){ toast('Informe o nome do serviço.'); return; }
+  const data = {nome:nome, preco:preco};
+  if(id){ setDoc('servicos', id, data); toast('Serviço atualizado.'); }
+  else{ addDoc('servicos', data); toast('Serviço cadastrado.'); }
+  sheetServico.classList.remove('open');
+};
+
+/* ================= CONFIG / BACKUP ================= */
+document.getElementById('btnSalvarConfig').onclick = function(){
+  const nomeSalao = document.getElementById('cfgNomeSalao').value.trim();
+  const whatsapp = document.getElementById('cfgWhats').value.trim();
+  const contaPadraoSelecionada = document.getElementById('cfgContaPadrao').value;
+  state.config = {nomeSalao:nomeSalao, whatsapp:whatsapp, contaPadraoId:contaPadraoSelecionada};
+  saveCache();
+  setGreeting();
+  toast('Configurações salvas.');
+};
+document.getElementById('btnExport').onclick = function(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'backup-ajha-'+todayISO()+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup exportado.');
+};
+document.getElementById('btnImport').onclick = function(){
+  document.getElementById('importFile').click();
+};
+document.getElementById('importFile').onchange = function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    let imported;
+    try{
+      imported = JSON.parse(ev.target.result);
+    }catch(err){
+      toast('Arquivo inválido. Verifique se é um backup deste app.');
+      return;
+    }
+    askConfirm('Importar este backup vai substituir todos os dados atuais do app. Continuar?', function(){
+      state = {
+        clientes: imported.clientes||[],
+        servicos: imported.servicos||[],
+        titulos: imported.titulos||[],
+        contratos: imported.contratos||[],
+        movimentacoes: imported.movimentacoes||[],
+        contas: imported.contas||[],
+        config: Object.assign({nomeSalao:'', whatsapp:''}, imported.config||{})
+      };
+      garantirContaPadrao();
+      saveCache();
+      document.getElementById('cfgNomeSalao').value = state.config.nomeSalao||'';
+      document.getElementById('cfgWhats').value = state.config.whatsapp||'';
+      setGreeting();
+      renderAll();
+      toast('Backup importado com sucesso.');
+    }, 'Importar');
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+};
+
+/* ================= SELECTS AUXILIARES ================= */
+function atualizarSelects(){
+  const servicosOpts = state.servicos.slice().sort(function(a,b){return a.nome.localeCompare(b.nome);})
+    .map(function(s){return '<option value="'+s.id+'">'+s.nome+' — '+fmtMoney(s.preco)+'</option>';}).join('');
+  const cobServ = document.getElementById('cobServico');
+  const cur = cobServ.value;
+  cobServ.innerHTML = '<option value="">Cobrança avulsa</option>' + servicosOpts;
+  if(cur) cobServ.value = cur;
+
+  const vdServ = document.getElementById('vdServico');
+  const curVdServ = vdServ.value;
+  vdServ.innerHTML = '<option value="">Descrição livre</option>' + servicosOpts;
+  if(curVdServ) vdServ.value = curVdServ;
+
+  const clientesOpts = state.clientes.slice().sort(function(a,b){return a.nome.localeCompare(b.nome);})
+    .map(function(c){return '<option value="'+c.id+'">'+c.nome+'</option>';}).join('');
+  const vdCli = document.getElementById('vdCliente');
+  const curVdCli = vdCli.value;
+  vdCli.innerHTML = '<option value="">Venda avulsa (sem cliente)</option>' + clientesOpts;
+  if(curVdCli) vdCli.value = curVdCli;
+
+  const contasOpts = state.contas.map(function(c){return '<option value="'+c.id+'">'+c.nome+'</option>';}).join('');
+  ['movConta','trfOrigem','trfDestino','vdConta','evConta'].forEach(function(selId){
+    const el = document.getElementById(selId);
+    const curVal = el.value;
+    el.innerHTML = contasOpts;
+    if(curVal) el.value = curVal;
+  });
+
+  const cfgSel = document.getElementById('cfgContaPadrao');
+  cfgSel.innerHTML = contasOpts;
+  cfgSel.value = contaPadraoId()||'';
+}
+
+document.querySelectorAll('.sheet-overlay').forEach(function(ov){
+  ov.addEventListener('click', function(e){ if(e.target===ov) ov.classList.remove('open'); });
+});
+</script>
+</body>
+</html>

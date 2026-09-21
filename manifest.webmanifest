@@ -1,0 +1,15 @@
+{
+  "name": "AJHA Finance",
+  "short_name": "AJHA Finance",
+  "description": "Controle de caixa, contas, clientes e inadimplência do seu negócio",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBF6F3",
+  "theme_color": "#3B1620",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
