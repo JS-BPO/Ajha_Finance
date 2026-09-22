@@ -171,7 +171,7 @@ nav.bottomnav button.active{color:var(--primary);}
 .nav-fab .circle{width:52px; height:52px; border-radius:50%; background:var(--primary); box-shadow:var(--shadow); display:flex; align-items:center; justify-content:center; transition:opacity .2s, box-shadow .2s;}
 .nav-fab .circle svg{stroke:var(--on-primary); width:24px; height:24px; stroke-width:2; fill:none;}
 .nav-fab.disabled{pointer-events:none;}
-.nav-fab.disabled .circle{opacity:.32; box-shadow:none;}
+.nav-fab.disabled .circle{visibility:hidden; box-shadow:none;}
 
 .sheet-overlay{position:fixed; inset:0; background:var(--overlay); z-index:80; display:none; align-items:flex-end; justify-content:center;}
 #sheetConfirm{z-index:200;}
@@ -330,7 +330,13 @@ input.is-locked{opacity:.85;}
 .rec-row b{white-space:nowrap;}
 .rec-more{font-size:12px; color:var(--muted); padding:6px 0 2px;}
 .badge.today{background:var(--warn-soft); color:var(--warn);}
-.status-chips button small{opacity:.7; margin-left:2px;}
+.vendas-bar{display:flex; align-items:center; gap:8px; margin-bottom:16px;}
+.vendas-bar .tabs{margin-bottom:0; flex:1; min-width:0;}
+.filter-btn{position:relative; display:inline-flex; align-items:center; gap:6px; flex-shrink:0; border:1px solid var(--border); background:var(--surface); color:var(--text); padding:8px 12px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer;}
+.filter-btn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2;}
+.filter-btn .caret{font-size:10px; color:var(--muted);}
+.filter-btn.on{background:var(--primary-soft); border-color:var(--primary); color:var(--primary);}
+.filter-btn select{position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; font-size:16px;}
 .status-sum{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:6px;}
 .ss{background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--c); border-radius:12px; padding:8px 8px; text-align:center;}
 .ss span{display:block; font-size:10.5px; color:var(--muted); font-weight:700;}
@@ -367,6 +373,12 @@ input.is-locked{opacity:.85;}
 .cor-row input{width:100%; height:44px; border:1px solid var(--border); border-radius:10px; background:var(--surface-2); padding:3px; cursor:pointer;}
 .dash-cols > div{min-width:0;}
 .dash-cols .section-title:first-child{margin-top:26px;}
+.rapido-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.rapido{display:flex; flex-direction:column; align-items:flex-start; gap:4px; text-align:left; background:var(--surface-2); border:1px solid var(--border); border-radius:16px; padding:16px 14px; color:var(--text); font-family:inherit; cursor:pointer; min-height:112px;}
+.rapido:active{background:var(--primary-soft); border-color:var(--primary);}
+.rapido span{font-size:24px; line-height:1; margin-bottom:6px;}
+.rapido b{font-size:15px; font-weight:600;}
+.rapido small{font-size:12px; color:var(--muted);}
 .group-label{font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin:16px 0 8px;}
 .group-label:first-child{margin-top:4px;}
 .list-item.is-muted .title, .list-item.is-muted .right{color:var(--muted);}
@@ -523,11 +535,13 @@ input.is-locked{opacity:.85;}
 
     <section class="view" id="view-vendas">
       <div class="section-title" style="margin-top:4px">Vendas</div>
+      <div class="vendas-bar">
       <div class="tabs" id="vendasTabs">
         <button data-vendas="mes" class="active">Este mês</button>
         <button data-vendas="tudo">Tudo</button>
       </div>
-      <div class="tabs sub status-chips" id="vendasStatus"></div>
+      <label class="filter-btn" id="vendasFiltroBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" stroke-linejoin="round"/></svg><span id="vendasStatusLabel">Filtrar</span><span class="caret">▾</span><select id="vendasStatus" aria-label="Filtrar vendas por status"></select></label>
+      </div>
       <div id="vendasList"></div>
     </section>
 
@@ -739,7 +753,7 @@ input.is-locked{opacity:.85;}
       <svg viewBox="0 0 24 24"><path d="M6 8V6a4 4 0 118 0v2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 8h11l.8 12H3.7z" stroke-linejoin="round"/></svg>
       Vendas
     </button>
-    <button class="nav-fab disabled" id="fabPrimary" aria-label="Adicionar">
+    <button class="nav-fab" id="fabPrimary" aria-label="Adicionar">
       <span class="circle">
         <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
       </span>
@@ -845,6 +859,19 @@ input.is-locked{opacity:.85;}
       <button class="btn primary" id="btnSalvarCategoria">Salvar</button>
     </div>
     <button class="delete-link" id="btnExcluirCategoria" style="display:none">Excluir esta categoria</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetRapido">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>O que você quer fazer?</h3>
+    <div class="rapido-grid">
+      <button type="button" class="rapido" data-rapido="venda"><span>🛍️</span><b>Nova venda</b><small>Avulsa ou para cliente</small></button>
+      <button type="button" class="rapido" data-rapido="agenda"><span>📅</span><b>Novo agendamento</b><small>Marcar um horário</small></button>
+      <button type="button" class="rapido" data-rapido="cliente"><span>👤</span><b>Novo cliente</b><small>Cadastro rápido</small></button>
+      <button type="button" class="rapido" data-rapido="caixa"><span>💵</span><b>Lançar no caixa</b><small>Entrada ou saída</small></button>
+    </div>
   </div>
 </div>
 
@@ -1279,7 +1306,11 @@ function loadCache(){
       state = Object.assign({}, state, parsed);
       state.config = Object.assign({nomeSalao:'', whatsapp:''}, parsed.config||{});
     }
-  }catch(e){ console.error('Falha ao ler dados salvos', e); }
+  }catch(e){
+    console.error('Falha ao ler dados salvos', e);
+    // nunca perde o que estava salvo: guarda uma cópia do conteúdo ilegível antes de qualquer gravação
+    try{ const bruto = localStorage.getItem(LS_KEY); if(bruto && !localStorage.getItem(LS_KEY+'_copia_ilegivel')) localStorage.setItem(LS_KEY+'_copia_ilegivel', bruto); }catch(e2){}
+  }
 }
 function toast(msg){
   const t = document.getElementById('toast');
@@ -1581,7 +1612,7 @@ document.querySelectorAll('nav.bottomnav button[data-view]').forEach(function(bt
   btn.onclick = function(){ switchView(btn.dataset.view); };
 });
 const SUBTELAS = {servicos:'Serviços', contas:'Contas', catfin:'Categorias financeiras', contratos:'Pacotes e mensalidades', ajustes:'Configurações', seguranca:'Segurança', backup:'Backup'};
-const SEM_FAB = ['dashboard','mais','contratos','ajustes','seguranca','backup'];
+const SEM_FAB = ['mais','contratos','ajustes','seguranca','backup'];
 let voltarPara = 'clientes';
 function viewAtual(){ const v = document.querySelector('.view.active'); return v ? v.id.replace('view-','') : 'dashboard'; }
 function fecharSheets(){ document.querySelectorAll('.sheet-overlay.open').forEach(function(o){ if(o.id!=='sheetConfirm') o.classList.remove('open'); }); }
@@ -1637,7 +1668,8 @@ document.getElementById('btnBack').onclick = function(){ switchView(voltarPara |
 
 document.getElementById('fabPrimary').onclick = function(){
   const active = document.querySelector('.view.active').id;
-  if(active==='view-clientes') openClienteSheet();
+  if(active==='view-dashboard') document.getElementById('sheetRapido').classList.add('open');
+  else if(active==='view-clientes') openClienteSheet();
   else if(active==='view-agenda') abrirAgendamento(null, {data: agendaData});
   else if(active==='view-vendas') openVendaSheet();
   else if(active==='view-caixa') openMovimentacaoSheet();
@@ -1735,6 +1767,7 @@ function listarVendas(){
   });
   return itens;
 }
+document.getElementById('vendasStatus').onchange = function(e){ vendasStatus = e.target.value; renderVendas(); };
 function renderVendas(){
   const box = document.getElementById('vendasList');
   if(!box) return;
@@ -1744,10 +1777,14 @@ function renderVendas(){
   if(vendasFiltro==='mes') itens = itens.filter(function(i){ return i.data.slice(0,7)===mesAtual; });
   const cont = {todos:itens.length, vencido:0, hoje:0, avencer:0, pago:0};
   itens.forEach(function(i){ cont[statusTitulo(i.ref)]++; });
-  const chips = [['todos','Todos'],['vencido','Vencidos'],['hoje','Vence hoje'],['avencer','A vencer'],['pago','Pagos']];
-  const boxSt = document.getElementById('vendasStatus');
-  boxSt.innerHTML = chips.map(function(c){ const on = vendasStatus===c[0] || (vendasStatus==='pendentes' && c[0]!=='todos' && c[0]!=='pago' && false); return '<button type="button" data-vst="'+c[0]+'" class="'+(vendasStatus===c[0]?'active':'')+'">'+c[1]+' <small>'+cont[c[0]]+'</small></button>'; }).join('') + (vendasStatus==='pendentes' ? '<button type="button" data-vst="pendentes" class="active">Pendentes</button>' : '');
-  boxSt.querySelectorAll('[data-vst]').forEach(function(b){ b.onclick = function(){ vendasStatus = b.dataset.vst; renderVendas(); }; });
+  cont.pendentes = cont.vencido + cont.hoje + cont.avencer;
+  const opcoes = [['todos','Todos os status'],['pendentes','Em aberto (não pagos)'],['vencido','Vencidos'],['hoje','Vencem hoje'],['avencer','A vencer'],['pago','Pagos']];
+  const sel = document.getElementById('vendasStatus');
+  sel.innerHTML = opcoes.map(function(o){ return '<option value="'+o[0]+'">'+o[1]+' ('+cont[o[0]]+')</option>'; }).join('');
+  sel.value = vendasStatus;
+  const rotulos = {todos:'Filtrar', pendentes:'Em aberto', vencido:'Vencidos', hoje:'Vence hoje', avencer:'A vencer', pago:'Pagos'};
+  document.getElementById('vendasStatusLabel').textContent = rotulos[vendasStatus] || 'Filtrar';
+  document.getElementById('vendasFiltroBtn').classList.toggle('on', vendasStatus!=='todos');
   if(vendasStatus==='pendentes') itens = itens.filter(function(i){ return i.ref.status!=='pago'; });
   else if(vendasStatus!=='todos') itens = itens.filter(function(i){ return statusTitulo(i.ref)===vendasStatus; });
   itens.sort(function(a,b){ return b.data.localeCompare(a.data) || b.ordenar-a.ordenar; });
@@ -2910,6 +2947,18 @@ if(temaSistema){
   const aoMudarSistema = function(){ if(aparenciaAtual().tema==='sistema'){ aplicarAparencia(aparenciaAtual()); renderAparencia(); } };
   if(temaSistema.addEventListener) temaSistema.addEventListener('change', aoMudarSistema); else if(temaSistema.addListener) temaSistema.addListener(aoMudarSistema);
 }
+
+/* ================= MENU RÁPIDO (+ da tela inicial) ================= */
+document.querySelectorAll('#sheetRapido [data-rapido]').forEach(function(b){
+  b.onclick = function(){
+    document.getElementById('sheetRapido').classList.remove('open');
+    const acao = b.dataset.rapido;
+    if(acao==='venda') openVendaSheet();
+    else if(acao==='agenda') abrirAgendamento(null, {data: todayISO()});
+    else if(acao==='cliente') openClienteSheet();
+    else if(acao==='caixa') openMovimentacaoSheet();
+  };
+});
 
 /* ================= AGENDA ================= */
 const STATUS_AG = {
