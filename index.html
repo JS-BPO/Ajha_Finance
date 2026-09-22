@@ -1612,7 +1612,7 @@ document.querySelectorAll('nav.bottomnav button[data-view]').forEach(function(bt
   btn.onclick = function(){ switchView(btn.dataset.view); };
 });
 const SUBTELAS = {servicos:'Serviços', contas:'Contas', catfin:'Categorias financeiras', contratos:'Pacotes e mensalidades', ajustes:'Configurações', seguranca:'Segurança', backup:'Backup'};
-const SEM_FAB = ['mais','contratos','ajustes','seguranca','backup'];
+const SEM_FAB = []; // o + aparece em todas as telas; onde não há ação própria, abre o menu rápido
 let voltarPara = 'clientes';
 function viewAtual(){ const v = document.querySelector('.view.active'); return v ? v.id.replace('view-','') : 'dashboard'; }
 function fecharSheets(){ document.querySelectorAll('.sheet-overlay.open').forEach(function(o){ if(o.id!=='sheetConfirm') o.classList.remove('open'); }); }
@@ -1660,7 +1660,7 @@ function openFicha(clienteId){
   document.getElementById('headerTitle').style.display='block';
   document.getElementById('headerTitle').textContent='Ficha do cliente';
   document.getElementById('btnBack').style.display='flex';
-  document.getElementById('fabPrimary').classList.add('disabled');
+  document.getElementById('fabPrimary').classList.remove('disabled');
   renderFicha();
   window.scrollTo(0,0);
 }
@@ -1668,14 +1668,14 @@ document.getElementById('btnBack').onclick = function(){ switchView(voltarPara |
 
 document.getElementById('fabPrimary').onclick = function(){
   const active = document.querySelector('.view.active').id;
-  if(active==='view-dashboard') document.getElementById('sheetRapido').classList.add('open');
-  else if(active==='view-clientes') openClienteSheet();
+  if(active==='view-clientes') openClienteSheet();
   else if(active==='view-agenda') abrirAgendamento(null, {data: agendaData});
   else if(active==='view-vendas') openVendaSheet();
   else if(active==='view-caixa') openMovimentacaoSheet();
   else if(active==='view-contas') openContaSheet();
   else if(active==='view-servicos'){ if(servicosTab==='categorias') openCatServSheet(); else openServicoSheet(); }
   else if(active==='view-catfin') openCategoriaSheet();
+  else document.getElementById('sheetRapido').classList.add('open');
 };
 
 function renderAll(){
