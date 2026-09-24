@@ -924,7 +924,7 @@ input.is-locked{opacity:.85;}
       </div>
       <div class="field">
         <label>Horário inicial</label>
-        <input type="time" id="agInicio" step="300">
+        <select id="agInicio"></select>
       </div>
     </div>
     <div class="field-row">
@@ -3030,6 +3030,8 @@ function abrirSeletor(reg){
   busca.value = '';
   desenharListaSeletor();
   document.getElementById('sheetSeletor').classList.add('open');
+  const marcado = document.querySelector('#selLista .sel-item.sel');
+  if(marcado) marcado.scrollIntoView({block:'center'});
   setTimeout(function(){ busca.focus(); }, 60);
 }
 function desenharListaSeletor(){
@@ -3070,7 +3072,8 @@ new MutationObserver(function(muts){
   if(abriu) atualizarBotoesSeletor();
 }).observe(document.body, {subtree:true, attributes:true, attributeFilter:['class']});
 
-[['vdCliente','Cliente','Venda avulsa (sem cliente)'],
+[['agInicio','Horário inicial','Escolher horário'],
+ ['vdCliente','Cliente','Venda avulsa (sem cliente)'],
  ['vdServico','Adicionar serviço','+ Adicionar serviço',1],
  ['vdConta','Conta que recebeu','Selecione a conta'],
  ['cobServico','Adicionar serviço','+ Adicionar serviço',1],
@@ -3268,6 +3271,12 @@ function atualizarFimAg(){
   } else { box.style.display = 'none'; box.innerHTML = ''; }
   return conf;
 }
+(function(){
+  // lista de horários de 5 em 5 minutos (o relógio do Android é grande demais no celular)
+  const opts = [];
+  for(let m=0; m<24*60; m+=5) opts.push('<option value="'+minParaHora(m)+'">'+minParaHora(m)+'</option>');
+  document.getElementById('agInicio').innerHTML = opts.join('');
+})();
 ['agInicio','agDuracao','agData','agStatus'].forEach(function(id){ document.getElementById(id).addEventListener('input', atualizarFimAg); document.getElementById(id).addEventListener('change', atualizarFimAg); });
 function horarioSugerido(data){
   if(data!==todayISO()) return '09:00';
