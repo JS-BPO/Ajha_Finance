@@ -379,6 +379,21 @@ input.is-locked{opacity:.85;}
 .rapido span{font-size:24px; line-height:1; margin-bottom:6px;}
 .rapido b{font-size:15px; font-weight:600;}
 .rapido small{font-size:12px; color:var(--muted);}
+.select-btn{width:100%; display:flex; align-items:center; gap:8px; border:1px solid var(--border); background:var(--surface-2); border-radius:var(--radius-s); padding:12px; font-size:15px; font-family:inherit; color:var(--text); text-align:left; cursor:pointer;}
+.select-btn .sb-txt{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.select-btn.is-empty .sb-txt{color:var(--muted);}
+.select-btn .sb-caret{color:var(--muted); font-size:11px;}
+.select-btn:active{border-color:var(--primary);}
+#sheetSeletor{z-index:150;}
+#sheetSeletor .sheet{max-height:82vh; display:flex; flex-direction:column;}
+.sel-lista{flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;}
+.sel-item{display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin-bottom:8px; font-family:inherit; color:var(--text); cursor:pointer;}
+.sel-item:active{background:var(--surface-2);}
+.sel-item.sel{border-color:var(--primary); background:var(--primary-soft);}
+.si-tx{flex:1; min-width:0;}
+.si-tx b{display:block; font-size:15px; font-weight:600;}
+.si-tx small{display:block; font-size:12.5px; color:var(--muted); margin-top:2px;}
+.si-ck{color:var(--primary); font-weight:700;}
 .group-label{font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin:16px 0 8px;}
 .group-label:first-child{margin-top:4px;}
 .list-item.is-muted .title, .list-item.is-muted .right{color:var(--muted);}
@@ -859,6 +874,18 @@ input.is-locked{opacity:.85;}
       <button class="btn primary" id="btnSalvarCategoria">Salvar</button>
     </div>
     <button class="delete-link" id="btnExcluirCategoria" style="display:none">Excluir esta categoria</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetSeletor">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="selTitulo">Selecionar</h3>
+    <div class="field" style="margin-bottom:10px">
+      <input type="search" id="selBusca" placeholder="Buscar..." autocomplete="off" inputmode="search">
+    </div>
+    <div id="selLista" class="sel-lista"></div>
+    <button class="btn ghost" id="selFechar" style="margin-top:10px">Fechar</button>
   </div>
 </div>
 
@@ -1908,6 +1935,7 @@ function openMovimentacaoSheet(id){
   document.getElementById('movData').value = m ? m.data : todayISO();
   document.getElementById('movConta').value = m ? m.contaId : contaPadraoId();
   preencherCategoriasMov(m ? (m.categoriaId||'') : '');
+  atualizarBotoesSeletor();
   sheetMov.classList.add('open');
 }
 document.getElementById('btnCancelarMov').onclick = function(){ sheetMov.classList.remove('open'); };
@@ -2540,6 +2568,7 @@ function openServicoSheet(id){
   document.getElementById('servicoDescricao').value = s? (s.descricao||'') : '';
   document.getElementById('servicoAtivo').value = (s && s.ativo===false) ? 'nao' : 'sim';
   preencherSelectCategoriaServico(s ? s.categoriaId : null);
+  if(typeof atualizarBotoesSeletor==='function') atualizarBotoesSeletor();
   document.getElementById('btnExcluirServico').style.display = id ? 'block' : 'none';
   sheetServico.classList.add('open');
 }
@@ -2948,6 +2977,116 @@ if(temaSistema){
   if(temaSistema.addEventListener) temaSistema.addEventListener('change', aoMudarSistema); else if(temaSistema.addListener) temaSistema.addListener(aoMudarSistema);
 }
 
+/* ================= SELETOR COM BUSCA =================
+   Mantém o <select> original (escondido) como fonte de dados e de valor,
+   então todo o resto do app continua lendo/gravando do mesmo jeito. */
+function semAcento(t){ return String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
+const SELETORES = [];
+let seletorAtivo = null;
+function opcoesDoSelect(sel){
+  const itens = [];
+  sel.querySelectorAll('option').forEach(function(o){
+    const grupo = o.parentElement && o.parentElement.tagName==='OPTGROUP' ? o.parentElement.label : '';
+    const txt = o.textContent.trim();
+    const p = txt.split(' — ');
+    itens.push({valor:o.value, texto:txt, titulo:p[0], sub:p.slice(1).join(' — '), grupo:grupo});
+  });
+  return itens;
+}
+function rotuloSelect(sel){
+  const o = sel.options[sel.selectedIndex];
+  return o ? o.textContent.trim() : '';
+}
+function atualizarBotoesSeletor(){
+  SELETORES.forEach(function(s){
+    const sel = document.getElementById(s.id);
+    if(!sel || !s.btn) return;
+    const txt = rotuloSelect(sel);
+    s.btn.querySelector('.sb-txt').textContent = txt || s.vazio;
+    s.btn.classList.toggle('is-empty', !sel.value);
+  });
+}
+function tornarBuscavel(id, cfg){
+  const sel = document.getElementById(id);
+  if(!sel) return;
+  cfg = cfg || {};
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'select-btn';
+  btn.innerHTML = '<span class="sb-txt"></span><span class="sb-caret">▾</span>';
+  sel.style.display = 'none';
+  sel.dataset.oculto = '1';
+  sel.parentNode.insertBefore(btn, sel.nextSibling);
+  const reg = {id:id, btn:btn, titulo: cfg.titulo || 'Selecionar', vazio: cfg.vazio || 'Selecione', ocultarVazio: !!cfg.ocultarVazio};
+  SELETORES.push(reg);
+  btn.onclick = function(){ abrirSeletor(reg); };
+  sel.addEventListener('change', atualizarBotoesSeletor);
+  atualizarBotoesSeletor();
+}
+function abrirSeletor(reg){
+  seletorAtivo = reg;
+  document.getElementById('selTitulo').textContent = reg.titulo;
+  const busca = document.getElementById('selBusca');
+  busca.value = '';
+  desenharListaSeletor();
+  document.getElementById('sheetSeletor').classList.add('open');
+  setTimeout(function(){ busca.focus(); }, 60);
+}
+function desenharListaSeletor(){
+  if(!seletorAtivo) return;
+  const sel = document.getElementById(seletorAtivo.id);
+  const termo = semAcento(document.getElementById('selBusca').value.trim());
+  const itens = opcoesDoSelect(sel).filter(function(o){
+    if(seletorAtivo.ocultarVazio && o.valor==='') return false;
+    return !termo || semAcento(o.texto + ' ' + o.grupo).indexOf(termo)>-1;
+  });
+  const box = document.getElementById('selLista');
+  if(itens.length===0){ box.innerHTML = '<div class="empty" style="padding:26px">Nada encontrado com esse termo.</div>'; return; }
+  let grupoAtual = null, html = '';
+  itens.forEach(function(o){
+    if(o.grupo !== grupoAtual){ grupoAtual = o.grupo; if(grupoAtual) html += '<div class="group-label">'+esc(grupoAtual)+'</div>'; }
+    const marcado = sel.value === o.valor && o.valor !== '';
+    html += '<button type="button" class="sel-item'+(marcado?' sel':'')+'" data-v="'+esc(o.valor)+'">'
+      +'<span class="si-tx"><b>'+esc(o.titulo)+'</b>'+(o.sub ? '<small>'+esc(o.sub)+'</small>' : '')+'</span>'
+      +(marcado ? '<span class="si-ck">✓</span>' : '')+'</button>';
+  });
+  box.innerHTML = html;
+  box.querySelectorAll('[data-v]').forEach(function(b){
+    b.onclick = function(){
+      sel.value = b.dataset.v;
+      document.getElementById('sheetSeletor').classList.remove('open');
+      atualizarBotoesSeletor();
+      sel.dispatchEvent(new Event('change', {bubbles:true}));
+      setTimeout(atualizarBotoesSeletor, 0); // alguns campos (adicionar serviço) se limpam após a escolha
+    };
+  });
+}
+document.getElementById('selBusca').addEventListener('input', desenharListaSeletor);
+document.getElementById('selFechar').onclick = function(){ document.getElementById('sheetSeletor').classList.remove('open'); };
+// mantém os rótulos em dia quando o app preenche os selects por código
+new MutationObserver(function(muts){
+  let abriu = false;
+  muts.forEach(function(m){ if(m.target.classList && m.target.classList.contains('open')) abriu = true; });
+  if(abriu) atualizarBotoesSeletor();
+}).observe(document.body, {subtree:true, attributes:true, attributeFilter:['class']});
+
+[['vdCliente','Cliente','Venda avulsa (sem cliente)'],
+ ['vdServico','Adicionar serviço','+ Adicionar serviço',1],
+ ['vdConta','Conta que recebeu','Selecione a conta'],
+ ['cobServico','Adicionar serviço','+ Adicionar serviço',1],
+ ['agCliente','Cliente','Selecione o cliente'],
+ ['agServico','Adicionar serviço','+ Adicionar serviço',1],
+ ['ccServico','Adicionar serviço','+ Adicionar serviço',1],
+ ['ccConta','Conta que recebeu','Selecione a conta'],
+ ['movConta','Conta','Selecione a conta'],
+ ['movCategoria','Categoria','Sem categoria'],
+ ['evConta','Conta que recebeu','Selecione a conta'],
+ ['trfOrigem','De qual conta','Selecione a conta'],
+ ['trfDestino','Para qual conta','Selecione a conta'],
+ ['servicoCategoria','Categoria do serviço','Sem categoria'],
+ ['cfgContaPadrao','Conta padrão','Selecione a conta']
+].forEach(function(x){ tornarBuscavel(x[0], {titulo:x[1], vazio:x[2], ocultarVazio:x[3]}); });
+
 /* ================= MENU RÁPIDO (+ da tela inicial) ================= */
 document.querySelectorAll('#sheetRapido [data-rapido]').forEach(function(b){
   b.onclick = function(){
@@ -3150,6 +3289,7 @@ function abrirAgendamento(id, preset){
   document.getElementById('agObs').value = a ? (a.observacoes||'') : '';
   document.getElementById('agServico').innerHTML = '<option value="">+ Adicionar serviço</option>' + opcoesServicosAtivos();
   itensAgenda.carregar(a ? a.itens : []);
+  atualizarBotoesSeletor();
   document.getElementById('agDuracao').value = a ? a.duracao : (itensAgenda.duracao() || 30);
   document.getElementById('btnExcluirAg').style.display = a ? 'block' : 'none';
   atualizarFimAg();
@@ -3301,6 +3441,7 @@ function abrirConcluir(id){
   document.getElementById('ccDescricao').value = agServicos(a);
   document.getElementById('ccValor').value = agValor(a) || '';
   itensConcluir.carregar(a.itens);
+  atualizarBotoesSeletor();
   const temVenda = !!(a.tituloId && state.titulos.some(function(t){return t.id===a.tituloId;}));
   document.getElementById('btnConcluirLancar').style.display = temVenda ? 'none' : 'block';
   atualizarCamposConcluir();
@@ -3428,6 +3569,7 @@ function atualizarSelects(){
   const cfgSel = document.getElementById('cfgContaPadrao');
   cfgSel.innerHTML = contasOpts;
   cfgSel.value = contaPadraoId()||'';
+  if(typeof atualizarBotoesSeletor==='function') atualizarBotoesSeletor();
 }
 
 document.querySelectorAll('.sheet-overlay').forEach(function(ov){
