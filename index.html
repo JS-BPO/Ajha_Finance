@@ -109,14 +109,17 @@ button{font-family:inherit;}
 
 #app{display:flex; min-height:100%; flex-direction:column;}
 
-header.topbar{padding:22px 20px 16px; display:flex; align-items:center; gap:12px;}
+header.topbar{padding:18px 20px 12px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:30; background:var(--background);}
+header.topbar.rolou{border-bottom:1px solid var(--border);}
+.busca-fixa{position:sticky; top:var(--hdr-h,74px); z-index:20; background:var(--background); padding:8px 0 10px; margin-bottom:6px;}
+.busca-fixa .field{margin-bottom:0;}
 header.topbar .greet{font-size:22px;}
 header.topbar .greet small{display:block; font-family:'Inter'; font-size:13px; color:var(--muted); font-weight:500; margin-top:2px;}
 .top-icon{margin-left:auto; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--surface); font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;}
 .back-btn{width:40px; height:40px; border-radius:50%; border:none; background:var(--surface-2); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;}
 .back-btn svg{width:20px; height:20px; stroke:var(--text); fill:none; stroke-width:2;}
 
-main{flex:1; padding:0 20px 100px; overflow-y:auto;}
+main{flex:1; padding:0 20px 100px;}
 .view{display:none; animation:fadeIn .25s ease;}
 .view.active{display:block;}
 @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
@@ -379,6 +382,15 @@ input.is-locked{opacity:.85;}
 .rapido span{font-size:24px; line-height:1; margin-bottom:6px;}
 .rapido b{font-size:15px; font-weight:600;}
 .rapido small{font-size:12px; color:var(--muted);}
+.seg-opts{display:flex; flex-wrap:wrap; gap:8px;}
+.seg-op{flex:1 1 calc(50% - 8px); min-height:44px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); border-radius:12px; padding:10px 12px; font-size:13.5px; font-weight:600; font-family:inherit; cursor:pointer;}
+.seg-op.active{background:var(--primary); border-color:var(--primary); color:var(--on-primary);}
+.seg-opts:has(.seg-op:nth-child(3)) .seg-op{flex:1 1 calc(33.33% - 8px); font-size:12.5px;}
+input[type=number]{-moz-appearance:textfield;}
+input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+#sheetData{z-index:150;}
+#sheetData .mo-cell{aspect-ratio:1/1;}
+#dtAtalhos{margin-bottom:0;}
 .select-btn{width:100%; display:flex; align-items:center; gap:8px; border:1px solid var(--border); background:var(--surface-2); border-radius:var(--radius-s); padding:12px; font-size:15px; font-family:inherit; color:var(--text); text-align:left; cursor:pointer;}
 .select-btn .sb-txt{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .select-btn.is-empty .sb-txt{color:var(--muted);}
@@ -577,8 +589,10 @@ input.is-locked{opacity:.85;}
 
     <section class="view" id="view-clientes">
       <div class="section-title" style="margin-top:4px">Clientes</div>
-      <div class="field" style="margin-bottom:16px">
-        <input type="text" id="buscaCliente" placeholder="Buscar cliente...">
+      <div class="busca-fixa">
+        <div class="field">
+          <input type="search" id="buscaCliente" placeholder="Buscar cliente..." autocomplete="off">
+        </div>
       </div>
       <div id="clientesList"></div>
     </section>
@@ -825,7 +839,7 @@ input.is-locked{opacity:.85;}
     </div>
     <div class="field" id="cobDescontoGeralField" style="display:none">
       <label>Desconto geral (R$)</label>
-      <input type="number" id="cobDescontoGeral" step="0.01" min="0" inputmode="decimal" placeholder="0,00">
+      <input data-moeda="1" type="text" id="cobDescontoGeral" inputmode="decimal" placeholder="0,00">
     </div>
     <div class="sum-box" id="cobResumo" style="display:none"></div>
     <div class="field">
@@ -835,7 +849,7 @@ input.is-locked{opacity:.85;}
     <div class="field-row">
       <div class="field">
         <label>Valor (R$)</label>
-        <input type="number" id="cobValor" step="0.01" min="0">
+        <input data-moeda="1" inputmode="decimal" type="text" id="cobValor">
       </div>
       <div class="field">
         <label>Vencimento</label>
@@ -874,6 +888,25 @@ input.is-locked{opacity:.85;}
       <button class="btn primary" id="btnSalvarCategoria">Salvar</button>
     </div>
     <button class="delete-link" id="btnExcluirCategoria" style="display:none">Excluir esta categoria</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetData">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="dtTitulo">Escolher data</h3>
+    <div class="tabs sub" id="dtAtalhos">
+      <button type="button" data-dt="hoje">Hoje</button>
+      <button type="button" data-dt="amanha">Amanhã</button>
+      <button type="button" data-dt="semana">Daqui a 7 dias</button>
+    </div>
+    <div class="ag-nav" style="margin-top:12px">
+      <button class="ag-arrow" id="dtPrev" type="button" aria-label="Mês anterior">‹</button>
+      <div class="ag-title" id="dtMes"></div>
+      <button class="ag-arrow" id="dtNext" type="button" aria-label="Próximo mês">›</button>
+    </div>
+    <div id="dtGrade"></div>
+    <button class="btn ghost" id="dtFechar" style="margin-top:14px">Fechar</button>
   </div>
 </div>
 
@@ -974,7 +1007,7 @@ input.is-locked{opacity:.85;}
     </div>
     <div class="field" id="ccDescontoGeralField" style="display:none">
       <label>Desconto geral (R$)</label>
-      <input type="number" id="ccDescontoGeral" step="0.01" min="0" inputmode="decimal" placeholder="0,00">
+      <input data-moeda="1" type="text" id="ccDescontoGeral" inputmode="decimal" placeholder="0,00">
     </div>
     <div class="sum-box" id="ccResumo" style="display:none"></div>
     <div class="field">
@@ -984,7 +1017,7 @@ input.is-locked{opacity:.85;}
     <div class="field-row">
       <div class="field">
         <label>Valor (R$)</label>
-        <input type="number" id="ccValor" step="0.01" min="0" inputmode="decimal">
+        <input data-moeda="1" type="text" id="ccValor" inputmode="decimal">
       </div>
       <div class="field">
         <label>Já foi pago?</label>
@@ -1044,7 +1077,7 @@ input.is-locked{opacity:.85;}
     <div class="field-row">
       <div class="field">
         <label>Preço (R$)</label>
-        <input type="number" id="servicoPreco" step="0.01" min="0" inputmode="decimal">
+        <input data-moeda="1" type="text" id="servicoPreco" inputmode="decimal">
       </div>
       <div class="field">
         <label>Duração (min)</label>
@@ -1088,7 +1121,7 @@ input.is-locked{opacity:.85;}
     <div class="field-row">
       <div class="field">
         <label id="ctValorLabel">Valor da parcela (R$)</label>
-        <input type="number" id="ctValor" step="0.01" min="0">
+        <input data-moeda="1" inputmode="decimal" type="text" id="ctValor">
       </div>
       <div class="field">
         <label>Dia de vencimento</label>
@@ -1121,7 +1154,7 @@ input.is-locked{opacity:.85;}
     </div>
     <div class="field" id="vdDescontoGeralField" style="display:none">
       <label>Desconto geral da venda (R$)</label>
-      <input type="number" id="vdDescontoGeral" step="0.01" min="0" inputmode="decimal" placeholder="0,00">
+      <input data-moeda="1" type="text" id="vdDescontoGeral" inputmode="decimal" placeholder="0,00">
     </div>
     <div class="sum-box" id="vdResumo" style="display:none"></div>
     <div class="field">
@@ -1131,7 +1164,7 @@ input.is-locked{opacity:.85;}
     <div class="field-row">
       <div class="field">
         <label>Valor (R$)</label>
-        <input type="number" id="vdValor" step="0.01" min="0">
+        <input data-moeda="1" inputmode="decimal" type="text" id="vdValor">
       </div>
       <div class="field">
         <label id="vdDataLabel">Data</label>
@@ -1179,7 +1212,7 @@ input.is-locked{opacity:.85;}
     <div class="field-row">
       <div class="field">
         <label>Valor (R$)</label>
-        <input type="number" id="evValor" step="0.01" min="0">
+        <input data-moeda="1" inputmode="decimal" type="text" id="evValor">
       </div>
       <div class="field">
         <label id="evDataLabel">Data</label>
@@ -1218,7 +1251,7 @@ input.is-locked{opacity:.85;}
     <div class="field-row">
       <div class="field">
         <label>Valor (R$)</label>
-        <input type="number" id="movValor" step="0.01" min="0">
+        <input data-moeda="1" inputmode="decimal" type="text" id="movValor">
       </div>
       <div class="field">
         <label>Data</label>
@@ -1252,7 +1285,7 @@ input.is-locked{opacity:.85;}
     <div class="field-row">
       <div class="field">
         <label>Valor (R$)</label>
-        <input type="number" id="trfValor" step="0.01" min="0">
+        <input data-moeda="1" inputmode="decimal" type="text" id="trfValor">
       </div>
       <div class="field">
         <label>Data</label>
@@ -1281,7 +1314,7 @@ input.is-locked{opacity:.85;}
     </div>
     <div class="field">
       <label>Saldo inicial (R$)</label>
-      <input type="number" id="contaSaldoInicial" step="0.01" value="0">
+      <input data-moeda="1" inputmode="decimal" type="text" id="contaSaldoInicial" value="0">
     </div>
     <div class="btn-row">
       <button class="btn ghost" id="btnCancelarConta">Cancelar</button>
@@ -1931,7 +1964,7 @@ function openMovimentacaoSheet(id){
   document.querySelectorAll('#movSeg button').forEach(function(b){ b.classList.remove('active','in','out'); });
   document.querySelector('#movSeg button[data-tipo="'+movTipoAtual+'"]').classList.add('active', movTipoAtual==='entrada'?'in':'out');
   document.getElementById('movDescricao').value = m ? m.descricao : '';
-  document.getElementById('movValor').value = m ? m.valor : '';
+  porValor('movValor', m ? m.valor : '');
   document.getElementById('movData').value = m ? m.data : todayISO();
   document.getElementById('movConta').value = m ? m.contaId : contaPadraoId();
   preencherCategoriasMov(m ? (m.categoriaId||'') : '');
@@ -1942,7 +1975,7 @@ document.getElementById('btnCancelarMov').onclick = function(){ sheetMov.classLi
 document.getElementById('btnSalvarMov').onclick = function(){
   const id = document.getElementById('movId').value;
   const descricao = document.getElementById('movDescricao').value.trim();
-  const valor = Number(document.getElementById('movValor').value)||0;
+  const valor = valorDo('movValor');
   const data = document.getElementById('movData').value || todayISO();
   const contaId = document.getElementById('movConta').value;
   const categoriaId = document.getElementById('movCategoria').value;
@@ -1971,7 +2004,7 @@ document.getElementById('btnExcluirMov').onclick = function(){
 const sheetTrf = document.getElementById('sheetTransferencia');
 document.getElementById('btnTransferir').onclick = function(){
   if(state.contas.length<2){ toast('Cadastre pelo menos 2 contas para transferir.'); return; }
-  document.getElementById('trfValor').value='';
+  porValor('trfValor','');
   document.getElementById('trfDescricao').value='';
   document.getElementById('trfData').value = todayISO();
   sheetTrf.classList.add('open');
@@ -1980,7 +2013,7 @@ document.getElementById('btnCancelarTrf').onclick = function(){ sheetTrf.classLi
 document.getElementById('btnSalvarTrf').onclick = function(){
   const origem = document.getElementById('trfOrigem').value;
   const destino = document.getElementById('trfDestino').value;
-  const valor = Number(document.getElementById('trfValor').value)||0;
+  const valor = valorDo('trfValor');
   const data = document.getElementById('trfData').value || todayISO();
   const descricao = document.getElementById('trfDescricao').value.trim();
   if(!origem || !destino){ toast('Selecione as duas contas.'); return; }
@@ -1999,11 +2032,12 @@ function openVendaSheet(){
   document.getElementById('vdServico').value='';
   itensVenda.limpar();
   document.getElementById('vdDescricao').value='';
-  document.getElementById('vdValor').value='';
+  porValor('vdValor','');
   document.getElementById('vdData').value = todayISO();
   document.getElementById('vdPago').value='sim';
   document.getElementById('vdConta').value = contaPadraoId();
   atualizarCamposVenda();
+  atualizarSegmentados(); atualizarBotoesData();
   sheetVenda.classList.add('open');
 }
 document.getElementById('btnCancelarVenda').onclick = function(){ sheetVenda.classList.remove('open'); };
@@ -2025,7 +2059,7 @@ function atualizarCamposVenda(){
 document.getElementById('btnSalvarVenda').onclick = function(){
   const clienteId = document.getElementById('vdCliente').value;
   const descricao = document.getElementById('vdDescricao').value.trim();
-  const valor = Number(document.getElementById('vdValor').value)||0;
+  const valor = valorDo('vdValor');
   const data = document.getElementById('vdData').value || todayISO();
   const pago = document.getElementById('vdPago').value==='sim';
   const contaId = document.getElementById('vdConta').value;
@@ -2061,7 +2095,7 @@ function openEditarVendaSheet(tipo, id){
     const t = state.titulos.find(function(x){return x.id===id;});
     if(!t) return;
     document.getElementById('evDescricao').value = t.descricao;
-    document.getElementById('evValor').value = t.valor;
+    porValor('evValor', t.valor);
     if(t.status==='pago'){
       document.getElementById('evData').value = t.pagoEm||t.vencimento;
       document.getElementById('evDataLabel').textContent = 'Data do pagamento';
@@ -2077,7 +2111,7 @@ function openEditarVendaSheet(tipo, id){
     const m = state.movimentacoes.find(function(x){return x.id===id;});
     if(!m) return;
     document.getElementById('evDescricao').value = m.descricao;
-    document.getElementById('evValor').value = m.valor;
+    porValor('evValor', m.valor);
     document.getElementById('evData').value = m.data;
     document.getElementById('evDataLabel').textContent = 'Data';
     contaField.style.display = 'block';
@@ -2087,7 +2121,7 @@ function openEditarVendaSheet(tipo, id){
 }
 document.getElementById('btnSalvarEdicaoVenda').onclick = function(){
   const descricao = document.getElementById('evDescricao').value.trim();
-  const valor = Number(document.getElementById('evValor').value)||0;
+  const valor = valorDo('evValor');
   const data = document.getElementById('evData').value;
   if(!descricao || !valor || !data){ toast('Preencha descrição, valor e data.'); return; }
 
@@ -2181,7 +2215,7 @@ function openClienteSheet(id){
   document.getElementById('clienteId').value = id||'';
   const c = id ? clienteById(id) : null;
   document.getElementById('clienteNome').value = c ? c.nome : '';
-  document.getElementById('clienteTelefone').value = c ? (c.telefone||'') : '';
+  document.getElementById('clienteTelefone').value = mascaraFone(c ? (c.telefone||'') : '');
   document.getElementById('clienteObs').value = c ? (c.observacoes||'') : '';
   document.getElementById('btnExcluirCliente').style.display = id ? 'block' : 'none';
   sheetCliente.classList.add('open');
@@ -2191,7 +2225,7 @@ document.getElementById('btnCancelarCliente').onclick = function(){ aposSalvarCl
 document.getElementById('btnSalvarCliente').onclick = function(){
   const id = document.getElementById('clienteId').value;
   const nome = document.getElementById('clienteNome').value.trim();
-  const telefone = document.getElementById('clienteTelefone').value.trim();
+  const telefone = mascaraFone(document.getElementById('clienteTelefone').value);
   if(!nome){ toast('Informe o nome.'); return; }
   const data = {nome:nome, telefone:telefone, observacoes: document.getElementById('clienteObs').value.trim()};
   let salvoId = id;
@@ -2353,15 +2387,16 @@ document.getElementById('btnNovaCobranca').onclick = function(){
   document.getElementById('cobServico').value='';
   itensCobranca.limpar();
   document.getElementById('cobDescricao').value='';
-  document.getElementById('cobValor').value='';
+  porValor('cobValor','');
   document.getElementById('cobVencimento').value = todayISO();
   document.getElementById('cobPago').value='nao';
+  atualizarSegmentados(); atualizarBotoesData();
   sheetCobranca.classList.add('open');
 };
 document.getElementById('btnCancelarCobranca').onclick = function(){ sheetCobranca.classList.remove('open'); };
 document.getElementById('btnSalvarCobranca').onclick = function(){
   const descricao = document.getElementById('cobDescricao').value.trim();
-  const valor = Number(document.getElementById('cobValor').value)||0;
+  const valor = valorDo('cobValor');
   const vencimento = document.getElementById('cobVencimento').value || todayISO();
   const jaPago = document.getElementById('cobPago').value==='sim';
   if(!descricao || !valor){ toast('Preencha descrição e valor.'); return; }
@@ -2384,6 +2419,7 @@ const sheetContrato = document.getElementById('sheetContrato');
 document.getElementById('btnNovoContrato').onclick = function(){
   document.getElementById('ctTipo').value='sessoes';
   toggleContratoTipo();
+  atualizarSegmentados();
   sheetContrato.classList.add('open');
 };
 document.getElementById('ctTipo').onchange = toggleContratoTipo;
@@ -2396,7 +2432,7 @@ document.getElementById('btnCancelarContrato').onclick = function(){ sheetContra
 document.getElementById('btnSalvarContrato').onclick = function(){
   const tipo = document.getElementById('ctTipo').value;
   const sessoesTotal = Number(document.getElementById('ctSessoes').value)||0;
-  const valorParcela = Number(document.getElementById('ctValor').value)||0;
+  const valorParcela = valorDo('ctValor');
   const diaVenc = Number(document.getElementById('ctDiaVenc').value)||10;
   const descricao = document.getElementById('ctDescricao').value.trim() || (tipo==='sessoes'?'Pacote de sessões':'Mensalidade');
   if(!valorParcela){ toast('Informe o valor.'); return; }
@@ -2484,7 +2520,7 @@ function openContaSheet(id){
   document.getElementById('contaId').value = id||'';
   const c = id ? contaById(id) : null;
   document.getElementById('contaNomeInput').value = c? c.nome : '';
-  document.getElementById('contaSaldoInicial').value = c? c.saldoInicial : 0;
+  porValor('contaSaldoInicial', c? c.saldoInicial : 0);
   document.getElementById('btnExcluirConta').style.display = id ? 'block' : 'none';
   sheetConta.classList.add('open');
 }
@@ -2492,7 +2528,7 @@ document.getElementById('btnCancelarConta').onclick = function(){ sheetConta.cla
 document.getElementById('btnSalvarConta').onclick = function(){
   const id = document.getElementById('contaId').value;
   const nome = document.getElementById('contaNomeInput').value.trim();
-  const saldoInicial = Number(document.getElementById('contaSaldoInicial').value)||0;
+  const saldoInicial = valorDo('contaSaldoInicial');
   if(!nome){ toast('Informe o nome da conta.'); return; }
   const data = {nome:nome, saldoInicial:saldoInicial};
   if(id){ setDoc('contas', id, data); toast('Conta atualizada.'); }
@@ -2563,7 +2599,7 @@ function openServicoSheet(id){
   document.getElementById('servicoId').value = id||'';
   const s = id ? state.servicos.find(function(x){return x.id===id;}) : null;
   document.getElementById('servicoNome').value = s? s.nome : '';
-  document.getElementById('servicoPreco').value = s? s.preco : '';
+  porValor('servicoPreco', s? s.preco : '');
   document.getElementById('servicoDuracao').value = s? (s.duracao||30) : 30;
   document.getElementById('servicoDescricao').value = s? (s.descricao||'') : '';
   document.getElementById('servicoAtivo').value = (s && s.ativo===false) ? 'nao' : 'sim';
@@ -2585,7 +2621,7 @@ document.getElementById('btnExcluirServico').onclick = function(){
 document.getElementById('btnSalvarServico').onclick = function(){
   const id = document.getElementById('servicoId').value;
   const nome = document.getElementById('servicoNome').value.trim();
-  const preco = Number(document.getElementById('servicoPreco').value)||0;
+  const preco = valorDo('servicoPreco');
   const duracao = Math.max(5, Math.round(Number(document.getElementById('servicoDuracao').value)||30));
   if(!nome){ toast('Informe o nome do serviço.'); return; }
   const data = {nome:nome, preco:preco, duracao:duracao,
@@ -2660,6 +2696,22 @@ document.getElementById('btnSalvarCategoria').onclick = function(){
 function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function fmtDuracao(min){ min = Math.round(Number(min)||0); const h = Math.floor(min/60), m = min%60; return h ? (h+'h'+(m? String(m).padStart(2,'0') : '')) : (m+' min'); }
 function arred(v){ return Math.round((Number(v)||0)*100)/100; }
+/* dinheiro: aceita "1.234,56", "1234.56" ou "90" e devolve número */
+function lerNumero(v){
+  if(typeof v === 'number') return v;
+  let t = String(v==null?'':v).replace(/[^0-9,.-]/g,'').trim();
+  if(!t) return 0;
+  if(t.indexOf(',')>-1) t = t.replace(/\./g,'').replace(',','.');
+  const n = Number(t);
+  return isNaN(n) ? 0 : n;
+}
+function valorDo(id){ return lerNumero(document.getElementById(id).value); }
+function fmtNumeroBR(v){ return (Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+function porValor(id, v){ const el = document.getElementById(id); el.value = (v===''||v==null) ? '' : (el.dataset.moeda ? fmtNumeroBR(v) : v); }
+document.addEventListener('blur', function(e){
+  const el = e.target;
+  if(el && el.dataset && el.dataset.moeda && el.value.trim()!=='') el.value = fmtNumeroBR(lerNumero(el.value));
+}, true);
 function servicoById(id){ return state.servicos.find(function(x){return x.id===id;}); }
 
 /* ================= CATEGORIAS DE SERVIÇO (separadas das categorias financeiras) ================= */
@@ -2763,7 +2815,7 @@ function criarEditorItens(cfg){
     const geral = $(cfg.descontoGeralField); if(geral) geral.style.display = itens.length ? 'block' : 'none';
     const valorEl = $(cfg.valor);
     if(valorEl){
-      if(itens.length){ valorEl.value = total(); valorEl.readOnly = true; valorEl.classList.add('is-locked'); }
+      if(itens.length){ valorEl.value = valorEl.dataset.moeda ? fmtNumeroBR(total()) : total(); valorEl.readOnly = true; valorEl.classList.add('is-locked'); }
       else { valorEl.readOnly = false; valorEl.classList.remove('is-locked'); }
     }
     const descEl = $(cfg.desc);
@@ -2774,8 +2826,8 @@ function criarEditorItens(cfg){
     const box = $(cfg.lista);
     box.innerHTML = itens.map(function(it){
       const campos = modo==='agenda'
-        ? '<label>Duração (min)<input type="number" min="0" step="5" inputmode="numeric" data-f="duracao" value="'+it.duracao+'"></label><label>Valor (R$)<input type="number" min="0" step="0.01" inputmode="decimal" data-f="valorUnitario" value="'+it.valorUnitario+'"></label>'
-        : '<label>Qtd<input type="number" min="1" step="1" inputmode="numeric" data-f="quantidade" value="'+it.quantidade+'"></label><label>Valor un. (R$)<input type="number" min="0" step="0.01" inputmode="decimal" data-f="valorUnitario" value="'+it.valorUnitario+'"></label><label>Desconto (R$)<input type="number" min="0" step="0.01" inputmode="decimal" data-f="desconto" value="'+(it.desconto||0)+'"></label>';
+        ? '<label>Duração (min)<input type="number" min="0" step="5" inputmode="numeric" data-f="duracao" value="'+it.duracao+'"></label><label>Valor (R$)<input type="text" inputmode="decimal" data-moeda="1" data-f="valorUnitario" value="'+fmtNumeroBR(it.valorUnitario)+'"></label>'
+        : '<label>Qtd<input type="number" min="1" step="1" inputmode="numeric" data-f="quantidade" value="'+it.quantidade+'"></label><label>Valor un. (R$)<input type="text" inputmode="decimal" data-moeda="1" data-f="valorUnitario" value="'+fmtNumeroBR(it.valorUnitario)+'"></label><label>Desconto (R$)<input type="text" inputmode="decimal" data-moeda="1" data-f="desconto" value="'+fmtNumeroBR(it.desconto||0)+'"></label>';
       return '<div class="item-card" data-item="'+it.id+'"><div class="item-top"><span class="nm">'+esc(it.nome)+'</span><button type="button" class="item-rem" data-rem="'+it.id+'" aria-label="Remover '+esc(it.nome)+'">×</button></div>'
         +'<div class="item-grid'+(modo==='agenda'?' two':'')+'">'+campos+'</div><div class="item-total" data-linha="'+it.id+'">'+linhaTexto(it)+'</div></div>';
     }).join('');
@@ -2786,7 +2838,7 @@ function criarEditorItens(cfg){
       inp.oninput = function(){
         const card = inp.closest('[data-item]');
         const it = itens.find(function(x){return x.id===card.dataset.item;});
-        let v = Number(inp.value); if(!(v>=0)) v = 0;
+        let v = lerNumero(inp.value); if(!(v>=0)) v = 0;
         if(inp.dataset.f==='quantidade') v = Math.max(1, Math.round(v)||1);
         it[inp.dataset.f] = v;
         it.total = totalItem(it);
@@ -2805,14 +2857,14 @@ function criarEditorItens(cfg){
     e.target.value = '';
   };
   const dg = $(cfg.descontoGeral);
-  if(dg) dg.oninput = function(){ descontoGeral = Math.max(0, Number(dg.value)||0); atualizarResumo(); };
+  if(dg) dg.oninput = function(){ descontoGeral = Math.max(0, lerNumero(dg.value)); atualizarResumo(); };
   return {
     itens: function(){ return itens.map(function(it){ const c = Object.assign({}, it); c.total = totalItem(it); if(modo==='agenda'){ delete c.desconto; c.quantidade = 1; } return c; }); },
     subtotal: subtotal, desconto: descontoTotal, total: total, duracao: duracaoTotal, vazio: function(){ return itens.length===0; },
     limpar: function(){ itens = []; descontoGeral = 0; if(dg) dg.value=''; desenhar(); atualizarResumo(); },
     carregar: function(lista, desc){
       itens = (lista||[]).map(function(it){ return {id:uidGen(), servicoId:it.servicoId||null, nome:it.nome, quantidade:it.quantidade||1, valorUnitario:Number(it.valorUnitario!=null?it.valorUnitario:it.valor||0), desconto:Number(it.desconto||0), duracao:Number(it.duracao!=null?it.duracao:((servicoById(it.servicoId)||{}).duracao||30)), total:Number(it.total||0)}; });
-      descontoGeral = Math.max(0, Number(desc)||0); if(dg) dg.value = descontoGeral || '';
+      descontoGeral = Math.max(0, lerNumero(desc)); if(dg) dg.value = descontoGeral ? fmtNumeroBR(descontoGeral) : '';
       desenhar(); atualizarResumo();
     }
   };
@@ -3069,8 +3121,129 @@ document.getElementById('selFechar').onclick = function(){ document.getElementBy
 new MutationObserver(function(muts){
   let abriu = false;
   muts.forEach(function(m){ if(m.target.classList && m.target.classList.contains('open')) abriu = true; });
-  if(abriu) atualizarBotoesSeletor();
+  if(abriu){ atualizarBotoesSeletor(); atualizarBotoesData(); atualizarSegmentados(); }
 }).observe(document.body, {subtree:true, attributes:true, attributeFilter:['class']});
+
+/* ---- data no estilo do app (o calendário do Android ocupa a tela toda) ---- */
+const DATAS = [];
+let dataAtiva = null, dtMesAtual = null;
+function fmtDataBotao(iso){
+  if(!iso) return '';
+  const hoje = todayISO();
+  if(iso===hoje) return 'Hoje · '+fmtDateBR(iso);
+  if(iso===somarDias(hoje,1)) return 'Amanhã · '+fmtDateBR(iso);
+  if(iso===somarDias(hoje,-1)) return 'Ontem · '+fmtDateBR(iso);
+  return DIAS_CURTOS[dataISOparaDate(iso).getDay()]+', '+fmtDateBR(iso);
+}
+function atualizarBotoesData(){
+  DATAS.forEach(function(d){
+    const inp = document.getElementById(d.id);
+    if(!inp || !d.btn) return;
+    d.btn.querySelector('.sb-txt').textContent = inp.value ? fmtDataBotao(inp.value) : 'Escolher data';
+    d.btn.classList.toggle('is-empty', !inp.value);
+  });
+}
+function tornarData(id, titulo){
+  const inp = document.getElementById(id);
+  if(!inp) return;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'select-btn';
+  btn.innerHTML = '<span class="sb-txt"></span><span class="sb-caret">📅</span>';
+  inp.style.display = 'none';
+  inp.parentNode.insertBefore(btn, inp.nextSibling);
+  const reg = {id:id, btn:btn, titulo:titulo||'Escolher data'};
+  DATAS.push(reg);
+  inp.addEventListener('change', atualizarBotoesData);
+  btn.onclick = function(){
+    dataAtiva = reg;
+    document.getElementById('dtTitulo').textContent = reg.titulo;
+    dtMesAtual = (inp.value || todayISO()).slice(0,8)+'01';
+    desenharCalendario();
+    document.getElementById('sheetData').classList.add('open');
+  };
+  atualizarBotoesData();
+}
+function escolherData(iso){
+  if(!dataAtiva) return;
+  const inp = document.getElementById(dataAtiva.id);
+  inp.value = iso;
+  document.getElementById('sheetData').classList.remove('open');
+  atualizarBotoesData();
+  inp.dispatchEvent(new Event('change', {bubbles:true}));
+}
+function desenharCalendario(){
+  const inp = document.getElementById(dataAtiva.id);
+  const base = dataISOparaDate(dtMesAtual);
+  document.getElementById('dtMes').textContent = base.toLocaleDateString('pt-BR',{month:'long', year:'numeric'});
+  const iniGrade = inicioSemana(dtMesAtual), mes = base.getMonth(), hoje = todayISO();
+  let html = '<div class="mo-grid">'+['S','T','Q','Q','S','S','D'].map(function(d){return '<div class="mo-wd">'+d+'</div>';}).join('');
+  for(let i=0;i<42;i++){
+    const d = somarDias(iniGrade,i), dt = dataISOparaDate(d);
+    if(i>=35 && dt.getMonth()!==mes) break;
+    html += '<button type="button" class="mo-cell'+(dt.getMonth()!==mes?' out':'')+(d===hoje?' today':'')+(d===inp.value?' sel':'')+'" data-dia="'+d+'"><span>'+dt.getDate()+'</span></button>';
+  }
+  html += '</div>';
+  const grade = document.getElementById('dtGrade');
+  grade.innerHTML = html;
+  grade.querySelectorAll('[data-dia]').forEach(function(b){ b.onclick = function(){ escolherData(b.dataset.dia); }; });
+}
+document.getElementById('dtPrev').onclick = function(){ const d = dataISOparaDate(dtMesAtual); d.setMonth(d.getMonth()-1); dtMesAtual = isoLocal(d); desenharCalendario(); };
+document.getElementById('dtNext').onclick = function(){ const d = dataISOparaDate(dtMesAtual); d.setMonth(d.getMonth()+1); dtMesAtual = isoLocal(d); desenharCalendario(); };
+document.getElementById('dtFechar').onclick = function(){ document.getElementById('sheetData').classList.remove('open'); };
+document.querySelectorAll('#dtAtalhos button').forEach(function(b){
+  b.onclick = function(){ escolherData(b.dataset.dt==='hoje' ? todayISO() : b.dataset.dt==='amanha' ? somarDias(todayISO(),1) : somarDias(todayISO(),7)); };
+});
+[['agData','Data do atendimento'],['vdData','Data da venda'],['cobVencimento','Vencimento'],['movData','Data do lançamento'],['trfData','Data da transferência'],['evData','Data'],['ccVencimento','Vencimento']].forEach(function(x){ tornarData(x[0], x[1]); });
+
+/* ---- telefone: (48) 99999-9999 enquanto digita ---- */
+function mascaraFone(v){
+  let d = String(v||'').replace(/\D/g,'').slice(0,13);
+  if(d.length>11 && d.slice(0,2)==='55') d = d.slice(2); // aceita colar com o 55 na frente
+  d = d.slice(0,11);
+  if(d.length<=2) return d.length ? '('+d : '';
+  if(d.length<=6) return '('+d.slice(0,2)+') '+d.slice(2);
+  if(d.length<=10) return '('+d.slice(0,2)+') '+d.slice(2,6)+'-'+d.slice(6);
+  return '('+d.slice(0,2)+') '+d.slice(2,7)+'-'+d.slice(7);
+}
+(function(){
+  const el = document.getElementById('clienteTelefone');
+  el.addEventListener('input', function(){
+    const fim = el.selectionStart === el.value.length;
+    el.value = mascaraFone(el.value);
+    if(fim) el.setSelectionRange(el.value.length, el.value.length);
+  });
+})();
+
+/* ---- botões no lugar das listinhas curtas ---- */
+const SEGMENTADOS = [];
+function tornarSegmentado(id){
+  const sel = document.getElementById(id);
+  if(!sel) return;
+  const box = document.createElement('div');
+  box.className = 'seg-opts';
+  sel.style.display = 'none';
+  sel.parentNode.insertBefore(box, sel.nextSibling);
+  const reg = {id:id, box:box};
+  SEGMENTADOS.push(reg);
+  desenharSegmentado(reg);
+  sel.addEventListener('change', function(){ desenharSegmentado(reg); });
+}
+function desenharSegmentado(reg){
+  const sel = document.getElementById(reg.id);
+  reg.box.innerHTML = Array.prototype.map.call(sel.options, function(o){
+    return '<button type="button" class="seg-op'+(o.value===sel.value?' active':'')+'" data-v="'+esc(o.value)+'">'+esc(o.textContent.split(' — ')[0])+'</button>';
+  }).join('');
+  reg.box.querySelectorAll('[data-v]').forEach(function(b){
+    b.onclick = function(){
+      sel.value = b.dataset.v;
+      desenharSegmentado(reg);
+      sel.dispatchEvent(new Event('change', {bubbles:true}));
+    };
+  });
+}
+function atualizarSegmentados(){ SEGMENTADOS.forEach(desenharSegmentado); }
+['vdPago','cobPago','ccPago','agStatus','ctTipo','servicoAtivo','catServAtivo'].forEach(tornarSegmentado);
 
 [['agInicio','Horário inicial','Escolher horário'],
  ['vdCliente','Cliente','Venda avulsa (sem cliente)'],
@@ -3292,8 +3465,10 @@ function abrirAgendamento(id, preset){
   preencherClientesAg(a ? a.clienteId : (preset.clienteId||''));
   document.getElementById('agStatus').innerHTML = Object.keys(STATUS_AG).map(function(k){ return '<option value="'+k+'">'+STATUS_AG[k].label+'</option>'; }).join('');
   document.getElementById('agStatus').value = a ? a.status : 'agendado';
+  atualizarSegmentados();
   const data = a ? a.data : (preset.data || (agendaData>=todayISO() ? agendaData : todayISO()));
   document.getElementById('agData').value = data;
+  atualizarBotoesData();
   document.getElementById('agInicio').value = a ? a.inicio : horarioSugerido(data);
   document.getElementById('agObs').value = a ? (a.observacoes||'') : '';
   document.getElementById('agServico').innerHTML = '<option value="">+ Adicionar serviço</option>' + opcoesServicosAtivos();
@@ -3448,12 +3623,13 @@ function abrirConcluir(id){
   document.getElementById('ccPago').value = 'sim';
   document.getElementById('ccVencimento').value = todayISO();
   document.getElementById('ccDescricao').value = agServicos(a);
-  document.getElementById('ccValor').value = agValor(a) || '';
+  porValor('ccValor', agValor(a) || '');
   itensConcluir.carregar(a.itens);
   atualizarBotoesSeletor();
   const temVenda = !!(a.tituloId && state.titulos.some(function(t){return t.id===a.tituloId;}));
   document.getElementById('btnConcluirLancar').style.display = temVenda ? 'none' : 'block';
   atualizarCamposConcluir();
+  atualizarSegmentados(); atualizarBotoesData();
   sheetConcluir.classList.add('open');
 }
 document.getElementById('btnCancelarConcluir').onclick = function(){ sheetConcluir.classList.remove('open'); };
@@ -3467,7 +3643,7 @@ document.getElementById('btnConcluirLancar').onclick = function(){
   const id = document.getElementById('ccAgId').value;
   const a = agById(id); if(!a) return;
   const descricao = document.getElementById('ccDescricao').value.trim() || agServicos(a);
-  const valor = Number(document.getElementById('ccValor').value)||0;
+  const valor = valorDo('ccValor');
   const pago = document.getElementById('ccPago').value==='sim';
   const contaId = document.getElementById('ccConta').value;
   if(!valor){ toast('Informe o valor da venda ou use "Concluir sem venda".'); return; }
@@ -3584,6 +3760,16 @@ function atualizarSelects(){
 document.querySelectorAll('.sheet-overlay').forEach(function(ov){
   ov.addEventListener('click', function(e){ if(e.target===ov) ov.classList.remove('open'); });
 });
+
+/* ---------------- CABEÇALHO FIXO ---------------- */
+(function(){
+  const topo = document.querySelector('header.topbar');
+  function medir(){ document.documentElement.style.setProperty('--hdr-h', topo.offsetHeight+'px'); }
+  medir();
+  window.addEventListener('resize', medir);
+  window.addEventListener('scroll', function(){ topo.classList.toggle('rolou', window.scrollY > 4); }, {passive:true});
+  setTimeout(medir, 300);
+})();
 
 /* ---------------- PRIMEIRA RENDERIZAÇÃO ---------------- */
 renderAll();
