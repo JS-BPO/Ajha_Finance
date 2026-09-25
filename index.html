@@ -391,6 +391,13 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
 #sheetData{z-index:150;}
 #sheetData .mo-cell{aspect-ratio:1/1;}
 #dtAtalhos{margin-bottom:0;}
+.msg-top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;}
+.msg-top b{font-size:15px;}
+.msg-txt{width:100%; border:1px solid var(--border); background:var(--surface-2); border-radius:12px; padding:12px; font-size:14px; line-height:1.5; color:var(--text); font-family:inherit; resize:vertical;}
+.msg-chips{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 12px;}
+.msg-chips .chip-btn{font-size:11.5px; padding:6px 9px;}
+.msg-prev span{display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:6px;}
+.bolha{background:color-mix(in srgb, var(--success) 14%, var(--surface)); border:1px solid color-mix(in srgb, var(--success) 25%, transparent); border-radius:14px; padding:12px 14px; font-size:13.5px; line-height:1.5; white-space:pre-wrap;}
 .select-btn{width:100%; display:flex; align-items:center; gap:8px; border:1px solid var(--border); background:var(--surface-2); border-radius:var(--radius-s); padding:12px; font-size:15px; font-family:inherit; color:var(--text); text-align:left; cursor:pointer;}
 .select-btn .sb-txt{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .select-btn.is-empty .sb-txt{color:var(--muted);}
@@ -671,6 +678,7 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
       <div class="section-title">Sistema</div>
       <div class="menu-card">
         <button type="button" class="menu-item" data-ir="ajustes"><span class="mi-ic">🎨</span><span class="mi-tx"><b>Configurações</b><small>Aparência, tema e dados do negócio</small></span><span class="mi-ch">›</span></button>
+        <button type="button" class="menu-item" data-ir="mensagens"><span class="mi-ic">💬</span><span class="mi-tx"><b>Mensagens do WhatsApp</b><small>Edite os textos de cobrança e da agenda</small></span><span class="mi-ch">›</span></button>
         <button type="button" class="menu-item" data-ir="seguranca"><span class="mi-ic">🔒</span><span class="mi-tx"><b>Segurança</b><small>Bloqueio por biometria ou PIN</small></span><span class="mi-ch">›</span></button>
         <button type="button" class="menu-item" data-ir="backup"><span class="mi-ic">💾</span><span class="mi-tx"><b>Backup</b><small>Exportar e restaurar os dados</small></span><span class="mi-ch">›</span></button>
       </div>
@@ -747,6 +755,11 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
           <button class="btn ghost" id="btnSair">Sair da conta</button>
         </div>
       </div>
+    </section>
+
+    <section class="view" id="view-mensagens">
+      <p class="hint">Edite os textos que o app abre no WhatsApp. O que estiver entre chaves é preenchido sozinho — toque para inserir no texto. Emojis podem ser trocados à vontade.</p>
+      <div id="mensagensLista"></div>
     </section>
 
     <section class="view" id="view-seguranca">
@@ -1496,6 +1509,31 @@ const CATEGORIAS_SERVICO_PADRAO = [
   {id:'csv-unhas', nome:'Unhas'}, {id:'csv-massagem', nome:'Massagem'}, {id:'csv-consultoria', nome:'Consultoria'},
   {id:'csv-manutencao', nome:'Manutenção'}, {id:'csv-outros', nome:'Outros'}
 ];
+const MENSAGENS_PADRAO = {
+  agConfirmar: {titulo:'Agenda · Confirmar', texto:'Olá, {cliente}! 😊\nPassando para confirmar seu atendimento:\n\n📅 {data} ({diaSemana})\n⏰ {hora}\n💇 {servicos}\n💰 {valor}\n\nSeu horário está confirmado. Até lá! 😊{assinatura}'},
+  agLembrar:   {titulo:'Agenda · Lembrete',  texto:'Oi, {cliente}! Tudo bem? 😊\nPassando para lembrar do seu horário {quando}:\n\n📅 {data} ({diaSemana})\n⏰ {hora}\n💇 {servicos}\n💰 {valor}\n\nSe precisar remarcar, é só me avisar por aqui.{assinatura}'},
+  agReagendar: {titulo:'Agenda · Reagendar', texto:'Olá, {cliente}! Tudo bem?\nPreciso reagendar seu atendimento de {data} às {hora} ({servicos}).\n\nQual dia e horário ficam melhor para você? 🙂{assinatura}'},
+  agCancelar:  {titulo:'Agenda · Cancelar',  texto:'Olá, {cliente}.\nSeu atendimento de {data} às {hora} ({servicos}) foi cancelado.\n\nQuando quiser, é só me chamar que marcamos um novo horário. 🙂{assinatura}'},
+  cobUma:      {titulo:'Cobrança · Uma parcela', texto:'Olá, {clienteCompleto}! Aqui é do {negocio}. Identificamos que o pagamento de "{descricao}" ({valor}), com vencimento em {vencimento}, ainda está em aberto ({dias} dia(s)). Pode nos ajudar a regularizar? 🙂'},
+  cobVarias:   {titulo:'Cobrança · Várias parcelas', texto:'Olá, {clienteCompleto}! Aqui é do {negocio}. Identificamos os seguintes valores em aberto:\n{lista}\nTotal: {total}. Pode nos ajudar a regularizar? 🙂'}
+};
+const CAMPOS_MENSAGEM = {
+  agConfirmar: ['{cliente}','{clienteCompleto}','{data}','{diaSemana}','{hora}','{horaFim}','{servicos}','{valor}','{duracao}','{quando}','{negocio}','{assinatura}'],
+  agLembrar:   ['{cliente}','{clienteCompleto}','{data}','{diaSemana}','{hora}','{horaFim}','{servicos}','{valor}','{duracao}','{quando}','{negocio}','{assinatura}'],
+  agReagendar: ['{cliente}','{clienteCompleto}','{data}','{diaSemana}','{hora}','{servicos}','{valor}','{negocio}','{assinatura}'],
+  agCancelar:  ['{cliente}','{clienteCompleto}','{data}','{diaSemana}','{hora}','{servicos}','{valor}','{negocio}','{assinatura}'],
+  cobUma:      ['{cliente}','{clienteCompleto}','{descricao}','{valor}','{vencimento}','{dias}','{negocio}','{assinatura}'],
+  cobVarias:   ['{cliente}','{clienteCompleto}','{lista}','{total}','{negocio}','{assinatura}']
+};
+function modeloMensagem(chave){
+  const m = (state.config.mensagens||{})[chave];
+  return (typeof m === 'string' && m.trim()) ? m : MENSAGENS_PADRAO[chave].texto;
+}
+function preencherModelo(txt, dados){
+  return String(txt).replace(/\{(\w+)\}/g, function(tudo, campo){
+    return dados[campo] !== undefined ? dados[campo] : tudo;
+  }).replace(/[ \t]+\n/g,'\n').trim();
+}
 function normalizarItem(it){
   if(!it || typeof it!=='object') return it;
   if(!it.id) it.id = uidGen();
@@ -1514,6 +1552,7 @@ function migrarDados(){
   if(state.config.nomeSalao===undefined) state.config.nomeSalao = '';
   if(state.config.whatsapp===undefined) state.config.whatsapp = '';
   if(!state.config.aparencia || typeof state.config.aparencia!=='object') state.config.aparencia = JSON.parse(JSON.stringify(APARENCIA_PADRAO));
+  if(!state.config.mensagens || typeof state.config.mensagens!=='object') state.config.mensagens = {};
   const ap = state.config.aparencia;
   if(!ap.tema) ap.tema = APARENCIA_PADRAO.tema;
   if(!ap.paleta) ap.paleta = APARENCIA_PADRAO.paleta;
@@ -1671,7 +1710,7 @@ if(biometriaAtiva()){
 document.querySelectorAll('nav.bottomnav button[data-view]').forEach(function(btn){
   btn.onclick = function(){ switchView(btn.dataset.view); };
 });
-const SUBTELAS = {servicos:'Serviços', contas:'Contas', catfin:'Categorias financeiras', contratos:'Pacotes e mensalidades', ajustes:'Configurações', seguranca:'Segurança', backup:'Backup'};
+const SUBTELAS = {servicos:'Serviços', contas:'Contas', catfin:'Categorias financeiras', contratos:'Pacotes e mensalidades', ajustes:'Configurações', seguranca:'Segurança', backup:'Backup', mensagens:'Mensagens do WhatsApp'};
 const SEM_FAB = []; // o + aparece em todas as telas; onde não há ação própria, abre o menu rápido
 let voltarPara = 'clientes';
 function viewAtual(){ const v = document.querySelector('.view.active'); return v ? v.id.replace('view-','') : 'dashboard'; }
@@ -1683,6 +1722,7 @@ function switchView(name){
   const navAlvo = SUBTELAS[name] ? 'mais' : name;
   document.querySelectorAll('nav.bottomnav button[data-view]').forEach(function(b){ b.classList.toggle('active', b.dataset.view===navAlvo); });
   document.getElementById('fabPrimary').classList.toggle('disabled', SEM_FAB.indexOf(name)>-1);
+  if(name==='mensagens') renderMensagens();
   if(SUBTELAS[name]) showHeaderSub(SUBTELAS[name], 'mais'); else showHeaderDefault();
   renderAll();
   window.scrollTo(0,0);
@@ -1745,6 +1785,7 @@ function renderAll(){
   renderContratos();
   renderServicosTabs();
   renderAparencia();
+  if(document.getElementById('view-mensagens').classList.contains('active') && !document.getElementById('msg-agConfirmar')) renderMensagens();
   renderDashboard();
   renderVendas();
   renderCaixa();
@@ -2351,11 +2392,21 @@ function renderFicha(){
     });
   }
 }
+function dadosCobranca(clienteId, extras){
+  const c = clienteById(clienteId);
+  const neg = (state.config.nomeSalao||'').trim();
+  return Object.assign({
+    cliente: c ? c.nome.trim().split(/\s+/)[0] : '',
+    clienteCompleto: c ? c.nome : '',
+    negocio: neg || 'nosso negócio',
+    assinatura: neg ? '\n\n— '+neg : ''
+  }, extras||{});
+}
 function cobrarWhatsApp(t){
   const fone = foneWhats(clienteFone(t.clienteId));
-  const dias = diffDias(t.vencimento);
-  const nomeSalao = state.config.nomeSalao || 'nosso negócio';
-  const msg = 'Olá, '+clienteNome(t.clienteId)+'! Aqui é do '+nomeSalao+'. Identificamos que o pagamento de "'+t.descricao+'" ('+fmtMoney(t.valor)+'), com vencimento em '+fmtDateBR(t.vencimento)+', ainda está em aberto ('+dias+' dia(s)). Pode nos ajudar a regularizar? 🙂';
+  const msg = preencherModelo(modeloMensagem('cobUma'), dadosCobranca(t.clienteId, {
+    descricao: t.descricao, valor: fmtMoney(t.valor), vencimento: fmtDateBR(t.vencimento), dias: Math.max(0, diffDias(t.vencimento))
+  }));
   const url = fone ? ('https://wa.me/'+fone+'?text='+encodeURIComponent(msg)) : ('https://wa.me/?text='+encodeURIComponent(msg));
   window.open(url, '_blank');
 }
@@ -2374,10 +2425,9 @@ document.getElementById('btnCobrarSelecionadas').onclick = function(){
   if(titulos.length===0) return;
   const c = clienteById(currentClienteId);
   const fone = foneWhats(c.telefone);
-  const nomeSalao = state.config.nomeSalao || 'nosso negócio';
   const linhas = titulos.map(function(t){ return '• '+t.descricao+' — '+fmtMoney(t.valor)+' (venceu '+fmtDateBR(t.vencimento)+')'; }).join('\n');
   const total = titulos.reduce(function(s,t){return s+Number(t.valor||0);},0);
-  const msg = 'Olá, '+c.nome+'! Aqui é do '+nomeSalao+'. Identificamos os seguintes valores em aberto:\n'+linhas+'\nTotal: '+fmtMoney(total)+'. Pode nos ajudar a regularizar? 🙂';
+  const msg = preencherModelo(modeloMensagem('cobVarias'), dadosCobranca(c.id, {lista: linhas, total: fmtMoney(total)}));
   const url = fone ? ('https://wa.me/'+fone+'?text='+encodeURIComponent(msg)) : ('https://wa.me/?text='+encodeURIComponent(msg));
   window.open(url, '_blank');
 };
@@ -2985,6 +3035,74 @@ function renderServicosTabs(){
   document.querySelectorAll('#view-servicos .stab').forEach(function(p){ p.style.display = p.dataset.spainel===servicosTab ? 'block' : 'none'; });
 }
 
+/* ================= MENSAGENS DO WHATSAPP (modelos editáveis) ================= */
+function exemploMensagem(chave){
+  const base = {cliente:'Mariana', clienteCompleto:'Mariana Souza', data:'25/09/2026', diaSemana:'sex', hora:'14:00', horaFim:'15:00',
+    duracao:'1h', servicos:'Corte feminino + Escova', valor:fmtMoney(150), quando:'de amanhã',
+    negocio: (state.config.nomeSalao||'').trim() || 'nosso negócio',
+    assinatura: (state.config.nomeSalao||'').trim() ? '\n\n— '+state.config.nomeSalao.trim() : '',
+    descricao:'Coloração', vencimento:'05/09/2026', dias:'19',
+    lista:'• Coloração — '+fmtMoney(180)+' (venceu 05/09/2026)\n• Hidratação — '+fmtMoney(120)+' (venceu 12/09/2026)', total:fmtMoney(300)};
+  return preencherModelo(document.getElementById('msg-'+chave) ? document.getElementById('msg-'+chave).value : modeloMensagem(chave), base);
+}
+function renderMensagens(){
+  const box = document.getElementById('mensagensLista');
+  if(!box) return;
+  box.innerHTML = Object.keys(MENSAGENS_PADRAO).map(function(k){
+    const chips = CAMPOS_MENSAGEM[k].map(function(c){ return '<button type="button" class="chip-btn slim" data-campo="'+esc(c)+'" data-alvo="'+k+'">'+esc(c)+'</button>'; }).join('');
+    return '<div class="card"><div class="msg-top"><b>'+MENSAGENS_PADRAO[k].titulo+'</b><button type="button" class="link-btn" data-restaurar="'+k+'">Restaurar padrão</button></div>'
+      +'<textarea id="msg-'+k+'" class="msg-txt" rows="7"></textarea>'
+      +'<div class="msg-chips">'+chips+'</div>'
+      +'<div class="msg-prev"><span>Como fica</span><div class="bolha" id="prev-'+k+'"></div></div></div>';
+  }).join('');
+  Object.keys(MENSAGENS_PADRAO).forEach(function(k){
+    const ta = document.getElementById('msg-'+k);
+    ta.value = modeloMensagem(k);
+    ta.addEventListener('input', function(){ atualizarPreviaMensagem(k); agendarSalvarMensagens(); });
+    ta.addEventListener('blur', function(){ salvarMensagens(); });
+    atualizarPreviaMensagem(k);
+  });
+  box.querySelectorAll('[data-campo]').forEach(function(b){
+    b.onclick = function(){
+      const ta = document.getElementById('msg-'+b.dataset.alvo);
+      const i = ta.selectionStart==null ? ta.value.length : ta.selectionStart;
+      const j = ta.selectionEnd==null ? i : ta.selectionEnd;
+      ta.value = ta.value.slice(0,i) + b.dataset.campo + ta.value.slice(j);
+      ta.focus();
+      ta.setSelectionRange(i + b.dataset.campo.length, i + b.dataset.campo.length);
+      atualizarPreviaMensagem(b.dataset.alvo);
+      salvarMensagens();
+    };
+  });
+  box.querySelectorAll('[data-restaurar]').forEach(function(b){
+    b.onclick = function(){
+      const k = b.dataset.restaurar;
+      askConfirm('Voltar esta mensagem para o texto original do app?', function(){
+        document.getElementById('msg-'+k).value = MENSAGENS_PADRAO[k].texto;
+        atualizarPreviaMensagem(k);
+        salvarMensagens();
+        toast('Mensagem restaurada.');
+      }, 'Restaurar');
+    };
+  });
+}
+function atualizarPreviaMensagem(k){
+  const alvo = document.getElementById('prev-'+k);
+  if(alvo) alvo.textContent = exemploMensagem(k);
+}
+let timerMensagens = null;
+function agendarSalvarMensagens(){ clearTimeout(timerMensagens); timerMensagens = setTimeout(salvarMensagens, 400); }
+function salvarMensagens(){
+  clearTimeout(timerMensagens);
+  const msgs = {};
+  Object.keys(MENSAGENS_PADRAO).forEach(function(k){
+    const ta = document.getElementById('msg-'+k);
+    if(ta) msgs[k] = ta.value;
+  });
+  state.config.mensagens = msgs;
+  saveCache();
+}
+
 /* ================= APARÊNCIA: tela e seletor rápido ================= */
 function aparenciaAtual(){ if(!state.config.aparencia) state.config.aparencia = JSON.parse(JSON.stringify(APARENCIA_PADRAO)); return state.config.aparencia; }
 function atualizarBotaoTema(){
@@ -3585,22 +3703,29 @@ function abrirWhatsCliente(clienteId, msg){
   window.open('https://wa.me/'+fone+'?text='+encodeURIComponent(msg), '_blank');
   return true;
 }
+function dadosAgendamento(a){
+  const c = clienteById(a.clienteId);
+  const neg = (state.config.nomeSalao||'').trim();
+  const dif = Math.round((dataISOparaDate(a.data) - dataISOparaDate(todayISO()))/86400000);
+  return {
+    cliente: c ? c.nome.trim().split(/\s+/)[0] : '',
+    clienteCompleto: c ? c.nome : '',
+    data: fmtDateBR(a.data),
+    diaSemana: DIAS_CURTOS[dataISOparaDate(a.data).getDay()].toLowerCase(),
+    hora: a.inicio,
+    horaFim: agFim(a),
+    duracao: fmtDuracao(a.duracao),
+    servicos: agServicos(a),
+    valor: fmtMoney(agValor(a)),
+    quando: dif===0 ? 'de hoje' : dif===1 ? 'de amanhã' : 'do dia '+fmtDateBR(a.data),
+    negocio: neg || 'nosso negócio',
+    assinatura: neg ? '\n\n— '+neg : ''
+  };
+}
 function whatsAgendamento(id, tipo){
   const a = agById(id); if(!a) return;
-  const c = clienteById(a.clienteId);
-  const nome = c ? c.nome.trim().split(/\s+/)[0] : '';
-  const neg = (state.config.nomeSalao||'').trim();
-  const dataTxt = fmtDateBR(a.data)+' ('+DIAS_CURTOS[dataISOparaDate(a.data).getDay()].toLowerCase()+')';
-  const serv = agServicos(a), valor = fmtMoney(agValor(a));
-  const ass = neg ? '\n\n— '+neg : '';
-  const dif = Math.round((dataISOparaDate(a.data) - dataISOparaDate(todayISO()))/86400000);
-  const quando = dif===0 ? 'de hoje' : dif===1 ? 'de amanhã' : 'do dia '+fmtDateBR(a.data);
-  let msg = '';
-  if(tipo==='confirmar') msg = 'Olá, '+nome+'! 😊\nPassando para confirmar seu atendimento'+(neg?' no '+neg:'')+':\n\n📅 '+dataTxt+'\n⏰ '+a.inicio+'\n💇 '+serv+'\n💰 '+valor+'\n\nSeu horário está confirmado. Até lá! 😊';
-  else if(tipo==='lembrar') msg = 'Oi, '+nome+'! Tudo bem? 😊\nPassando para lembrar do seu horário '+quando+':\n\n📅 '+dataTxt+'\n⏰ '+a.inicio+'\n💇 '+serv+'\n💰 '+valor+'\n\nSe precisar remarcar, é só me avisar por aqui.'+ass;
-  else if(tipo==='reagendar') msg = 'Olá, '+nome+'! Tudo bem?\nPreciso reagendar seu atendimento de '+dataTxt+' às '+a.inicio+' ('+serv+').\n\nQual dia e horário ficam melhor para você? 🙂'+ass;
-  else msg = 'Olá, '+nome+'.\nSeu atendimento de '+dataTxt+' às '+a.inicio+' ('+serv+') foi cancelado.\n\nQuando quiser, é só me chamar que marcamos um novo horário. 🙂'+ass;
-  abrirWhatsCliente(a.clienteId, msg);
+  const chave = {confirmar:'agConfirmar', lembrar:'agLembrar', reagendar:'agReagendar', cancelar:'agCancelar'}[tipo] || 'agConfirmar';
+  abrirWhatsCliente(a.clienteId, preencherModelo(modeloMensagem(chave), dadosAgendamento(a)));
 }
 
 /* ---- concluir atendimento (gera a venda) ---- */
