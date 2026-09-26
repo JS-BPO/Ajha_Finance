@@ -93,6 +93,7 @@ function aplicarAparencia(ap){
   color-scheme:light;
 }
 html[data-modo="escuro"]{color-scheme:dark;}
+html[data-modo="escuro"] .saldo-card{background:linear-gradient(155deg,color-mix(in srgb, var(--secondary) 65%, var(--primary)),var(--secondary)); border:1px solid var(--border);}
 html[data-modo="escuro"] .hero{background:linear-gradient(155deg,color-mix(in srgb, var(--secondary) 65%, var(--primary)),var(--secondary)); border:1px solid var(--border);}
 html[data-modo="escuro"] .card, html[data-modo="escuro"] .kpi, html[data-modo="escuro"] .list-item{box-shadow:none;}
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -143,6 +144,44 @@ nav.bottomnav button.active{color:var(--primary);}
 .kpi.success .value{color:var(--success);}
 .kpi .sub{font-size:11px; color:var(--muted); margin-top:2px;}
 
+.saldo-card{background:linear-gradient(155deg,var(--primary),var(--secondary)); color:#fff; border-radius:26px; padding:20px 20px 18px; box-shadow:0 18px 32px -20px rgba(16,18,24,.5); margin-bottom:14px;}
+.sc-top{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.sc-label{font-size:11.5px; font-weight:700; opacity:.78; text-transform:uppercase; letter-spacing:.07em;}
+.sc-link{border:none; background:none; color:inherit; font-family:inherit; font-size:12.5px; font-weight:700; opacity:.85; cursor:pointer; padding:0; white-space:nowrap;}
+.sc-valor{font-family:'Fraunces',serif; font-size:37px; font-weight:600; letter-spacing:-.02em; margin:6px 0 14px; line-height:1.05;}
+.sc-bar{display:flex; gap:3px; height:6px; border-radius:6px; overflow:hidden; background:rgba(255,255,255,.2);}
+.sc-bar > span{display:block; border-radius:6px; transition:width .3s ease;}
+#heroBarEnt{background:#9BE8BE;}
+#heroBarSai{background:#FFB9AC;}
+.sc-fluxo{display:flex; gap:10px; margin-top:12px;}
+.sc-fluxo > div{flex:1; min-width:0; display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; column-gap:8px; align-items:center;}
+.sc-fluxo i{grid-row:1/3; width:27px; height:27px; border-radius:50%; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; font-style:normal; font-size:13px; font-weight:800;}
+.sc-fluxo i.up{color:#9BE8BE;}
+.sc-fluxo i.down{color:#FFB9AC;}
+.sc-fluxo span{font-size:11px; opacity:.78; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.sc-fluxo b{font-size:15px; font-weight:700;}
+.stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.stat{display:flex; gap:10px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:13px 13px 12px;}
+.stat .st-tx{min-width:0;}
+.st-ic{width:33px; height:33px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:15px; background:var(--surface-2); flex-shrink:0;}
+.st-ic.ok{background:var(--success-soft);}
+.st-ic.info{background:var(--primary-soft);}
+.st-ic.warn{background:var(--warn-soft);}
+.st-ic.bad{background:var(--danger-soft);}
+.st-lb{display:block; font-size:11px; font-weight:600; color:var(--muted); line-height:1.25;}
+.st-vl{display:block; font-family:'Fraunces',serif; font-size:20px; font-weight:600; margin-top:3px; letter-spacing:-.01em;}
+.st-vl.warn{color:var(--warn);}
+.st-vl.bad{color:var(--danger);}
+.st-sb{display:block; font-size:10.5px; color:var(--muted); margin-top:2px;}
+.bloco{background:var(--surface); border:1px solid var(--border); border-radius:22px; padding:14px 14px 8px; margin-top:14px;}
+.bloco-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:10px;}
+.bloco-top h3{font-family:'Fraunces',serif; font-size:16.5px; font-weight:600;}
+.bloco-link{border:none; background:none; color:var(--primary); font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; padding:0; white-space:nowrap;}
+.bloco-tot{font-size:13px; font-weight:700; color:var(--danger); white-space:nowrap;}
+.bloco .list-item, .bloco .ag-card, .bloco .rec-group, .bloco .cat-row{background:var(--surface-2); border-color:transparent; box-shadow:none; margin-bottom:8px;}
+.bloco .rec-group{padding:4px 12px 8px;}
+.bloco .cat-row{padding:10px 12px; border-radius:14px;}
+.bloco .empty{padding:16px 10px; background:none; border:none;}
 .hero{background:linear-gradient(155deg,var(--primary),var(--secondary)); color:#fff; border-radius:var(--radius-l); padding:22px; box-shadow:var(--shadow); margin-bottom:18px;}
 .hero .label{font-size:12px; opacity:.75; font-weight:600; text-transform:uppercase; letter-spacing:.05em;}
 .hero .value{font-family:'Fraunces',serif; font-size:34px; margin-top:6px;}
@@ -210,6 +249,56 @@ nav.bottomnav button.active{color:var(--primary);}
 .icon-btn svg{width:16px; height:16px; stroke:var(--muted); fill:none; stroke-width:2;}
 .icon-btn.danger{background:var(--danger-soft); border-color:var(--danger-soft);}
 .icon-btn.danger svg{stroke:var(--danger);}
+.contas-box{background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:4px 14px 6px; margin-top:8px;}
+.cb-total{display:flex; width:100%; align-items:center; justify-content:space-between; gap:10px; background:none; border:none; padding:12px 0 11px; font-family:inherit; color:var(--text); cursor:pointer; text-align:left;}
+.cb-lb{font-size:12px; font-weight:700; color:var(--muted);}
+.cb-lb small{display:block; font-size:10.5px; font-weight:600; color:var(--muted); opacity:.8; margin-top:2px;}
+.cb-tv{font-family:'Fraunces',serif; font-size:23px; font-weight:600; letter-spacing:-.01em; white-space:nowrap;}
+.cb-tv.out{color:var(--danger);}
+.cb-total.on .cb-lb{color:var(--primary);}
+.cb-linhas{border-top:1px solid var(--border); padding-top:2px;}
+.cb-linha{display:flex; width:100%; align-items:center; justify-content:space-between; gap:10px; background:none; border:none; border-radius:10px; padding:9px 8px; margin:2px -8px; font-family:inherit; color:var(--text); cursor:pointer; text-align:left;}
+.cb-linha.on{background:var(--primary-soft);}
+.cb-nm{font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;}
+.cb-linha.on .cb-nm{color:var(--primary);}
+.cb-vl{font-size:13.5px; font-weight:700; white-space:nowrap;}
+.cb-vl.out{color:var(--danger);}
+.caixa-alerta{display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:var(--warn-soft); border:1px solid transparent; border-radius:16px; padding:11px 13px; margin:10px 0 2px; font-family:inherit; color:var(--text); cursor:pointer;}
+.caixa-alerta.urgente{background:var(--danger-soft);}
+.caixa-alerta .al-ic{font-size:17px;}
+.caixa-alerta .al-tx{flex:1; min-width:0;}
+.caixa-alerta .al-tx b{display:block; font-size:13.5px;}
+.caixa-alerta .al-tx small{display:block; font-size:11.5px; color:var(--muted); margin-top:1px;}
+.caixa-alerta .al-ch{color:var(--muted); font-size:18px;}
+.caixa-kpis{display:grid; grid-template-columns:1fr 1fr 1.15fr; gap:8px; margin-top:8px;}
+.caixa-kpis .ck{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:11px 12px; min-width:0;}
+.caixa-kpis .ck.in{background:var(--success-soft); border-color:transparent;}
+.caixa-kpis .ck.out{background:var(--danger-soft); border-color:transparent;}
+.ck-lb{display:block; font-size:11px; font-weight:700; color:var(--muted);}
+.ck-vl{display:block; font-family:'Fraunces',serif; font-size:15px; font-weight:600; margin-top:3px; letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.ck-vl.pos{color:var(--success);}
+.ck-vl.neg{color:var(--danger);}
+.dia-grupo{margin-bottom:16px;}
+.dia-head{display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:0 4px 7px;}
+.dia-head span{font-size:12px; font-weight:700; color:var(--muted); text-transform:capitalize;}
+.dia-head b{font-size:12.5px; font-weight:700;}
+.dia-head b.pos{color:var(--success);}
+.dia-head b.neg{color:var(--danger);}
+.mov{display:flex; align-items:center; gap:11px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:12px 13px; margin-bottom:7px;}
+.mov.tem-acoes{cursor:pointer;}
+.mv-ic{width:33px; height:33px; flex-shrink:0; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800;}
+.mv-ic.in{background:var(--success-soft); color:var(--success);}
+.mv-ic.out{background:var(--danger-soft); color:var(--danger);}
+.mv-ic.tr{background:var(--surface-2); color:var(--muted);}
+.mv-tx{flex:1; min-width:0;}
+.mv-ti{font-weight:600; font-size:14.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.mv-me{font-size:12px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.mov .icon-row{display:none;}
+.mov.aberto .icon-row{display:flex;}
+.mov.aberto .mv-ti{white-space:normal;}
+.mv-vl{text-align:right; font-size:14px; font-weight:700; white-space:nowrap;}
+.mv-vl.in{color:var(--success);}
+.mv-vl.out{color:var(--danger);}
 .icon-row{display:flex; gap:8px; margin-top:10px;}
 .cobranca-check{width:20px; height:20px; accent-color:var(--primary); flex-shrink:0; margin-top:2px; cursor:pointer;}
 .list-item.selecionavel{align-items:flex-start;}
@@ -319,10 +408,10 @@ input.is-locked{opacity:.85;}
 .with-link .link-btn{text-transform:none; letter-spacing:0; font-size:12.5px;}
 .kpi-row.four{grid-template-columns:1fr 1fr;}
 .kpi-row + .kpi-row{margin-top:10px;}
-.mini-stats{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;}
-.mini-stat{display:flex; justify-content:space-between; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m); padding:12px 14px; font-family:inherit; color:var(--text); cursor:pointer;}
-.mini-stat span{font-size:12px; color:var(--muted); font-weight:600;}
-.mini-stat b{font-family:'Fraunces',serif; font-size:20px;}
+.mini-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px;}
+.mini-stat{display:flex; flex-direction:column; align-items:flex-start; gap:3px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:11px 12px; font-family:inherit; color:var(--text); cursor:pointer; text-align:left; min-width:0;}
+.mini-stat span{font-size:11px; color:var(--muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;}
+.mini-stat b{font-family:'Fraunces',serif; font-size:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;}
 .rec-group{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-m); padding:4px 14px 8px; margin-bottom:10px;}
 .rec-head{display:flex; justify-content:space-between; align-items:center; padding:10px 0 6px; font-size:13px; font-weight:700; color:var(--c);}
 .rec-head span{display:flex; align-items:center; gap:8px;}
@@ -333,6 +422,7 @@ input.is-locked{opacity:.85;}
 .rec-row b{white-space:nowrap;}
 .rec-more{font-size:12px; color:var(--muted); padding:6px 0 2px;}
 .badge.today{background:var(--warn-soft); color:var(--warn);}
+.badge.parcial{background:var(--info-soft); color:var(--info);}
 .vendas-bar{display:flex; align-items:center; gap:8px; margin-bottom:16px;}
 .vendas-bar .tabs{margin-bottom:0; flex:1; min-width:0;}
 .filter-btn{position:relative; display:inline-flex; align-items:center; gap:6px; flex-shrink:0; border:1px solid var(--border); background:var(--surface); color:var(--text); padding:8px 12px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer;}
@@ -498,53 +588,68 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
   <main>
 
     <section class="view active" id="view-dashboard">
-      <div class="hero">
-        <div class="label">Saldo total em caixa</div>
-        <div class="value" id="kpiSaldoMes">R$ 0,00</div>
-        <div class="foot"><span id="kpiEntradasMes">Entradas do mês: R$ 0,00</span><span id="kpiSaidasMes">Saídas do mês: R$ 0,00</span></div>
+      <div class="saldo-card">
+        <div class="sc-top">
+          <span class="sc-label">Saldo total em caixa</span>
+          <button type="button" class="sc-link" data-ir="caixa">Ver caixa ›</button>
+        </div>
+        <div class="sc-valor" id="kpiSaldoMes">R$ 0,00</div>
+        <div class="sc-bar"><span id="heroBarEnt"></span><span id="heroBarSai"></span></div>
+        <div class="sc-fluxo">
+          <div><i class="up">↑</i><span>Entradas do mês</span><b id="kpiEntradasMes">R$ 0,00</b></div>
+          <div><i class="down">↓</i><span>Saídas do mês</span><b id="kpiSaidasMes">R$ 0,00</b></div>
+        </div>
       </div>
 
-      <div class="kpi-row four">
-        <div class="kpi">
-          <div class="label">Faturamento hoje</div>
-          <div class="value" id="kpiFatDia">R$ 0,00</div>
-          <div class="sub" id="kpiFatDiaSub">0 venda(s)</div>
+      <div class="stat-grid">
+        <div class="stat">
+          <span class="st-ic ok">💰</span>
+          <div class="st-tx"><span class="st-lb">Faturamento hoje</span><b class="st-vl" id="kpiFatDia">R$ 0,00</b><small class="st-sb" id="kpiFatDiaSub">0 venda(s)</small></div>
         </div>
-        <div class="kpi">
-          <div class="label">Faturamento do mês</div>
-          <div class="value" id="kpiFatMes">R$ 0,00</div>
-          <div class="sub" id="kpiFatMesSub">0 venda(s)</div>
+        <div class="stat">
+          <span class="st-ic info">📈</span>
+          <div class="st-tx"><span class="st-lb">Faturamento do mês</span><b class="st-vl" id="kpiFatMes">R$ 0,00</b><small class="st-sb" id="kpiFatMesSub">0 venda(s)</small></div>
         </div>
-        <div class="kpi warn">
-          <div class="label">A receber</div>
-          <div class="value" id="kpiAReceber">R$ 0,00</div>
-          <div class="sub" id="kpiAReceberSub">0 cobrança(s) em aberto</div>
+        <div class="stat">
+          <span class="st-ic warn">⏳</span>
+          <div class="st-tx"><span class="st-lb">A receber</span><b class="st-vl warn" id="kpiAReceber">R$ 0,00</b><small class="st-sb" id="kpiAReceberSub">0 cobrança(s) em aberto</small></div>
         </div>
-        <div class="kpi danger">
-          <div class="label">Inadimplência</div>
-          <div class="value" id="kpiInadim">R$ 0,00</div>
-          <div class="sub" id="kpiInadimSub">0 cliente(s) em atraso</div>
+        <div class="stat">
+          <span class="st-ic bad">⚠️</span>
+          <div class="st-tx"><span class="st-lb">Inadimplência</span><b class="st-vl bad" id="kpiInadim">R$ 0,00</b><small class="st-sb" id="kpiInadimSub">0 cliente(s) em atraso</small></div>
         </div>
       </div>
+
       <div class="mini-stats">
         <button type="button" class="mini-stat" data-ir="clientes"><span>Clientes</span><b id="kpiClientes">0</b></button>
-        <button type="button" class="mini-stat" data-ir="agenda"><span>Agendamentos hoje</span><b id="kpiAgHoje">0</b></button>
+        <button type="button" class="mini-stat" data-ir="agenda"><span>Agenda hoje</span><b id="kpiAgHoje">0</b></button>
+        <button type="button" class="mini-stat" data-ir="caixa" data-caixa-apagar="1"><span>A pagar</span><b id="kpiAPagar">R$ 0,00</b></button>
       </div>
 
       <div class="dash-cols">
         <div>
-          <div class="section-title with-link">Agenda de hoje <button type="button" class="link-btn" data-ir="agenda">Ver agenda</button></div>
-          <div id="dashAgendaHoje"></div>
-          <div class="section-title">Próximos atendimentos</div>
-          <div id="dashProximos"></div>
+          <div class="bloco">
+            <div class="bloco-top"><h3>Agenda de hoje</h3><button type="button" class="bloco-link" data-ir="agenda">Ver agenda ›</button></div>
+            <div id="dashAgendaHoje"></div>
+          </div>
+          <div class="bloco">
+            <div class="bloco-top"><h3>Próximos atendimentos</h3></div>
+            <div id="dashProximos"></div>
+          </div>
         </div>
         <div>
-          <div class="section-title with-link">Recebimentos pendentes <button type="button" class="link-btn" data-ir="vendas" data-filtro="pendentes">Ver todos</button></div>
-          <div id="dashRecebimentos"></div>
-          <div class="section-title">Clientes em atraso</div>
-          <div id="dashInadim"></div>
-          <div class="section-title">Saídas do mês por categoria</div>
-          <div id="dashCategorias"></div>
+          <div class="bloco">
+            <div class="bloco-top"><h3>Recebimentos pendentes</h3><button type="button" class="bloco-link" data-ir="vendas" data-filtro="pendentes">Ver todos ›</button></div>
+            <div id="dashRecebimentos"></div>
+          </div>
+          <div class="bloco">
+            <div class="bloco-top"><h3>Clientes em atraso</h3></div>
+            <div id="dashInadim"></div>
+          </div>
+          <div class="bloco">
+            <div class="bloco-top"><h3>Saídas do mês por categoria</h3><span class="bloco-tot" id="dashCatTotal"></span></div>
+            <div id="dashCategorias"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -581,11 +686,21 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
 
     <section class="view" id="view-caixa">
       <div class="section-title" style="margin-top:4px">Caixa</div>
-      <div class="tabs" id="caixaTabs">
-        <button data-caixa="mes" class="active">Este mês</button>
-        <button data-caixa="tudo">Tudo</button>
+      <div class="vendas-bar">
+        <div class="tabs" id="caixaTabs">
+          <button data-caixa="hoje">Hoje</button>
+          <button data-caixa="mes" class="active">Este mês</button>
+          <button data-caixa="tudo">Tudo</button>
+        </div>
+        <label class="filter-btn" id="caixaFiltroBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" stroke-linejoin="round"/></svg><span id="caixaTipoLabel">Filtrar</span><span class="caret">▾</span><select id="caixaTipo" aria-label="Filtrar o caixa"></select></label>
       </div>
-      <button class="btn ghost" id="btnTransferir" style="margin-bottom:14px">⇄ Transferir entre contas</button>
+      <div id="caixaAlerta"></div>
+      <div class="contas-box" id="caixaContas"></div>
+      <div class="caixa-kpis" id="caixaResumo"></div>
+      <div class="field" style="margin:12px 0 4px">
+        <input type="search" id="buscaCaixa" placeholder="Buscar lançamento..." autocomplete="off">
+      </div>
+      <button class="btn ghost" id="btnTransferir" style="display:none">⇄ Transferir entre contas</button>
       <div id="caixaList"></div>
     </section>
 
@@ -932,6 +1047,126 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
     </div>
     <div id="selLista" class="sel-lista"></div>
     <button class="btn ghost" id="selFechar" style="margin-top:10px">Fechar</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetCaixaRapido">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Lançar no caixa</h3>
+    <div class="rapido-grid">
+      <button type="button" class="rapido" data-caixa-acao="mov"><span>💵</span><b>Entrada ou saída</b><small>Lançamento avulso</small></button>
+      <button type="button" class="rapido" data-caixa-acao="compra"><span>🧾</span><b>Compra parcelada</b><small>Gera as parcelas</small></button>
+      <button type="button" class="rapido" data-caixa-acao="transf"><span>⇄</span><b>Transferência</b><small>Entre suas contas</small></button>
+      <button type="button" class="rapido" data-caixa-acao="apagar"><span>📌</span><b>Contas a pagar</b><small>Ver o que está em aberto</small></button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetCompra">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Compra parcelada</h3>
+    <p class="sheet-sub">O app cria uma parcela por mês em Contas a pagar. Cada parcela vira uma saída no caixa quando você marcar como paga.</p>
+    <div class="field">
+      <label>Descrição</label>
+      <input type="text" id="cpDescricao" placeholder="Ex: Cadeira nova, secador, estoque de tintas">
+    </div>
+    <div class="field">
+      <label>Fornecedor / loja (opcional)</label>
+      <input type="text" id="cpFornecedor" placeholder="Ex: Beauty Distribuidora">
+    </div>
+    <div class="field">
+      <label>Categoria</label>
+      <select id="cpCategoria"></select>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor total (R$)</label>
+        <input type="text" id="cpTotal" inputmode="decimal" data-moeda="1" placeholder="0,00">
+      </div>
+      <div class="field">
+        <label>Parcelas</label>
+        <input type="number" id="cpParcelas" min="1" max="60" step="1" inputmode="numeric" value="1">
+      </div>
+    </div>
+    <div class="field">
+      <label>Valor de cada parcela (R$)</label>
+      <input type="text" id="cpParcela" inputmode="decimal" data-moeda="1" placeholder="0,00">
+    </div>
+    <div class="field">
+      <label>Vencimento da 1ª parcela</label>
+      <input type="date" id="cpVencimento">
+    </div>
+    <div class="sum-box" id="cpResumo"></div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarCompra">Cancelar</button>
+      <button class="btn primary" id="btnSalvarCompra">Lançar compra</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetPagarConta">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Pagar parcela</h3>
+    <p class="sheet-sub" id="pcSub"></p>
+    <input type="hidden" id="pcId">
+    <div class="field-row">
+      <div class="field">
+        <label>Valor pago (R$)</label>
+        <input type="text" id="pcValor" inputmode="decimal" data-moeda="1">
+      </div>
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="pcData">
+      </div>
+    </div>
+    <div class="field">
+      <label>Conta que pagou</label>
+      <select id="pcConta"></select>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarPagarConta">Cancelar</button>
+      <button class="btn primary" id="btnConfirmarPagarConta">Confirmar pagamento</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetPagamento">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="pgTitulo">Registrar pagamento</h3>
+    <p class="sheet-sub" id="pgSub"></p>
+    <input type="hidden" id="pgTituloId">
+    <div class="sum-box" id="pgResumo"></div>
+    <div class="seg" id="pgSeg">
+      <button type="button" class="active in" data-pg="total">Valor total</button>
+      <button type="button" data-pg="parcial">Pagou só uma parte</button>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor recebido (R$)</label>
+        <input type="text" id="pgValor" inputmode="decimal" data-moeda="1">
+      </div>
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="pgData">
+      </div>
+    </div>
+    <div class="field">
+      <label>Conta que recebeu</label>
+      <select id="pgConta"></select>
+    </div>
+    <div class="field" id="pgVencField" style="display:none">
+      <label>Novo vencimento do saldo (opcional)</label>
+      <input type="date" id="pgVencimento">
+    </div>
+    <div id="pgHistorico"></div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarPagamento">Cancelar</button>
+      <button class="btn primary" id="btnConfirmarPagamento">Registrar</button>
+    </div>
   </div>
 </div>
 
@@ -1356,6 +1591,8 @@ let state = {
   categorias: [],
   categoriasServico: [],
   agendamentos: [],
+  compras: [],
+  contasPagar: [],
   config: { nomeSalao: '', whatsapp: '' }
 };
 let currentClienteId = null;
@@ -1409,6 +1646,8 @@ document.getElementById('btnConfirmOk').onclick = function(){
   confirmCallback = null;
   if(cb) cb();
 };
+function tituloPago(t){ return Number(t.pago!=null ? t.pago : (t.status==='pago' ? t.valor : 0)) || 0; }
+function saldoTitulo(t){ return Math.max(0, arred(Number(t.valor||0) - tituloPago(t))); }
 function statusTitulo(t){
   if(t.status==='pago') return 'pago';
   const d = diffDias(t.vencimento);
@@ -1416,7 +1655,9 @@ function statusTitulo(t){
 }
 function badgeTitulo(t){
   const st = statusTitulo(t);
+  const parcial = st!=='pago' && tituloPago(t)>0 ? '<span class="badge parcial">Parcial · falta '+fmtMoney(saldoTitulo(t))+'</span>' : '';
   if(st==='pago') return '<span class="badge ok">Pago</span>';
+  if(parcial) return parcial + (st==='vencido' ? ' <span class="badge late">'+diffDias(t.vencimento)+'d atraso</span>' : '');
   if(st==='vencido') return '<span class="badge late">'+diffDias(t.vencimento)+'d atraso</span>';
   if(st==='hoje') return '<span class="badge today">Vence hoje</span>';
   return '<span class="badge pending">A vencer</span>';
@@ -1522,7 +1763,7 @@ const CAMPOS_MENSAGEM = {
   agLembrar:   ['{cliente}','{clienteCompleto}','{data}','{diaSemana}','{hora}','{horaFim}','{servicos}','{valor}','{duracao}','{quando}','{negocio}','{assinatura}'],
   agReagendar: ['{cliente}','{clienteCompleto}','{data}','{diaSemana}','{hora}','{servicos}','{valor}','{negocio}','{assinatura}'],
   agCancelar:  ['{cliente}','{clienteCompleto}','{data}','{diaSemana}','{hora}','{servicos}','{valor}','{negocio}','{assinatura}'],
-  cobUma:      ['{cliente}','{clienteCompleto}','{descricao}','{valor}','{vencimento}','{dias}','{negocio}','{assinatura}'],
+  cobUma:      ['{cliente}','{clienteCompleto}','{descricao}','{valor}','{valorTotal}','{vencimento}','{dias}','{negocio}','{assinatura}'],
   cobVarias:   ['{cliente}','{clienteCompleto}','{lista}','{total}','{negocio}','{assinatura}']
 };
 function modeloMensagem(chave){
@@ -1545,7 +1786,7 @@ function normalizarItem(it){
 }
 function migrarDados(){
   const antes = JSON.stringify(state);
-  ['clientes','servicos','titulos','contratos','movimentacoes','contas','categorias','categoriasServico','agendamentos'].forEach(function(k){
+  ['clientes','servicos','titulos','contratos','movimentacoes','contas','categorias','categoriasServico','agendamentos','compras','contasPagar'].forEach(function(k){
     if(!Array.isArray(state[k])) state[k] = [];
   });
   if(!state.config || typeof state.config!=='object') state.config = {nomeSalao:'', whatsapp:''};
@@ -1562,9 +1803,14 @@ function migrarDados(){
     state.categoriasServico = CATEGORIAS_SERVICO_PADRAO.map(function(c){ return {id:c.id, nome:c.nome, ativo:true, criadoEm:Date.now()}; });
   }
   // todo registro precisa de id único e estável
-  ['clientes','servicos','titulos','contratos','movimentacoes','contas','categorias','categoriasServico','agendamentos'].forEach(function(k){
+  ['clientes','servicos','titulos','contratos','movimentacoes','contas','categorias','categoriasServico','agendamentos','compras','contasPagar'].forEach(function(k){
     state[k].forEach(function(r){ if(r && typeof r==='object' && !r.id) r.id = uidGen(); });
   });
+  state.titulos.forEach(function(t){
+    if(t.pago===undefined) t.pago = (t.status==='pago') ? Number(t.valor||0) : 0;
+    if(!Array.isArray(t.pagamentos)) t.pagamentos = [];
+  });
+  state.contasPagar.forEach(function(c){ if(!c.status) c.status = 'pendente'; });
   state.categoriasServico.forEach(function(c){ if(c.ativo===undefined) c.ativo = true; });
   state.servicos.forEach(function(sv){
     if(sv.categoriaId===undefined) sv.categoriaId = null;
@@ -1744,6 +1990,7 @@ document.addEventListener('click', function(e){
   if(!alvo) return;
   if(alvo.dataset.filtro==='pendentes'){ vendasFiltro='tudo'; vendasStatus='pendentes'; document.querySelectorAll('#vendasTabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.vendas==='tudo'); }); }
   if(alvo.dataset.sub) servicosTab = alvo.dataset.sub;
+  if(alvo.dataset.caixaApagar){ caixaTipo = 'apagar'; caixaFiltro = 'tudo'; }
   switchView(alvo.dataset.ir);
 });
 function openFicha(clienteId){
@@ -1771,7 +2018,7 @@ document.getElementById('fabPrimary').onclick = function(){
   if(active==='view-clientes') openClienteSheet();
   else if(active==='view-agenda') abrirAgendamento(null, {data: agendaData});
   else if(active==='view-vendas') openVendaSheet();
-  else if(active==='view-caixa') openMovimentacaoSheet();
+  else if(active==='view-caixa') document.getElementById('sheetCaixaRapido').classList.add('open');
   else if(active==='view-contas') openContaSheet();
   else if(active==='view-servicos'){ if(servicosTab==='categorias') openCatServSheet(); else openServicoSheet(); }
   else if(active==='view-catfin') openCategoriaSheet();
@@ -1803,18 +2050,24 @@ function renderDashboard(){
   const entradasMes = movMes.filter(function(m){return m.tipo==='entrada';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
   const saidasMes = movMes.filter(function(m){return m.tipo==='saida';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
   document.getElementById('kpiSaldoMes').textContent = fmtMoney(saldoTotalContas());
-  document.getElementById('kpiEntradasMes').textContent = 'Entradas do mês: '+fmtMoney(entradasMes);
-  document.getElementById('kpiSaidasMes').textContent = 'Saídas do mês: '+fmtMoney(saidasMes);
+  document.getElementById('kpiEntradasMes').textContent = fmtMoney(entradasMes);
+  document.getElementById('kpiSaidasMes').textContent = fmtMoney(saidasMes);
+  const somaFluxo = entradasMes + saidasMes;
+  const pctEnt = somaFluxo ? Math.round(entradasMes/somaFluxo*100) : 0;
+  const barEnt = document.getElementById('heroBarEnt');
+  const barSai = document.getElementById('heroBarSai');
+  if(barEnt){ barEnt.style.width = pctEnt+'%'; }
+  if(barSai){ barSai.style.width = (somaFluxo ? 100-pctEnt : 0)+'%'; }
 
-  const pendentes = state.titulos.filter(function(t){return t.status==='pendente';});
-  const totalPendente = pendentes.reduce(function(s,t){return s+Number(t.valor||0);},0);
+  const pendentes = state.titulos.filter(function(t){return t.status!=='pago' && saldoTitulo(t)>0;});
+  const totalPendente = pendentes.reduce(function(s,t){return s+saldoTitulo(t);},0);
   document.getElementById('kpiAReceber').textContent = fmtMoney(totalPendente);
   document.getElementById('kpiAReceberSub').textContent = pendentes.length+' cobrança(s) em aberto';
 
   const atrasados = pendentes.filter(function(t){ return diffDias(t.vencimento) > 0; });
-  const totalAtraso = atrasados.reduce(function(s,t){return s+Number(t.valor||0);},0);
+  const totalAtraso = atrasados.reduce(function(s,t){return s+saldoTitulo(t);},0);
   const porCliente = {};
-  atrasados.forEach(function(t){ porCliente[t.clienteId] = (porCliente[t.clienteId]||0) + Number(t.valor||0); });
+  atrasados.forEach(function(t){ porCliente[t.clienteId] = (porCliente[t.clienteId]||0) + saldoTitulo(t); });
   const clientesAtrasoIds = Object.keys(porCliente);
   document.getElementById('kpiInadim').textContent = fmtMoney(totalAtraso);
   document.getElementById('kpiInadimSub').textContent = clientesAtrasoIds.length+' cliente(s) em atraso';
@@ -1823,12 +2076,17 @@ function renderDashboard(){
   movMes.filter(function(m){return m.tipo==='saida';}).forEach(function(m){ const k = m.categoriaId||''; porCat[k] = (porCat[k]||0) + Number(m.valor||0); });
   const catIds = Object.keys(porCat).sort(function(a,b){return porCat[b]-porCat[a];});
   const boxCat = document.getElementById('dashCategorias');
+  const totCat = document.getElementById('dashCatTotal');
+  if(totCat){ totCat.textContent = saidasMes ? fmtMoney(saidasMes) : ''; }
   if(catIds.length===0){
     boxCat.innerHTML = '<div class="empty" style="padding:20px">Nenhuma saída lançada neste mês.</div>';
   } else {
+    const maiorCat = Math.max.apply(null, catIds.map(function(k){ return porCat[k]; }));
     boxCat.innerHTML = catIds.map(function(k){
       const pct = saidasMes ? Math.round(porCat[k]/saidasMes*100) : 0;
-      return '<div class="cat-row"><div class="top"><span>'+catNome(k)+'</span><span>'+fmtMoney(porCat[k])+' · '+pct+'%</span></div><div class="bar"><span style="width:'+pct+'%"></span></div></div>';
+      const larg = maiorCat ? Math.max(4, Math.round(porCat[k]/maiorCat*100)) : 0;
+      return '<div class="cat-row"><div class="top"><span>'+esc(catNome(k))+'</span><span><b>'+fmtMoney(porCat[k])+'</b> · '+pct+'%</span></div>'
+        +'<div class="bar"><span style="width:'+larg+'%"></span></div></div>';
     }).join('');
   }
 
@@ -1921,6 +2179,10 @@ function renderVendas(){
 }
 
 /* ================= CAIXA ================= */
+(function(){
+  const bc = document.getElementById('buscaCaixa');
+  if(bc) bc.addEventListener('input', function(){ caixaBusca = bc.value.trim(); renderCaixa(); });
+})();
 document.querySelectorAll('#caixaTabs button').forEach(function(btn){
   btn.onclick = function(){
     caixaFiltro = btn.dataset.caixa;
@@ -1928,31 +2190,176 @@ document.querySelectorAll('#caixaTabs button').forEach(function(btn){
     renderCaixa();
   };
 });
+let caixaTipo = 'todos';
+let caixaConta = '';
+let caixaBusca = '';
+document.getElementById('caixaTipo').onchange = function(e){ caixaTipo = e.target.value; renderCaixa(); };
+function movDoPeriodo(m){
+  const hoje = todayISO();
+  if(caixaFiltro==='hoje') return m.data===hoje;
+  if(caixaFiltro==='mes') return m.data.slice(0,7)===hoje.slice(0,7);
+  return true;
+}
+function cardContaPagar(c){
+  const dias = diffDias(c.vencimento);
+  const badge = c.status==='pago' ? '<span class="badge ok">Paga</span>'
+    : (dias>0 ? '<span class="badge late">'+dias+'d atraso</span>' : (dias===0 ? '<span class="badge today">Vence hoje</span>' : '<span class="badge pending">A vencer</span>'));
+  const acoes = c.status==='pago' ? '' : '<div class="action-row"><button class="chip-btn on-success" data-pagar-conta="'+c.id+'">Marcar como paga</button></div>';
+  return '<div class="list-item"><div class="stripe" style="background:'+(c.status==='pago'?'var(--success)':(dias>0?'var(--danger)':'var(--warn)'))+'"></div>'
+    +'<div class="main"><div class="title">'+esc(c.descricao)+'</div>'
+    +'<div class="meta">Vence '+fmtDateBR(c.vencimento)+' · '+badge+(c.totalParcelas>1 ? ' · parcela '+c.parcela+'/'+c.totalParcelas : '')+'</div>'
+    +'<div class="meta">'+catNome(c.categoriaId)+(c.fornecedor ? ' · '+esc(c.fornecedor) : '')+'</div>'+acoes
+    +'<div class="icon-row">'+iconDeleteBtn('data-excluir-conta-pagar="'+c.id+'"')+'</div></div>'
+    +'<div class="right out">'+fmtMoney(c.valor)+'</div></div>';
+}
+function rotuloDia(iso){
+  const hoje = todayISO();
+  const curta = fmtDateBR(iso).slice(0,5);
+  if(iso===hoje) return 'Hoje · '+curta;
+  if(iso===somarDias(hoje,-1)) return 'Ontem · '+curta;
+  return DIAS_CURTOS[dataISOparaDate(iso).getDay()]+', '+curta;
+}
+function movDaConta(m){
+  if(!caixaConta) return true;
+  if(m.tipo==='transferencia') return m.contaOrigemId===caixaConta || m.contaDestinoId===caixaConta;
+  return m.contaId===caixaConta;
+}
+function movDaBusca(m){
+  if(!caixaBusca) return true;
+  const alvo = [m.descricao||'', contaNome(m.contaId), catNome(m.categoriaId),
+    m.tipo==='transferencia' ? contaNome(m.contaOrigemId)+' '+contaNome(m.contaDestinoId) : ''].join(' ');
+  return semAcento(alvo).indexOf(semAcento(caixaBusca))>=0;
+}
+function cardMovimentacao(m){
+  let ic, cls, titulo, meta, valor;
+  if(m.tipo==='transferencia'){
+    ic = '⇄'; cls = 'tr';
+    titulo = contaNome(m.contaOrigemId)+' → '+contaNome(m.contaDestinoId);
+    meta = m.descricao ? esc(m.descricao) : 'Transferência entre contas';
+    valor = '<div class="mv-vl">'+fmtMoney(m.valor)+'</div>';
+  } else {
+    const entrada = m.tipo==='entrada';
+    ic = entrada ? '↑' : '↓'; cls = entrada ? 'in' : 'out';
+    titulo = esc(m.descricao);
+    meta = contaNome(m.contaId)+' · '+catNome(m.categoriaId);
+    valor = '<div class="mv-vl '+cls+'">'+(entrada?'+ ':'- ')+fmtMoney(m.valor)+'</div>';
+  }
+  const acoes = m.tipo==='transferencia'
+    ? '<div class="icon-row">'+iconDeleteBtn('data-excluir-transf="'+m.id+'"')+'</div>'
+    : (m.origem==='manual' ? '<div class="icon-row">'+iconEditBtn('data-editar-mov="'+m.id+'"')+iconDeleteBtn('data-excluir-mov="'+m.id+'"')+'</div>' : '');
+  return '<div class="mov'+(acoes?' tem-acoes':'')+'">'
+    +'<span class="mv-ic '+cls+'">'+ic+'</span>'
+    +'<div class="mv-tx"><div class="mv-ti">'+titulo+'</div><div class="mv-me">'+meta+'</div>'+acoes+'</div>'
+    +valor+'</div>';
+}
 function renderCaixa(){
-  const mesAtual = todayISO().slice(0,7);
-  let list = state.movimentacoes.slice();
-  if(caixaFiltro==='mes') list = list.filter(function(m){ return m.data.slice(0,7)===mesAtual; });
-  list.sort(function(a,b){ return b.data.localeCompare(a.data) || (b.criadoEm||0)-(a.criadoEm||0); });
-
   const box = document.getElementById('caixaList');
-  if(list.length===0){
-    box.innerHTML = '<div class="empty"><div class="display">Nenhuma movimentação</div>Toque no + para lançar uma entrada ou saída.</div>';
+  if(!box) return;
+  document.querySelectorAll('#caixaTabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.caixa===caixaFiltro); });
+
+  const movs = state.movimentacoes.filter(movDoPeriodo);
+  const aPagar = state.contasPagar.filter(function(c){return c.status!=='pago';});
+  const totalAPagar = aPagar.reduce(function(s,c){return s+Number(c.valor||0);},0);
+
+  // --- aviso de contas a pagar ---
+  const hoje = todayISO(), limite = somarDias(hoje, 7);
+  const proximas = aPagar.filter(function(c){ return c.vencimento <= limite; });
+  const vencidas = aPagar.filter(function(c){ return c.vencimento < hoje; });
+  const alerta = document.getElementById('caixaAlerta');
+  if(proximas.length && caixaTipo!=='apagar'){
+    const foco = vencidas.length ? vencidas : proximas;
+    const totalFoco = foco.reduce(function(s,c){return s+Number(c.valor||0);},0);
+    const extra = vencidas.length && proximas.length>vencidas.length
+      ? ' · +'+(proximas.length-vencidas.length)+' esta semana' : ' · toque para ver';
+    alerta.innerHTML = '<button type="button" class="caixa-alerta'+(vencidas.length?' urgente':'')+'" id="btnVerAPagar">'
+      +'<span class="al-ic">'+(vencidas.length?'⚠️':'📌')+'</span>'
+      +'<span class="al-tx"><b>'+(vencidas.length ? vencidas.length+' conta(s) vencida(s)' : proximas.length+' conta(s) vencem esta semana')+'</b>'
+      +'<small>'+fmtMoney(totalFoco)+extra+'</small></span><span class="al-ch">›</span></button>';
+    document.getElementById('btnVerAPagar').onclick = function(){ caixaTipo = 'apagar'; renderCaixa(); };
+  } else { alerta.innerHTML = ''; }
+
+  // --- saldo por conta ---
+  const strip = document.getElementById('caixaContas');
+  const saldoGeral = saldoTotalContas();
+  strip.innerHTML = '<button type="button" class="cb-total'+(caixaConta?'':' on')+'" data-conta-filtro="">'
+      +'<span class="cb-lb">Saldo total<small>'+state.contas.length+' conta(s)</small></span>'
+      +'<b class="cb-tv '+(saldoGeral<0?'out':'')+'">'+fmtMoney(saldoGeral)+'</b></button>'
+    + (state.contas.length ? '<div class="cb-linhas">'
+      + state.contas.map(function(c){
+          const sal = contaSaldo(c.id);
+          return '<button type="button" class="cb-linha'+(caixaConta===c.id?' on':'')+'" data-conta-filtro="'+c.id+'">'
+            +'<span class="cb-nm">'+esc(c.nome)+'</span>'
+            +'<b class="cb-vl '+(sal<0?'out':'')+'">'+fmtMoney(sal)+'</b></button>';
+        }).join('') + '</div>' : '');
+  strip.querySelectorAll('[data-conta-filtro]').forEach(function(b){
+    b.onclick = function(){ caixaConta = b.dataset.contaFiltro; renderCaixa(); };
+  });
+
+  // --- resumo do período ---
+  const doPeriodo = movs.filter(movDaConta);
+  const entradas = doPeriodo.filter(function(m){return m.tipo==='entrada';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
+  const saidas = doPeriodo.filter(function(m){return m.tipo==='saida';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
+  const sobrou = entradas - saidas;
+  document.getElementById('caixaResumo').innerHTML =
+    '<div class="ck in"><span class="ck-lb">Entradas</span><b class="ck-vl">'+fmtMoney(entradas)+'</b></div>'
+    +'<div class="ck out"><span class="ck-lb">Saídas</span><b class="ck-vl">'+fmtMoney(saidas)+'</b></div>'
+    +'<div class="ck res"><span class="ck-lb">Sobrou</span><b class="ck-vl '+(sobrou<0?'neg':'pos')+'">'+(sobrou<0?'- ':'')+fmtMoney(Math.abs(sobrou))+'</b></div>';
+
+  // --- filtro de tipo ---
+  const opcoes = [['todos','Tudo ('+doPeriodo.length+')'],['entrada','Só entradas ('+doPeriodo.filter(function(m){return m.tipo==='entrada';}).length+')'],
+    ['saida','Só saídas ('+doPeriodo.filter(function(m){return m.tipo==='saida';}).length+')'],
+    ['transferencia','Transferências ('+doPeriodo.filter(function(m){return m.tipo==='transferencia';}).length+')'],
+    ['apagar','Contas a pagar ('+aPagar.length+')']];
+  const sel = document.getElementById('caixaTipo');
+  sel.innerHTML = opcoes.map(function(o){ return '<option value="'+o[0]+'">'+o[1]+'</option>'; }).join('');
+  sel.value = caixaTipo;
+  const rotulos = {todos:'Filtrar', entrada:'Entradas', saida:'Saídas', transferencia:'Transferências', apagar:'A pagar'};
+  document.getElementById('caixaTipoLabel').textContent = rotulos[caixaTipo] || 'Filtrar';
+  document.getElementById('caixaFiltroBtn').classList.toggle('on', caixaTipo!=='todos');
+
+  if(caixaTipo==='apagar'){
+    const lista = state.contasPagar.slice().sort(function(a,b){ return (a.status==='pago')-(b.status==='pago') || a.vencimento.localeCompare(b.vencimento); });
+    box.innerHTML = lista.length
+      ? '<div class="rec-group" style="margin-bottom:12px"><div class="rec-head" style="--c:var(--warn)"><span><i></i>Em aberto · '+aPagar.length+'</span><b>'+fmtMoney(totalAPagar)+'</b></div></div>'
+        + lista.map(cardContaPagar).join('')
+      : '<div class="empty"><div class="display">Nenhuma conta a pagar</div>Toque no + e escolha "Compra parcelada" para lançar uma compra.</div>';
+    ligarAcoesContaPagar(box);
     return;
   }
-  box.innerHTML = list.map(function(m){
-    if(m.tipo==='transferencia'){
-      return '<div class="list-item">'
-        +'<div class="stripe" style="background:var(--accent)"></div>'
-        +'<div class="main"><div class="title">'+contaNome(m.contaOrigemId)+' → '+contaNome(m.contaDestinoId)+'</div><div class="meta">'+fmtDateBR(m.data)+(m.descricao ? ' · '+m.descricao : '')+'</div>'
-        +'<div class="icon-row">'+iconDeleteBtn('data-excluir-transf="'+m.id+'"')+'</div></div>'
-        +'<div class="right">'+fmtMoney(m.valor)+'</div></div>';
-    }
-    const acoes = m.origem==='manual' ? ('<div class="icon-row">'+iconEditBtn('data-editar-mov="'+m.id+'"')+iconDeleteBtn('data-excluir-mov="'+m.id+'"')+'</div>') : '';
-    return '<div class="list-item">'
-      +'<div class="stripe" style="background:'+(m.tipo==='entrada'?'var(--success)':'var(--danger)')+'"></div>'
-      +'<div class="main"><div class="title">'+m.descricao+'</div><div class="meta">'+fmtDateBR(m.data)+' · '+contaNome(m.contaId)+' · '+catNome(m.categoriaId)+'</div>'+acoes+'</div>'
-      +'<div class="right '+(m.tipo==='entrada'?'in':'out')+'">'+(m.tipo==='entrada'?'+ ':'- ')+fmtMoney(m.valor)+'</div></div>';
+
+  let list = doPeriodo.slice();
+  if(caixaTipo!=='todos') list = list.filter(function(m){ return m.tipo===caixaTipo; });
+  list = list.filter(movDaBusca);
+  list.sort(function(a,b){ return b.data.localeCompare(a.data) || (b.criadoEm||0)-(a.criadoEm||0); });
+  if(list.length===0){
+    box.innerHTML = caixaBusca
+      ? '<div class="empty"><div class="display">Nada encontrado</div>Nenhum lançamento com "'+esc(caixaBusca)+'".</div>'
+      : '<div class="empty"><div class="display">Nenhuma movimentação</div>Toque no + para lançar uma entrada, uma saída ou uma compra parcelada.</div>';
+    return;
+  }
+
+  // --- agrupado por dia ---
+  const dias = [];
+  list.forEach(function(m){
+    let g = dias[dias.length-1];
+    if(!g || g.data!==m.data){ g = {data:m.data, itens:[]}; dias.push(g); }
+    g.itens.push(m);
+  });
+  box.innerHTML = dias.map(function(g){
+    const res = g.itens.reduce(function(s,m){ return s + (m.tipo==='entrada' ? Number(m.valor||0) : (m.tipo==='saida' ? -Number(m.valor||0) : 0)); }, 0);
+    return '<div class="dia-grupo"><div class="dia-head"><span>'+rotuloDia(g.data)+'</span>'
+      +'<b class="'+(res<0?'neg':'pos')+'">'+(res>0?'+ ':(res<0?'- ':''))+fmtMoney(Math.abs(res))+'</b></div>'
+      + g.itens.map(cardMovimentacao).join('') + '</div>';
   }).join('');
+
+  box.querySelectorAll('.mov.tem-acoes').forEach(function(el){
+    el.onclick = function(ev){
+      if(ev.target.closest('.icon-row')) return;
+      const aberto = el.classList.contains('aberto');
+      box.querySelectorAll('.mov.aberto').forEach(function(o){ o.classList.remove('aberto'); });
+      if(!aberto) el.classList.add('aberto');
+    };
+  });
   box.querySelectorAll('[data-editar-mov]').forEach(function(el){
     el.onclick = function(){ openMovimentacaoSheet(el.dataset.editarMov); };
   });
@@ -1976,6 +2383,19 @@ function renderCaixa(){
   });
 }
 
+function ligarAcoesContaPagar(box){
+  box.querySelectorAll('[data-pagar-conta]').forEach(function(b){ b.onclick = function(){ abrirPagarConta(b.dataset.pagarConta); }; });
+  box.querySelectorAll('[data-excluir-conta-pagar]').forEach(function(b){
+    b.onclick = function(){
+      const c = state.contasPagar.find(function(x){return x.id===b.dataset.excluirContaPagar;});
+      if(!c) return;
+      askConfirm(c.status==='pago' ? 'Excluir esta parcela já paga? A saída lançada no caixa continua registrada.' : 'Excluir esta parcela a pagar?', function(){
+        deleteDoc('contasPagar', c.id);
+        toast('Parcela excluída.');
+      });
+    };
+  });
+}
 const sheetMov = document.getElementById('sheetMovimentacao');
 let movTipoAtual = 'entrada';
 document.querySelectorAll('#movSeg button').forEach(function(btn){
@@ -2201,10 +2621,10 @@ document.getElementById('btnExcluirVenda').onclick = function(){
 
 /* ================= CLIENTES (lista) ================= */
 function clienteEmAberto(clienteId){
-  return state.titulos.filter(function(t){return t.clienteId===clienteId && t.status==='pendente';}).reduce(function(s,t){return s+Number(t.valor||0);},0);
+  return state.titulos.filter(function(t){return t.clienteId===clienteId && t.status!=='pago';}).reduce(function(s,t){return s+saldoTitulo(t);},0);
 }
 function clienteAtrasado(clienteId){
-  return state.titulos.some(function(t){return t.clienteId===clienteId && t.status==='pendente' && diffDias(t.vencimento)>0;});
+  return state.titulos.some(function(t){return t.clienteId===clienteId && t.status!=='pago' && saldoTitulo(t)>0 && diffDias(t.vencimento)>0;});
 }
 function renderClientes(){
   const busca = (document.getElementById('buscaCliente').value||'').toLowerCase();
@@ -2312,8 +2732,8 @@ function renderFicha(){
   renderFichaExtras(c);
 
   const titulosCliente = state.titulos.filter(function(t){return t.clienteId===c.id;}).sort(function(a,b){return b.vencimento.localeCompare(a.vencimento);});
-  const emAberto = titulosCliente.filter(function(t){return t.status==='pendente';}).reduce(function(s,t){return s+Number(t.valor||0);},0);
-  const pago = titulosCliente.filter(function(t){return t.status==='pago';}).reduce(function(s,t){return s+Number(t.valor||0);},0);
+  const emAberto = titulosCliente.reduce(function(s,t){return s+saldoTitulo(t);},0);
+  const pago = titulosCliente.reduce(function(s,t){return s+tituloPago(t);},0);
   document.getElementById('fichaEmAberto').textContent = fmtMoney(emAberto);
   document.getElementById('fichaPago').textContent = fmtMoney(pago);
 
@@ -2323,9 +2743,9 @@ function renderFicha(){
   } else {
     boxTit.innerHTML = titulosCliente.map(function(t){
       const dias = diffDias(t.vencimento);
-      const atrasado = t.status==='pendente' && dias>0;
+      const atrasado = t.status!=='pago' && dias>0;
       const badge = badgeTitulo(t);
-      const acoesPendente = t.status==='pendente' ? ('<button class="chip-btn on-success" data-pagar="'+t.id+'">Marcar como pago</button>'+(atrasado ? '<button class="chip-btn" data-cobrar="'+t.id+'">Cobrar no WhatsApp</button>' : '')) : '';
+      const acoesPendente = t.status!=='pago' ? ('<button class="chip-btn on-success" data-pagar="'+t.id+'">'+(tituloPago(t)>0?'Receber saldo':'Registrar pagamento')+'</button>'+(atrasado ? '<button class="chip-btn" data-cobrar="'+t.id+'">Cobrar no WhatsApp</button>' : '')) : '';
       const acoes = acoesPendente ? ('<div class="action-row">'+acoesPendente+'</div>') : '';
       const icones = '<div class="icon-row">'+iconEditBtn('data-editar-titulo="'+t.id+'"')+iconDeleteBtn('data-excluir-titulo="'+t.id+'"')+'</div>';
       const checkbox = atrasado ? ('<input type="checkbox" class="cobranca-check" data-check="'+t.id+'"'+(selecionadosCobranca.indexOf(t.id)>-1?' checked':'')+'>') : '';
@@ -2336,7 +2756,7 @@ function renderFicha(){
         +'<div class="right">'+fmtMoney(t.valor)+'</div></div>';
     }).join('');
   }
-  selecionadosCobranca = selecionadosCobranca.filter(function(id){ return titulosCliente.some(function(t){return t.id===id && t.status==='pendente' && diffDias(t.vencimento)>0;}); });
+  selecionadosCobranca = selecionadosCobranca.filter(function(id){ return titulosCliente.some(function(t){return t.id===id && t.status!=='pago' && diffDias(t.vencimento)>0;}); });
   atualizarBotaoCobrarSelecionadas();
   boxTit.querySelectorAll('[data-check]').forEach(function(cb){
     cb.onchange = function(){
@@ -2350,12 +2770,7 @@ function renderFicha(){
   boxTit.querySelectorAll('[data-pagar]').forEach(function(btn){
     btn.onclick = function(){
       const t = state.titulos.find(function(x){return x.id===btn.dataset.pagar;});
-      setDoc('titulos', t.id, {status:'pago', pagoEm: todayISO()});
-      addDoc('movimentacoes', {
-        tipo:'entrada', descricao: t.descricao+' — '+clienteNome(t.clienteId),
-        valor:t.valor, data: todayISO(), origem:'titulo', tituloId:t.id, clienteId:t.clienteId, contaId: contaPadraoId()
-      });
-      toast('Pagamento registrado.');
+      abrirPagamento(t.id, true);
     };
   });
   boxTit.querySelectorAll('[data-cobrar]').forEach(function(btn){
@@ -2405,7 +2820,7 @@ function dadosCobranca(clienteId, extras){
 function cobrarWhatsApp(t){
   const fone = foneWhats(clienteFone(t.clienteId));
   const msg = preencherModelo(modeloMensagem('cobUma'), dadosCobranca(t.clienteId, {
-    descricao: t.descricao, valor: fmtMoney(t.valor), vencimento: fmtDateBR(t.vencimento), dias: Math.max(0, diffDias(t.vencimento))
+    descricao: t.descricao, valor: fmtMoney(saldoTitulo(t)), valorTotal: fmtMoney(t.valor), vencimento: fmtDateBR(t.vencimento), dias: Math.max(0, diffDias(t.vencimento))
   }));
   const url = fone ? ('https://wa.me/'+fone+'?text='+encodeURIComponent(msg)) : ('https://wa.me/?text='+encodeURIComponent(msg));
   window.open(url, '_blank');
@@ -2425,8 +2840,8 @@ document.getElementById('btnCobrarSelecionadas').onclick = function(){
   if(titulos.length===0) return;
   const c = clienteById(currentClienteId);
   const fone = foneWhats(c.telefone);
-  const linhas = titulos.map(function(t){ return '• '+t.descricao+' — '+fmtMoney(t.valor)+' (venceu '+fmtDateBR(t.vencimento)+')'; }).join('\n');
-  const total = titulos.reduce(function(s,t){return s+Number(t.valor||0);},0);
+  const linhas = titulos.map(function(t){ return '• '+t.descricao+' — '+fmtMoney(saldoTitulo(t))+' (venceu '+fmtDateBR(t.vencimento)+')'; }).join('\n');
+  const total = titulos.reduce(function(s,t){return s+saldoTitulo(t);},0);
   const msg = preencherModelo(modeloMensagem('cobVarias'), dadosCobranca(c.id, {lista: linhas, total: fmtMoney(total)}));
   const url = fone ? ('https://wa.me/'+fone+'?text='+encodeURIComponent(msg)) : ('https://wa.me/?text='+encodeURIComponent(msg));
   window.open(url, '_blank');
@@ -2935,7 +3350,7 @@ document.getElementById('btnFichaWhats').onclick = function(){
 function renderFichaExtras(c){
   const tits = state.titulos.filter(function(t){return t.clienteId===c.id;});
   const cont = {vencido:[0,0], hoje:[0,0], avencer:[0,0], pago:[0,0]};
-  tits.forEach(function(t){ const st = statusTitulo(t); cont[st][0]++; cont[st][1]+=Number(t.valor||0); });
+  tits.forEach(function(t){ const st = statusTitulo(t); cont[st][0]++; cont[st][1]+= (st==='pago' ? tituloPago(t) : saldoTitulo(t)); });
   document.getElementById('fichaStatusResumo').innerHTML = [['vencido','Vencidos','var(--danger)'],['hoje','Vence hoje','var(--warn)'],['avencer','A vencer','var(--accent)'],['pago','Pagos','var(--success)']].map(function(x){
     return '<div class="ss" style="--c:'+x[2]+'"><span>'+x[1]+'</span><b>'+cont[x[0]][0]+'</b><small>'+fmtMoney(cont[x[0]][1])+'</small></div>';
   }).join('');
@@ -2989,6 +3404,8 @@ function renderDashboardExtras(){
   document.getElementById('kpiClientes').textContent = state.clientes.length;
   const agHoje = agDoDia(hoje);
   document.getElementById('kpiAgHoje').textContent = agHoje.filter(agAtivo).length;
+  const aPagarAbertas = state.contasPagar.filter(function(c){return c.status!=='pago';});
+  document.getElementById('kpiAPagar').textContent = fmtMoney(aPagarAbertas.reduce(function(s,c){return s+Number(c.valor||0);},0));
 
   const boxHoje = document.getElementById('dashAgendaHoje');
   boxHoje.innerHTML = agHoje.length ? agHoje.map(function(a){return cardAgendamento(a,false);}).join('') : '<div class="empty" style="padding:20px">Nenhum atendimento hoje.</div>';
@@ -2999,15 +3416,15 @@ function renderDashboardExtras(){
   boxProx.innerHTML = prox.length ? prox.map(function(a){return cardAgendamento(a,true);}).join('') : '<div class="empty" style="padding:20px">Sem próximos agendamentos.</div>';
   ligarCardsAg(boxProx);
 
-  const pend = state.titulos.filter(function(t){return t.status==='pendente';}).sort(function(a,b){return a.vencimento.localeCompare(b.vencimento);});
+  const pend = state.titulos.filter(function(t){return t.status!=='pago' && saldoTitulo(t)>0;}).sort(function(a,b){return a.vencimento.localeCompare(b.vencimento);});
   const grupos = [['vencido','Vencidos'],['hoje','Vencem hoje'],['avencer','A vencer']];
   const boxRec = document.getElementById('dashRecebimentos');
   const html = grupos.map(function(g){
     const lista = pend.filter(function(t){return statusTitulo(t)===g[0];});
     if(!lista.length) return '';
-    const total = lista.reduce(function(s,t){return s+Number(t.valor||0);},0);
+    const total = lista.reduce(function(s,t){return s+saldoTitulo(t);},0);
     return '<div class="rec-group"><div class="rec-head" style="--c:'+corTitulo(lista[0])+'"><span><i></i>'+g[1]+' · '+lista.length+'</span><b>'+fmtMoney(total)+'</b></div>'
-      + lista.slice(0,4).map(function(t){ return '<div class="rec-row" data-cliente="'+t.clienteId+'"><span>'+esc(clienteNome(t.clienteId))+'<small>'+esc(t.descricao)+' · '+fmtDateBR(t.vencimento)+'</small></span><b>'+fmtMoney(t.valor)+'</b></div>'; }).join('')
+      + lista.slice(0,4).map(function(t){ return '<div class="rec-row" data-cliente="'+t.clienteId+'"><span>'+esc(clienteNome(t.clienteId))+'<small>'+esc(t.descricao)+' · '+fmtDateBR(t.vencimento)+'</small></span><b>'+fmtMoney(saldoTitulo(t))+'</b></div>'; }).join('')
       + (lista.length>4 ? '<div class="rec-more">+ '+(lista.length-4)+' outro(s)</div>' : '') + '</div>';
   }).join('');
   boxRec.innerHTML = html || '<div class="empty" style="padding:20px">Nenhum recebimento pendente. 🎉</div>';
@@ -3041,7 +3458,7 @@ function exemploMensagem(chave){
     duracao:'1h', servicos:'Corte feminino + Escova', valor:fmtMoney(150), quando:'de amanhã',
     negocio: (state.config.nomeSalao||'').trim() || 'nosso negócio',
     assinatura: (state.config.nomeSalao||'').trim() ? '\n\n— '+state.config.nomeSalao.trim() : '',
-    descricao:'Coloração', vencimento:'05/09/2026', dias:'19',
+    descricao:'Coloração', vencimento:'05/09/2026', dias:'19', valorTotal:fmtMoney(180),
     lista:'• Coloração — '+fmtMoney(180)+' (venceu 05/09/2026)\n• Hidratação — '+fmtMoney(120)+' (venceu 12/09/2026)', total:fmtMoney(300)};
   return preencherModelo(document.getElementById('msg-'+chave) ? document.getElementById('msg-'+chave).value : modeloMensagem(chave), base);
 }
@@ -3312,7 +3729,7 @@ document.getElementById('dtFechar').onclick = function(){ document.getElementByI
 document.querySelectorAll('#dtAtalhos button').forEach(function(b){
   b.onclick = function(){ escolherData(b.dataset.dt==='hoje' ? todayISO() : b.dataset.dt==='amanha' ? somarDias(todayISO(),1) : somarDias(todayISO(),7)); };
 });
-[['agData','Data do atendimento'],['vdData','Data da venda'],['cobVencimento','Vencimento'],['movData','Data do lançamento'],['trfData','Data da transferência'],['evData','Data'],['ccVencimento','Vencimento']].forEach(function(x){ tornarData(x[0], x[1]); });
+[['agData','Data do atendimento'],['vdData','Data da venda'],['cobVencimento','Vencimento'],['movData','Data do lançamento'],['trfData','Data da transferência'],['evData','Data'],['ccVencimento','Vencimento'],['cpVencimento','Vencimento da 1ª parcela'],['pcData','Data do pagamento'],['pgData','Data do recebimento'],['pgVencimento','Novo vencimento do saldo']].forEach(function(x){ tornarData(x[0], x[1]); });
 
 /* ---- telefone: (48) 99999-9999 enquanto digita ---- */
 function mascaraFone(v){
@@ -3364,6 +3781,9 @@ function atualizarSegmentados(){ SEGMENTADOS.forEach(desenharSegmentado); }
 ['vdPago','cobPago','ccPago','agStatus','ctTipo','servicoAtivo','catServAtivo'].forEach(tornarSegmentado);
 
 [['agInicio','Horário inicial','Escolher horário'],
+ ['cpCategoria','Categoria da compra','Sem categoria'],
+ ['pcConta','Conta que pagou','Selecione a conta'],
+ ['pgConta','Conta que recebeu','Selecione a conta'],
  ['vdCliente','Cliente','Venda avulsa (sem cliente)'],
  ['vdServico','Adicionar serviço','+ Adicionar serviço',1],
  ['vdConta','Conta que recebeu','Selecione a conta'],
@@ -3380,6 +3800,181 @@ function atualizarSegmentados(){ SEGMENTADOS.forEach(desenharSegmentado); }
  ['servicoCategoria','Categoria do serviço','Sem categoria'],
  ['cfgContaPadrao','Conta padrão','Selecione a conta']
 ].forEach(function(x){ tornarBuscavel(x[0], {titulo:x[1], vazio:x[2], ocultarVazio:x[3]}); });
+
+document.querySelectorAll('#sheetCaixaRapido [data-caixa-acao]').forEach(function(b){
+  b.onclick = function(){
+    document.getElementById('sheetCaixaRapido').classList.remove('open');
+    const a = b.dataset.caixaAcao;
+    if(a==='mov') openMovimentacaoSheet();
+    else if(a==='compra') abrirCompra();
+    else if(a==='transf') document.getElementById('btnTransferir').click();
+    else { caixaTipo = 'apagar'; renderCaixa(); }
+  };
+});
+
+/* ================= COMPRAS PARCELADAS (contas a pagar) ================= */
+const sheetCompra = document.getElementById('sheetCompra');
+function proximoVencimento(iso, n){
+  const d = dataISOparaDate(iso), dia = d.getDate();
+  const alvo = new Date(d.getFullYear(), d.getMonth()+n, 1);
+  const ultimo = new Date(alvo.getFullYear(), alvo.getMonth()+1, 0).getDate();
+  alvo.setDate(Math.min(dia, ultimo));
+  return isoLocal(alvo);
+}
+function resumoCompra(){
+  const total = valorDo('cpTotal'), n = Math.max(1, Math.round(Number(document.getElementById('cpParcelas').value)||1));
+  const parcela = valorDo('cpParcela');
+  const venc = document.getElementById('cpVencimento').value || todayISO();
+  const box = document.getElementById('cpResumo');
+  if(!total && !parcela){ box.style.display='none'; box.innerHTML=''; return; }
+  box.style.display='block';
+  box.innerHTML = '<div class="sum-line"><span>Parcelas</span><span>'+n+'× '+fmtMoney(parcela)+'</span></div>'
+    +'<div class="sum-line"><span>1º vencimento</span><span>'+fmtDateBR(venc)+'</span></div>'
+    +'<div class="sum-line"><span>Último vencimento</span><span>'+fmtDateBR(proximoVencimento(venc, n-1))+'</span></div>'
+    +'<div class="sum-line total"><span>Total</span><b>'+fmtMoney(arred(parcela*n))+'</b></div>';
+}
+function recalcularParcela(){
+  const total = valorDo('cpTotal'), n = Math.max(1, Math.round(Number(document.getElementById('cpParcelas').value)||1));
+  if(total>0) porValor('cpParcela', arred(total/n));
+  resumoCompra();
+}
+function recalcularTotal(){
+  const parcela = valorDo('cpParcela'), n = Math.max(1, Math.round(Number(document.getElementById('cpParcelas').value)||1));
+  if(parcela>0) porValor('cpTotal', arred(parcela*n));
+  resumoCompra();
+}
+document.getElementById('cpTotal').addEventListener('input', recalcularParcela);
+document.getElementById('cpParcelas').addEventListener('input', recalcularParcela);
+document.getElementById('cpParcela').addEventListener('change', recalcularTotal);
+document.getElementById('cpVencimento').addEventListener('change', resumoCompra);
+function abrirCompra(){
+  document.getElementById('cpDescricao').value = '';
+  document.getElementById('cpFornecedor').value = '';
+  porValor('cpTotal',''); porValor('cpParcela','');
+  document.getElementById('cpParcelas').value = 1;
+  document.getElementById('cpVencimento').value = todayISO();
+  const sel = document.getElementById('cpCategoria');
+  const saidas = (state.categorias||[]).filter(function(c){return c.tipo==='saida';}).sort(function(a,b){return a.nome.localeCompare(b.nome);});
+  sel.innerHTML = '<option value="">Sem categoria</option>' + saidas.map(function(c){ return '<option value="'+c.id+'">'+esc(c.nome)+'</option>'; }).join('');
+  sel.value = saidas.some(function(c){return c.id==='cat-materiais';}) ? 'cat-materiais' : '';
+  resumoCompra();
+  atualizarBotoesSeletor(); atualizarBotoesData();
+  sheetCompra.classList.add('open');
+}
+document.getElementById('btnCancelarCompra').onclick = function(){ sheetCompra.classList.remove('open'); };
+document.getElementById('btnSalvarCompra').onclick = function(){
+  const descricao = document.getElementById('cpDescricao').value.trim();
+  const n = Math.max(1, Math.round(Number(document.getElementById('cpParcelas').value)||1));
+  const parcela = valorDo('cpParcela') || arred(valorDo('cpTotal')/n);
+  const venc = document.getElementById('cpVencimento').value || todayISO();
+  if(!descricao){ toast('Informe a descrição da compra.'); return; }
+  if(!parcela){ toast('Informe o valor total ou o valor da parcela.'); return; }
+  const compraId = addDoc('compras', {descricao:descricao, fornecedor: document.getElementById('cpFornecedor').value.trim(),
+    categoriaId: document.getElementById('cpCategoria').value || null, valorTotal: arred(parcela*n), parcelas:n, valorParcela:parcela, primeiroVencimento:venc});
+  for(let i=0;i<n;i++){
+    addDoc('contasPagar', {compraId:compraId, descricao: descricao + (n>1 ? ' ('+(i+1)+'/'+n+')' : ''), fornecedor: document.getElementById('cpFornecedor').value.trim(),
+      categoriaId: document.getElementById('cpCategoria').value || null, valor: parcela, vencimento: proximoVencimento(venc, i), status:'pendente', parcela:i+1, totalParcelas:n});
+  }
+  sheetCompra.classList.remove('open');
+  caixaTipo = 'apagar'; caixaFiltro = 'tudo';
+  switchView('caixa');
+  toast(n>1 ? n+' parcelas criadas em Contas a pagar.' : 'Conta a pagar criada.');
+};
+
+const sheetPagarConta = document.getElementById('sheetPagarConta');
+function abrirPagarConta(id){
+  const c = state.contasPagar.find(function(x){return x.id===id;});
+  if(!c) return;
+  if(state.contas.length===0){ toast('Cadastre uma conta antes.'); return; }
+  document.getElementById('pcId').value = id;
+  document.getElementById('pcSub').textContent = c.descricao + ' · vence ' + fmtDateBR(c.vencimento);
+  porValor('pcValor', c.valor);
+  document.getElementById('pcData').value = todayISO();
+  const sel = document.getElementById('pcConta');
+  sel.innerHTML = state.contas.map(function(k){ return '<option value="'+k.id+'">'+esc(k.nome)+'</option>'; }).join('');
+  sel.value = contaPadraoId()||'';
+  atualizarBotoesSeletor(); atualizarBotoesData();
+  sheetPagarConta.classList.add('open');
+}
+document.getElementById('btnCancelarPagarConta').onclick = function(){ sheetPagarConta.classList.remove('open'); };
+document.getElementById('btnConfirmarPagarConta').onclick = function(){
+  const c = state.contasPagar.find(function(x){return x.id===document.getElementById('pcId').value;});
+  if(!c) return;
+  const valor = valorDo('pcValor');
+  const data = document.getElementById('pcData').value || todayISO();
+  const contaId = document.getElementById('pcConta').value;
+  if(!valor){ toast('Informe o valor pago.'); return; }
+  if(!contaId){ toast('Selecione a conta que pagou.'); return; }
+  const movId = addDoc('movimentacoes', {tipo:'saida', descricao: c.descricao, valor:valor, data:data, contaId:contaId, categoriaId: c.categoriaId||'', origem:'conta-pagar', contaPagarId:c.id});
+  setDoc('contasPagar', c.id, {status:'pago', pagoEm:data, contaId:contaId, movimentacaoId:movId, valorPago:valor});
+  sheetPagarConta.classList.remove('open');
+  toast('Parcela paga e lançada no caixa.');
+};
+
+/* ================= PAGAMENTO (total ou parcial) DE UMA COBRANÇA ================= */
+const sheetPagamento = document.getElementById('sheetPagamento');
+let pgModo = 'total';
+document.querySelectorAll('#pgSeg button').forEach(function(b){
+  b.onclick = function(){
+    pgModo = b.dataset.pg;
+    document.querySelectorAll('#pgSeg button').forEach(function(x){ x.classList.remove('active','in','out'); });
+    b.classList.add('active', pgModo==='total' ? 'in' : 'out');
+    const t = state.titulos.find(function(x){return x.id===document.getElementById('pgTituloId').value;});
+    if(t && pgModo==='total') porValor('pgValor', saldoTitulo(t));
+    document.getElementById('pgVencField').style.display = pgModo==='parcial' ? 'block' : 'none';
+  };
+});
+function abrirPagamento(tituloId){
+  const t = state.titulos.find(function(x){return x.id===tituloId;});
+  if(!t) return;
+  if(state.contas.length===0){ toast('Cadastre uma conta antes.'); return; }
+  document.getElementById('pgTituloId').value = tituloId;
+  document.getElementById('pgSub').textContent = t.descricao + ' · ' + clienteNome(t.clienteId);
+  document.getElementById('pgResumo').innerHTML =
+    '<div class="sum-line"><span>Valor da cobrança</span><span>'+fmtMoney(t.valor)+'</span></div>'
+    +'<div class="sum-line"><span>Já recebido</span><span>'+fmtMoney(tituloPago(t))+'</span></div>'
+    +'<div class="sum-line total"><span>Falta receber</span><b>'+fmtMoney(saldoTitulo(t))+'</b></div>';
+  pgModo = 'total';
+  document.querySelectorAll('#pgSeg button').forEach(function(x){ x.classList.remove('active','in','out'); });
+  document.querySelector('#pgSeg button[data-pg="total"]').classList.add('active','in');
+  document.getElementById('pgVencField').style.display = 'none';
+  porValor('pgValor', saldoTitulo(t));
+  document.getElementById('pgData').value = todayISO();
+  document.getElementById('pgVencimento').value = t.vencimento;
+  const sel = document.getElementById('pgConta');
+  sel.innerHTML = state.contas.map(function(k){ return '<option value="'+k.id+'">'+esc(k.nome)+'</option>'; }).join('');
+  sel.value = contaPadraoId()||'';
+  const pags = (t.pagamentos||[]);
+  document.getElementById('pgHistorico').innerHTML = pags.length
+    ? '<div class="group-label">Pagamentos recebidos</div>'+pags.map(function(p){
+        return '<div class="rec-row" style="cursor:default"><span>'+fmtDateBR(p.data)+'<small>'+esc(contaNome(p.contaId))+'</small></span><b>'+fmtMoney(p.valor)+'</b></div>'; }).join('')
+    : '';
+  atualizarBotoesSeletor(); atualizarBotoesData();
+  sheetPagamento.classList.add('open');
+}
+document.getElementById('btnCancelarPagamento').onclick = function(){ sheetPagamento.classList.remove('open'); };
+document.getElementById('btnConfirmarPagamento').onclick = function(){
+  const t = state.titulos.find(function(x){return x.id===document.getElementById('pgTituloId').value;});
+  if(!t) return;
+  const valor = valorDo('pgValor');
+  const data = document.getElementById('pgData').value || todayISO();
+  const contaId = document.getElementById('pgConta').value;
+  if(!valor){ toast('Informe o valor recebido.'); return; }
+  if(!contaId){ toast('Selecione a conta que recebeu.'); return; }
+  const saldo = saldoTitulo(t);
+  if(valor > saldo + 0.005){ toast('O valor é maior que o saldo em aberto ('+fmtMoney(saldo)+').'); return; }
+  const pagoAgora = arred(tituloPago(t) + valor);
+  const quitado = pagoAgora >= arred(Number(t.valor||0)) - 0.005;
+  const pagamentos = (t.pagamentos||[]).concat([{id:uidGen(), valor:valor, data:data, contaId:contaId}]);
+  const dados = {pago: pagoAgora, pagamentos: pagamentos, status: quitado ? 'pago' : 'parcial'};
+  if(quitado) dados.pagoEm = data;
+  else if(pgModo==='parcial' && document.getElementById('pgVencimento').value) dados.vencimento = document.getElementById('pgVencimento').value;
+  setDoc('titulos', t.id, dados);
+  addDoc('movimentacoes', {tipo:'entrada', descricao: t.descricao + (quitado ? '' : ' (parcial)') + ' — ' + clienteNome(t.clienteId),
+    valor:valor, data:data, contaId:contaId, origem:'titulo', tituloId:t.id, clienteId:t.clienteId});
+  sheetPagamento.classList.remove('open');
+  toast(quitado ? 'Pagamento registrado. Cobrança quitada.' : 'Pagamento parcial registrado. Falta '+fmtMoney(arred(Number(t.valor)-pagoAgora))+'.');
+};
 
 /* ================= MENU RÁPIDO (+ da tela inicial) ================= */
 document.querySelectorAll('#sheetRapido [data-rapido]').forEach(function(b){
@@ -3829,6 +4424,8 @@ document.getElementById('importFile').onchange = function(e){
         categorias: imported.categorias||[],
         categoriasServico: imported.categoriasServico||[],
         agendamentos: imported.agendamentos||[],
+        compras: imported.compras||[],
+        contasPagar: imported.contasPagar||[],
         versaoDados: imported.versaoDados||1,
         config: Object.assign({nomeSalao:'', whatsapp:''}, imported.config||{})
       };
@@ -3945,11 +4542,11 @@ const CONTATO_LICENCA = 'o suporte do AJHA Finance';
   function status(txt){ document.getElementById('syncStatus').textContent = txt; }
   function temDados(st){ return ['clientes','titulos','movimentacoes','servicos','contratos'].some(function(k){ return (st[k]||[]).length>0; }); }
   function limparLocal(){
-    state = {clientes:[], servicos:[], titulos:[], contratos:[], movimentacoes:[], contas:[], categorias:[], categoriasServico:[], agendamentos:[], config:{nomeSalao:'', whatsapp:''}};
+    state = {clientes:[], servicos:[], titulos:[], contratos:[], movimentacoes:[], contas:[], categorias:[], categoriasServico:[], agendamentos:[], compras:[], contasPagar:[], config:{nomeSalao:'', whatsapp:''}};
     try{ localStorage.removeItem(LS_KEY); }catch(e){}
   }
   function aplicarEstado(obj){
-    state = Object.assign({clientes:[], servicos:[], titulos:[], contratos:[], movimentacoes:[], contas:[], categorias:[], categoriasServico:[], agendamentos:[]}, obj);
+    state = Object.assign({clientes:[], servicos:[], titulos:[], contratos:[], movimentacoes:[], contas:[], categorias:[], categoriasServico:[], agendamentos:[], compras:[], contasPagar:[]}, obj);
     state.config = Object.assign({nomeSalao:'', whatsapp:''}, obj.config||{});
     garantirContaPadrao();
     migrarDados();
