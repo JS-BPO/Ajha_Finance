@@ -309,12 +309,12 @@ nav.bottomnav button.active{color:var(--primary);}
 .caixa-alerta .al-tx b{display:block; font-size:13.5px;}
 .caixa-alerta .al-tx small{display:block; font-size:11.5px; color:var(--muted); margin-top:1px;}
 .caixa-alerta .al-ch{color:var(--muted); font-size:18px;}
-.caixa-kpis{display:grid; grid-template-columns:1fr 1fr 1.15fr; gap:8px; margin-top:8px;}
-.caixa-kpis .ck{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:11px 12px; min-width:0;}
+.caixa-kpis{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin-top:8px;}
+.caixa-kpis .ck{background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:11px 10px; min-width:0; overflow:hidden;}
 .caixa-kpis .ck.in{background:var(--success-soft); border-color:transparent;}
 .caixa-kpis .ck.out{background:var(--danger-soft); border-color:transparent;}
 .ck-lb{display:block; font-size:11px; font-weight:700; color:var(--muted);}
-.ck-vl{display:block; font-family:'Fraunces',serif; font-size:15px; font-weight:600; margin-top:3px; letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.ck-vl{display:block; font-family:'Fraunces',serif; font-size:15px; font-weight:600; margin-top:3px; letter-spacing:-.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding-right:1px;}
 .ck-vl.pos{color:var(--success);}
 .ck-vl.neg{color:var(--danger);}
 .dia-grupo{margin-bottom:16px;}
@@ -2486,6 +2486,22 @@ function cardPrevisto(p){
     +'<div class="mv-tx"><div class="mv-ti">'+esc(p.titulo)+'</div><div class="mv-me">'+esc(p.sub)+' · previsto</div></div>'
     +'<div class="mv-vl '+(entrada?'in':'out')+'">'+(entrada?'+ ':'- ')+fmtMoney(p.valor)+'</div></div>';
 }
+function caberTexto(el, maxPx, minPx){
+  if(!el) return;
+  el.style.fontSize = '';
+  let t = maxPx;
+  let guarda = 0;
+  while(el.scrollWidth > el.clientWidth && t > minPx && guarda < 60){
+    t -= 0.5; guarda++;
+    el.style.fontSize = t+'px';
+  }
+}
+function ajustarValores(){
+  document.querySelectorAll('#caixaResumo .ck-vl').forEach(function(el){ caberTexto(el, 15, 9.5); });
+  document.querySelectorAll('.contas-box .cb-tv').forEach(function(el){ caberTexto(el, 23, 15); });
+  document.querySelectorAll('.stat .st-vl').forEach(function(el){ caberTexto(el, 20, 13); });
+  document.querySelectorAll('.mini-stat b').forEach(function(el){ caberTexto(el, 17, 11); });
+}
 function mostrarBuscaCaixa(ver){
   const campo = document.getElementById('buscaCaixa');
   if(campo && campo.parentNode) campo.parentNode.style.display = ver ? '' : 'none';
@@ -2505,6 +2521,7 @@ function renderPrevisao(box){
     '<div class="ck in"><span class="ck-lb">A receber</span><b class="ck-vl">'+fmtMoney(receber)+'</b></div>'
     +'<div class="ck out"><span class="ck-lb">A pagar</span><b class="ck-vl">'+fmtMoney(pagar)+'</b></div>'
     +'<div class="ck res"><span class="ck-lb">Previsto</span><b class="ck-vl '+(saldo<0?'neg':'pos')+'">'+(saldo<0?'- ':'')+fmtMoney(Math.abs(saldo))+'</b></div>';
+  ajustarValores();
   if(itens.length===0){
     box.innerHTML = '<div class="empty"><div class="display">Nada previsto para '+nomeMes(mes)+'</div>Cobranças a vencer e parcelas de compras aparecem aqui.</div>';
     return;
@@ -2615,6 +2632,7 @@ function renderCaixa(){
     '<div class="ck in"><span class="ck-lb">Entradas</span><b class="ck-vl">'+fmtMoney(entradas)+'</b></div>'
     +'<div class="ck out"><span class="ck-lb">Saídas</span><b class="ck-vl">'+fmtMoney(saidas)+'</b></div>'
     +'<div class="ck res"><span class="ck-lb">Sobrou</span><b class="ck-vl '+(sobrou<0?'neg':'pos')+'">'+(sobrou<0?'- ':'')+fmtMoney(Math.abs(sobrou))+'</b></div>';
+  ajustarValores();
 
   if(caixaTipo==='apagar'){
     const hojeAP = todayISO();
@@ -2625,6 +2643,7 @@ function renderCaixa(){
       '<div class="ck out"><span class="ck-lb">Em aberto</span><b class="ck-vl">'+fmtMoney(totalAPagar)+'</b></div>'
       +'<div class="ck"><span class="ck-lb">Vencidas</span><b class="ck-vl '+(vencidasAP?'neg':'')+'">'+fmtMoney(vencidasAP)+'</b></div>'
       +'<div class="ck"><span class="ck-lb">Pagas no mês</span><b class="ck-vl pos">'+fmtMoney(pagasMes)+'</b></div>';
+    ajustarValores();
     const lista = state.contasPagar.slice().sort(function(a,b){ return (a.status==='pago')-(b.status==='pago') || a.vencimento.localeCompare(b.vencimento); });
     box.innerHTML = lista.length
       ? '<div class="rec-group" style="margin-bottom:12px"><div class="rec-head" style="--c:var(--warn)"><span><i></i>Em aberto · '+aPagar.length+'</span><b>'+fmtMoney(totalAPagar)+'</b></div></div>'
@@ -3714,6 +3733,7 @@ function renderFichaExtras(c){
 
 /* ================= DASHBOARD: faturamento, agenda e recebimentos ================= */
 function renderDashboardExtras(){
+  setTimeout(ajustarValores, 0);
   const hoje = todayISO(), mes = hoje.slice(0,7);
   const vendas = listarVendas();
   const vDia = vendas.filter(function(v){return v.data===hoje;}), vMes = vendas.filter(function(v){return v.data.slice(0,7)===mes;});

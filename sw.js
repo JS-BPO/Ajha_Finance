@@ -1,6 +1,6 @@
 /* AJHA Finance — service worker (funcionar sem internet)
    >>> Troque VERSAO toda vez que publicar uma mudança no app. <<< */
-const VERSAO = "ajha-finance-v21";
+const VERSAO = "ajha-finance-v22";
 const CASCA = ["./", "./index.html", "./manifest.webmanifest",
   "./icons/icon-192-b.png", "./icons/icon-512-b.png",
   "./icons/icon-maskable-b.png", "./icons/icon-180-b.png", "./icons/favicon-32.png"];
