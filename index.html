@@ -249,6 +249,22 @@ nav.bottomnav button.active{color:var(--primary);}
 .icon-btn svg{width:16px; height:16px; stroke:var(--muted); fill:none; stroke-width:2;}
 .icon-btn.danger{background:var(--danger-soft); border-color:var(--danger-soft);}
 .icon-btn.danger svg{stroke:var(--danger);}
+.mes-nav{flex:1; min-width:0; display:flex; align-items:center; border:1px solid var(--border); background:var(--surface); border-radius:22px; padding:2px;}
+.mn-seta{flex-shrink:0; width:32px; height:32px; border:none; background:none; color:var(--muted); font-size:20px; line-height:1; font-family:inherit; cursor:pointer; border-radius:50%;}
+.mn-seta:active{background:var(--surface-2);}
+.mn-label{flex:1; min-width:0; display:flex; align-items:center; justify-content:center; gap:5px; border:none; background:none; font-family:inherit; font-size:13px; font-weight:700; color:var(--text); cursor:pointer; padding:6px 2px;}
+.mn-label span:not(.caret){white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.seg-caixa{margin-bottom:12px;}
+.seg-caixa button{padding:10px 4px; font-size:12.5px;}
+.seg button.active{background:var(--primary-soft); color:var(--primary);}
+.caixa-alerta.previsao{background:var(--primary-soft); cursor:default;}
+.mov.previsto{border-style:dashed;}
+.periodo-btn{flex:1; min-width:0; justify-content:center;}
+.periodo-btn span:not(.caret){white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.periodo-btn.on{border-color:var(--primary); color:var(--primary); background:var(--primary-soft);}
+.periodo-btn.on svg{stroke:var(--primary);}
+.per-ou{font-size:11.5px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin:2px 0 10px;}
+.per-atalhos button.on{background:var(--primary); border-color:var(--primary); color:var(--on-primary);}
 .per-atalhos{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 14px;}
 .per-atalhos button{border:1px solid var(--border); background:var(--surface-2); color:var(--text); border-radius:18px; padding:8px 13px; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer;}
 .per-atalhos button:active{background:var(--primary-soft); border-color:var(--primary);}
@@ -302,11 +318,8 @@ nav.bottomnav button.active{color:var(--primary);}
 .ck-vl.pos{color:var(--success);}
 .ck-vl.neg{color:var(--danger);}
 .dia-grupo{margin-bottom:16px;}
-.dia-head{display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:0 4px 7px;}
+.dia-head{padding:0 4px 7px;}
 .dia-head span{font-size:12px; font-weight:700; color:var(--muted); text-transform:capitalize;}
-.dia-head b{font-size:12.5px; font-weight:700;}
-.dia-head b.pos{color:var(--success);}
-.dia-head b.neg{color:var(--danger);}
 .mov{display:flex; align-items:center; gap:11px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:12px 13px; margin-bottom:7px;}
 .mov.tem-acoes{cursor:pointer;}
 .mv-ic{width:33px; height:33px; flex-shrink:0; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:800;}
@@ -701,11 +714,7 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
     <section class="view" id="view-vendas">
       <div class="section-title" style="margin-top:4px">Vendas</div>
       <div class="vendas-bar">
-      <div class="tabs" id="vendasTabs">
-        <button data-vendas="mes" class="active">Este mês</button>
-        <button data-vendas="tudo">Tudo</button>
-        <button data-vendas="periodo" id="vendasTabPeriodo">Período</button>
-      </div>
+      <button type="button" class="filter-btn periodo-btn" id="vendasPeriodoBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3M17 3v3M3.5 9h17M5 5.5h14a1.5 1.5 0 011.5 1.5v12A1.5 1.5 0 0119 20.5H5A1.5 1.5 0 013.5 19V7A1.5 1.5 0 015 5.5z" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="vendasPeriodoLabel">Este mês</span><span class="caret">▾</span></button>
       <button type="button" class="filter-btn" id="vendasFiltroBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" stroke-linejoin="round"/></svg><span id="vendasStatusLabel">Filtrar</span><span class="caret">▾</span></button>
       <select id="vendasStatus" aria-label="Filtrar vendas por status" style="display:none"></select>
       <button type="button" class="sel-btn" id="vendasSelBtn" aria-label="Selecionar para somar" title="Selecionar para somar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -716,15 +725,18 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
     <section class="view" id="view-caixa">
       <div class="section-title" style="margin-top:4px">Caixa</div>
       <div class="vendas-bar">
-        <div class="tabs" id="caixaTabs">
-          <button data-caixa="hoje">Hoje</button>
-          <button data-caixa="mes" class="active">Este mês</button>
-          <button data-caixa="tudo">Tudo</button>
-          <button data-caixa="periodo" id="caixaTabPeriodo">Período</button>
+        <div class="mes-nav">
+          <button type="button" class="mn-seta" data-mes="-1" aria-label="Mês anterior">‹</button>
+          <button type="button" class="mn-label" id="caixaPeriodoBtn"><span id="caixaPeriodoLabel">Este mês</span><span class="caret">▾</span></button>
+          <button type="button" class="mn-seta" data-mes="1" aria-label="Próximo mês">›</button>
         </div>
-        <button type="button" class="filter-btn" id="caixaFiltroBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" stroke-linejoin="round"/></svg><span id="caixaTipoLabel">Filtrar</span><span class="caret">▾</span></button>
-        <select id="caixaTipo" aria-label="Filtrar o caixa" style="display:none"></select>
         <button type="button" class="sel-btn" id="caixaSelBtn" aria-label="Selecionar para somar" title="Selecionar para somar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="seg seg-caixa" id="caixaSeg">
+        <button type="button" class="active" data-cx="todos">Tudo</button>
+        <button type="button" data-cx="entrada">Entradas</button>
+        <button type="button" data-cx="saida">Saídas</button>
+        <button type="button" data-cx="apagar">A pagar</button>
       </div>
       <div id="caixaAlerta"></div>
       <div class="contas-box" id="caixaContas"></div>
@@ -1075,12 +1087,15 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
     <div class="handle"></div>
     <h3>Escolher período</h3>
     <p class="sheet-sub">Veja tudo entre duas datas.</p>
-    <div class="per-atalhos">
-      <button type="button" data-atalho="7">Últimos 7 dias</button>
-      <button type="button" data-atalho="30">Últimos 30 dias</button>
+    <div class="per-atalhos" id="perAtalhos">
+      <button type="button" data-atalho="hoje">Hoje</button>
       <button type="button" data-atalho="mes">Este mês</button>
       <button type="button" data-atalho="mespassado">Mês passado</button>
+      <button type="button" data-atalho="7">Últimos 7 dias</button>
+      <button type="button" data-atalho="30">Últimos 30 dias</button>
+      <button type="button" data-atalho="tudo">Tudo</button>
     </div>
+    <div class="per-ou">ou escolha as datas</div>
     <div class="field-row">
       <div class="field">
         <label>De</label>
@@ -1668,6 +1683,7 @@ let currentClienteId = null;
 let aposSalvarCliente = null;
 let selecionadosCobranca = [];
 let caixaFiltro = 'mes';
+let caixaMes = '';
 let vendasFiltro = 'mes';
 
 function isoLocal(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -2058,7 +2074,7 @@ function showHeaderSub(titulo, destino){
 document.addEventListener('click', function(e){
   const alvo = e.target.closest('[data-ir]');
   if(!alvo) return;
-  if(alvo.dataset.filtro==='pendentes'){ vendasFiltro='tudo'; vendasStatus='pendentes'; document.querySelectorAll('#vendasTabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.vendas==='tudo'); }); }
+  if(alvo.dataset.filtro==='pendentes'){ vendasFiltro='tudo'; vendasStatus='pendentes'; }
   if(alvo.dataset.sub) servicosTab = alvo.dataset.sub;
   if(alvo.dataset.caixaApagar){ caixaTipo = 'apagar'; caixaFiltro = 'tudo'; }
   switchView(alvo.dataset.ir);
@@ -2179,14 +2195,7 @@ function renderDashboard(){
 }
 
 /* ================= VENDAS ================= */
-document.querySelectorAll('#vendasTabs button').forEach(function(btn){
-  btn.onclick = function(){
-    if(btn.dataset.vendas==='periodo'){ abrirPeriodo('vendas'); return; }
-    vendasFiltro = btn.dataset.vendas;
-    document.querySelectorAll('#vendasTabs button').forEach(function(b){ b.classList.toggle('active', b===btn); });
-    renderVendas();
-  };
-});
+document.getElementById('vendasPeriodoBtn').onclick = function(){ abrirPeriodo('vendas'); };
 let vendasStatus = 'todos';
 function listarVendas(){
   let itens = state.titulos.map(function(t){
@@ -2202,10 +2211,7 @@ function renderVendas(){
   const box = document.getElementById('vendasList');
   if(!box) return;
   const mesAtual = todayISO().slice(0,7);
-  document.querySelectorAll('#vendasTabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.vendas===vendasFiltro); });
-  const tabPerV = document.getElementById('vendasTabPeriodo');
-  if(tabPerV) tabPerV.textContent = vendasFiltro==='periodo' ? rotuloPeriodo('vendas') : 'Período';
-  focarAba('#vendasTabs');
+  atualizarBotaoPeriodo('vendas');
 
   let itens = listarVendas();
   if(vendasFiltro==='mes') itens = itens.filter(function(i){ return i.data.slice(0,7)===mesAtual; });
@@ -2278,21 +2284,9 @@ function renderVendas(){
   document.getElementById('perCancelar').onclick = fecha;
   document.querySelectorAll('#sheetPeriodo [data-atalho]').forEach(function(b){
     b.onclick = function(){
-      const hoje = todayISO(), a = b.dataset.atalho;
-      let de = hoje, ate = hoje;
-      if(a==='7') de = somarDias(hoje,-6);
-      else if(a==='30') de = somarDias(hoje,-29);
-      else if(a==='mes'){ de = hoje.slice(0,8)+'01'; }
-      else if(a==='mespassado'){
-        const d = dataISOparaDate(hoje.slice(0,8)+'01');
-        d.setMonth(d.getMonth()-1);
-        de = isoLocal(d);
-        const fim = dataISOparaDate(de); fim.setMonth(fim.getMonth()+1); fim.setDate(0);
-        ate = isoLocal(fim);
-      }
-      document.getElementById('perDe').value = de;
-      document.getElementById('perAte').value = ate;
-      atualizarBotoesData();
+      aplicarAtalho(periodoAlvo, b.dataset.atalho);
+      if(periodoAlvo==='caixa') renderCaixa(); else renderVendas();
+      fecha();
     };
   });
   document.getElementById('perAplicar').onclick = function(){
@@ -2304,8 +2298,12 @@ function renderVendas(){
     else { vendasFiltro = 'periodo'; renderVendas(); }
     fecha();
   };
-  const fc = document.getElementById('caixaFiltroBtn');
-  if(fc) fc.onclick = function(){ abrirSeletor({id:'caixaTipo', titulo:'Filtrar o caixa', vazio:'Filtrar', semBusca:true}); };
+  document.querySelectorAll('#caixaSeg button').forEach(function(b){
+    b.onclick = function(){ caixaTipo = b.dataset.cx; renderCaixa(); };
+  });
+  document.querySelectorAll('.mes-nav [data-mes]').forEach(function(b){
+    b.onclick = function(){ andarMes(Number(b.dataset.mes)); };
+  });
   const fv = document.getElementById('vendasFiltroBtn');
   if(fv) fv.onclick = function(){ abrirSeletor({id:'vendasStatus', titulo:'Filtrar vendas', vazio:'Filtrar', semBusca:true}); };
   const bcx = document.getElementById('caixaSelBtn');
@@ -2327,14 +2325,7 @@ function renderVendas(){
   const bc = document.getElementById('buscaCaixa');
   if(bc) bc.addEventListener('input', function(){ caixaBusca = bc.value.trim(); renderCaixa(); });
 })();
-document.querySelectorAll('#caixaTabs button').forEach(function(btn){
-  btn.onclick = function(){
-    if(btn.dataset.caixa==='periodo'){ abrirPeriodo('caixa'); return; }
-    caixaFiltro = btn.dataset.caixa;
-    document.querySelectorAll('#caixaTabs button').forEach(function(b){ b.classList.toggle('active', b===btn); });
-    renderCaixa();
-  };
-});
+document.getElementById('caixaPeriodoBtn').onclick = function(){ abrirPeriodo('caixa'); };
 let caixaTipo = 'todos';
 let caixaConta = '';
 const periodos = {caixa:{de:'', ate:''}, vendas:{de:'', ate:''}};
@@ -2351,7 +2342,55 @@ function periodoValido(tela){ const p = periodos[tela]; return !!(p.de && p.ate)
 function rotuloPeriodo(tela){
   const p = periodos[tela];
   if(!periodoValido(tela)) return 'Período';
+  if(p.de===p.ate) return fmtDateBR(p.de);
   return fmtDateBR(p.de).slice(0,5)+' a '+fmtDateBR(p.ate).slice(0,5);
+}
+function mesDoCaixa(){ return caixaMes || todayISO().slice(0,7); }
+function nomeMes(mes){
+  const d = dataISOparaDate(mes+'-01');
+  const txt = d.toLocaleDateString('pt-BR',{month:'long', year:'numeric'});
+  const curto = txt.charAt(0).toUpperCase()+txt.slice(1);
+  return mes===todayISO().slice(0,7) ? curto.replace(' de ',' de ') : curto;
+}
+function mesFuturo(){ return caixaFiltro==='mes' && mesDoCaixa() > todayISO().slice(0,7); }
+function andarMes(n){
+  const d = dataISOparaDate(mesDoCaixa()+'-01');
+  d.setMonth(d.getMonth()+n);
+  caixaMes = isoLocal(d).slice(0,7);
+  caixaFiltro = 'mes';
+  renderCaixa();
+}
+function rotuloFiltroTela(tela){
+  const f = tela==='caixa' ? caixaFiltro : vendasFiltro;
+  if(f==='hoje') return 'Hoje';
+  if(f==='mes') return tela==='caixa' ? nomeMes(mesDoCaixa()) : 'Este mês';
+  if(f==='tudo') return 'Tudo';
+  return rotuloPeriodo(tela);
+}
+function atualizarBotaoPeriodo(tela){
+  const el = document.getElementById(tela+'PeriodoLabel');
+  if(el) el.textContent = rotuloFiltroTela(tela);
+  const btn = document.getElementById(tela+'PeriodoBtn');
+  const f = tela==='caixa' ? caixaFiltro : vendasFiltro;
+  if(btn) btn.classList.toggle('on', f!=='mes');
+}
+function aplicarAtalho(tela, a){
+  const hoje = todayISO();
+  if(a==='hoje'){ if(tela==='caixa') caixaFiltro='hoje'; else { vendasFiltro='periodo'; periodos.vendas={de:hoje, ate:hoje}; } return; }
+  if(a==='mes'){ if(tela==='caixa'){ caixaFiltro='mes'; caixaMes = hoje.slice(0,7); } else vendasFiltro='mes'; return; }
+  if(a==='tudo'){ if(tela==='caixa') caixaFiltro='tudo'; else vendasFiltro='tudo'; return; }
+  let de = hoje, ate = hoje;
+  if(a==='7') de = somarDias(hoje,-6);
+  else if(a==='30') de = somarDias(hoje,-29);
+  else if(a==='mespassado'){
+    const d = dataISOparaDate(hoje.slice(0,8)+'01');
+    d.setMonth(d.getMonth()-1);
+    de = isoLocal(d);
+    const fim = dataISOparaDate(de); fim.setMonth(fim.getMonth()+1); fim.setDate(0);
+    ate = isoLocal(fim);
+  }
+  periodos[tela] = {de:de, ate:ate};
+  if(tela==='caixa') caixaFiltro='periodo'; else vendasFiltro='periodo';
 }
 function dentroDoPeriodo(tela, iso){
   const p = periodos[tela];
@@ -2361,9 +2400,12 @@ function dentroDoPeriodo(tela, iso){
 function abrirPeriodo(tela){
   periodoAlvo = tela;
   const p = periodos[tela], hoje = todayISO();
-  document.getElementById('perDe').value = p.de || somarDias(hoje,-30);
+  document.getElementById('perDe').value = p.de || hoje.slice(0,8)+'01';
   document.getElementById('perAte').value = p.ate || hoje;
   atualizarBotoesData();
+  const f = tela==='caixa' ? caixaFiltro : vendasFiltro;
+  const atual = f==='hoje' ? 'hoje' : (f==='mes' ? 'mes' : (f==='tudo' ? 'tudo' : ''));
+  document.querySelectorAll('#perAtalhos [data-atalho]').forEach(function(b){ b.classList.toggle('on', b.dataset.atalho===atual); });
   document.getElementById('sheetPeriodo').classList.add('open');
 }
 const selModo = {caixa:false, vendas:false};
@@ -2393,11 +2435,10 @@ function somaSelHTML(ent, sai){
   return '<i class="tot">'+fmtMoney(0)+'</i>';
 }
 let caixaBusca = '';
-document.getElementById('caixaTipo').onchange = function(e){ caixaTipo = e.target.value; renderCaixa(); };
 function movDoPeriodo(m){
   const hoje = todayISO();
   if(caixaFiltro==='hoje') return m.data===hoje;
-  if(caixaFiltro==='mes') return m.data.slice(0,7)===hoje.slice(0,7);
+  if(caixaFiltro==='mes') return m.data.slice(0,7)===mesDoCaixa();
   if(caixaFiltro==='periodo') return dentroDoPeriodo('caixa', m.data);
   return true;
 }
@@ -2431,6 +2472,60 @@ function movDaBusca(m){
     m.tipo==='transferencia' ? contaNome(m.contaOrigemId)+' '+contaNome(m.contaDestinoId) : ''].join(' ');
   return semAcento(alvo).indexOf(semAcento(caixaBusca))>=0;
 }
+function previstosDoMes(mes){
+  const rec = state.titulos.filter(function(t){ return t.status!=='pago' && String(t.vencimento||'').slice(0,7)===mes; })
+    .map(function(t){ return {data:t.vencimento, tipo:'entrada', titulo:t.descricao, sub:(t.clienteId?clienteNome(t.clienteId):'Venda avulsa'), valor:saldoTitulo(t), id:t.id, kind:'titulo'}; });
+  const pag = state.contasPagar.filter(function(c){ return c.status!=='pago' && String(c.vencimento||'').slice(0,7)===mes; })
+    .map(function(c){ return {data:c.vencimento, tipo:'saida', titulo:c.descricao, sub:'Conta a pagar', valor:Number(c.valor||0), id:c.id, kind:'conta'}; });
+  return rec.concat(pag).sort(function(a,b){ return a.data.localeCompare(b.data); });
+}
+function cardPrevisto(p){
+  const entrada = p.tipo==='entrada';
+  return '<div class="mov previsto" data-prev="'+p.kind+':'+p.id+'">'
+    +'<span class="mv-ic '+(entrada?'in':'out')+'">'+(entrada?'↑':'↓')+'</span>'
+    +'<div class="mv-tx"><div class="mv-ti">'+esc(p.titulo)+'</div><div class="mv-me">'+esc(p.sub)+' · previsto</div></div>'
+    +'<div class="mv-vl '+(entrada?'in':'out')+'">'+(entrada?'+ ':'- ')+fmtMoney(p.valor)+'</div></div>';
+}
+function mostrarBuscaCaixa(ver){
+  const campo = document.getElementById('buscaCaixa');
+  if(campo && campo.parentNode) campo.parentNode.style.display = ver ? '' : 'none';
+}
+function renderPrevisao(box){
+  const mes = mesDoCaixa();
+  mostrarBuscaCaixa(false);
+  const todosItens = previstosDoMes(mes);
+  const itens = caixaTipo==='todos' ? todosItens : todosItens.filter(function(p){ return p.tipo===caixaTipo; });
+  const receber = todosItens.filter(function(p){return p.tipo==='entrada';}).reduce(function(s,p){return s+Number(p.valor||0);},0);
+  const pagar = todosItens.filter(function(p){return p.tipo==='saida';}).reduce(function(s,p){return s+Number(p.valor||0);},0);
+  const saldo = receber - pagar;
+  document.getElementById('caixaAlerta').innerHTML =
+    '<div class="caixa-alerta previsao"><span class="al-ic">🔮</span><span class="al-tx"><b>Mês futuro</b>'
+    +'<small>Ainda não houve movimento. Estes são os valores previstos.</small></span></div>';
+  document.getElementById('caixaResumo').innerHTML =
+    '<div class="ck in"><span class="ck-lb">A receber</span><b class="ck-vl">'+fmtMoney(receber)+'</b></div>'
+    +'<div class="ck out"><span class="ck-lb">A pagar</span><b class="ck-vl">'+fmtMoney(pagar)+'</b></div>'
+    +'<div class="ck res"><span class="ck-lb">Previsto</span><b class="ck-vl '+(saldo<0?'neg':'pos')+'">'+(saldo<0?'- ':'')+fmtMoney(Math.abs(saldo))+'</b></div>';
+  if(itens.length===0){
+    box.innerHTML = '<div class="empty"><div class="display">Nada previsto para '+nomeMes(mes)+'</div>Cobranças a vencer e parcelas de compras aparecem aqui.</div>';
+    return;
+  }
+  const dias = [];
+  itens.forEach(function(p){
+    let g = dias[dias.length-1];
+    if(!g || g.data!==p.data){ g = {data:p.data, itens:[]}; dias.push(g); }
+    g.itens.push(p);
+  });
+  box.innerHTML = dias.map(function(g){
+    return '<div class="dia-grupo"><div class="dia-head"><span>'+rotuloDia(g.data)+'</span></div>'
+      + g.itens.map(cardPrevisto).join('') + '</div>';
+  }).join('');
+  box.querySelectorAll('[data-prev]').forEach(function(el){
+    el.onclick = function(){
+      const p = el.dataset.prev.split(':'), id = p.slice(1).join(':');
+      if(p[0]==='conta') abrirPagarConta(id); else abrirPagamento(id);
+    };
+  });
+}
 function cardMovimentacao(m){
   let ic, cls, titulo, meta, valor;
   if(m.tipo==='transferencia'){
@@ -2458,10 +2553,14 @@ function cardMovimentacao(m){
 function renderCaixa(){
   const box = document.getElementById('caixaList');
   if(!box) return;
-  document.querySelectorAll('#caixaTabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.caixa===caixaFiltro); });
-  const tabPerC = document.getElementById('caixaTabPeriodo');
-  if(tabPerC) tabPerC.textContent = caixaFiltro==='periodo' ? rotuloPeriodo('caixa') : 'Período';
-  focarAba('#caixaTabs');
+  atualizarBotaoPeriodo('caixa');
+  mostrarBuscaCaixa(true);
+  document.querySelectorAll('#caixaSeg button').forEach(function(b){
+    const alvo = (caixaTipo==='transferencia' ? 'todos' : caixaTipo);
+    b.classList.toggle('active', b.dataset.cx===alvo);
+    b.classList.toggle('in', b.dataset.cx==='entrada');
+    b.classList.toggle('out', b.dataset.cx==='saida');
+  });
 
   const movs = state.movimentacoes.filter(movDoPeriodo);
   const aPagar = state.contasPagar.filter(function(c){return c.status!=='pago';});
@@ -2501,6 +2600,12 @@ function renderCaixa(){
     b.onclick = function(){ caixaConta = b.dataset.contaFiltro; renderCaixa(); };
   });
 
+  if(mesFuturo() && caixaTipo!=='apagar'){
+    renderPrevisao(box);
+    selBarFora('caixa');
+    return;
+  }
+
   // --- resumo do período ---
   const doPeriodo = movs.filter(movDaConta);
   const entradas = doPeriodo.filter(function(m){return m.tipo==='entrada';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
@@ -2511,19 +2616,15 @@ function renderCaixa(){
     +'<div class="ck out"><span class="ck-lb">Saídas</span><b class="ck-vl">'+fmtMoney(saidas)+'</b></div>'
     +'<div class="ck res"><span class="ck-lb">Sobrou</span><b class="ck-vl '+(sobrou<0?'neg':'pos')+'">'+(sobrou<0?'- ':'')+fmtMoney(Math.abs(sobrou))+'</b></div>';
 
-  // --- filtro de tipo ---
-  const opcoes = [['todos','Tudo ('+doPeriodo.length+')'],['entrada','Só entradas ('+doPeriodo.filter(function(m){return m.tipo==='entrada';}).length+')'],
-    ['saida','Só saídas ('+doPeriodo.filter(function(m){return m.tipo==='saida';}).length+')'],
-    ['transferencia','Transferências ('+doPeriodo.filter(function(m){return m.tipo==='transferencia';}).length+')'],
-    ['apagar','Contas a pagar ('+aPagar.length+')']];
-  const sel = document.getElementById('caixaTipo');
-  sel.innerHTML = opcoes.map(function(o){ return '<option value="'+o[0]+'">'+o[1]+'</option>'; }).join('');
-  sel.value = caixaTipo;
-  const rotulos = {todos:'Filtrar', entrada:'Entradas', saida:'Saídas', transferencia:'Transferências', apagar:'A pagar'};
-  document.getElementById('caixaTipoLabel').textContent = rotulos[caixaTipo] || 'Filtrar';
-  document.getElementById('caixaFiltroBtn').classList.toggle('on', caixaTipo!=='todos');
-
   if(caixaTipo==='apagar'){
+    const hojeAP = todayISO();
+    const vencidasAP = aPagar.filter(function(c){ return c.vencimento < hojeAP; }).reduce(function(s,c){ return s+Number(c.valor||0); }, 0);
+    const pagasMes = state.contasPagar.filter(function(c){ return c.status==='pago' && String(c.pagoEm||c.vencimento).slice(0,7)===mesDoCaixa(); })
+      .reduce(function(s,c){ return s+Number(c.valor||0); }, 0);
+    document.getElementById('caixaResumo').innerHTML =
+      '<div class="ck out"><span class="ck-lb">Em aberto</span><b class="ck-vl">'+fmtMoney(totalAPagar)+'</b></div>'
+      +'<div class="ck"><span class="ck-lb">Vencidas</span><b class="ck-vl '+(vencidasAP?'neg':'')+'">'+fmtMoney(vencidasAP)+'</b></div>'
+      +'<div class="ck"><span class="ck-lb">Pagas no mês</span><b class="ck-vl pos">'+fmtMoney(pagasMes)+'</b></div>';
     const lista = state.contasPagar.slice().sort(function(a,b){ return (a.status==='pago')-(b.status==='pago') || a.vencimento.localeCompare(b.vencimento); });
     box.innerHTML = lista.length
       ? '<div class="rec-group" style="margin-bottom:12px"><div class="rec-head" style="--c:var(--warn)"><span><i></i>Em aberto · '+aPagar.length+'</span><b>'+fmtMoney(totalAPagar)+'</b></div></div>'
@@ -2554,9 +2655,7 @@ function renderCaixa(){
     g.itens.push(m);
   });
   box.innerHTML = dias.map(function(g){
-    const res = g.itens.reduce(function(s,m){ return s + (m.tipo==='entrada' ? Number(m.valor||0) : (m.tipo==='saida' ? -Number(m.valor||0) : 0)); }, 0);
-    return '<div class="dia-grupo"><div class="dia-head"><span>'+rotuloDia(g.data)+'</span>'
-      +'<b class="'+(res<0?'neg':'pos')+'">'+(res>0?'+ ':(res<0?'- ':''))+fmtMoney(Math.abs(res))+'</b></div>'
+    return '<div class="dia-grupo"><div class="dia-head"><span>'+rotuloDia(g.data)+'</span></div>'
       + g.itens.map(cardMovimentacao).join('') + '</div>';
   }).join('');
 
