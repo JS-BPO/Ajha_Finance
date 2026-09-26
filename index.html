@@ -249,6 +249,29 @@ nav.bottomnav button.active{color:var(--primary);}
 .icon-btn svg{width:16px; height:16px; stroke:var(--muted); fill:none; stroke-width:2;}
 .icon-btn.danger{background:var(--danger-soft); border-color:var(--danger-soft);}
 .icon-btn.danger svg{stroke:var(--danger);}
+.per-atalhos{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 14px;}
+.per-atalhos button{border:1px solid var(--border); background:var(--surface-2); color:var(--text); border-radius:18px; padding:8px 13px; font-family:inherit; font-size:12.5px; font-weight:600; cursor:pointer;}
+.per-atalhos button:active{background:var(--primary-soft); border-color:var(--primary);}
+.sel-btn{flex-shrink:0; width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--border); background:var(--surface); border-radius:50%; cursor:pointer; padding:0;}
+.sel-btn svg{width:17px; height:17px; fill:none; stroke:var(--muted); stroke-width:2.2;}
+.sel-btn.on{background:var(--primary); border-color:var(--primary);}
+.sel-btn.on svg{stroke:var(--on-primary);}
+.sel-box{width:21px; height:21px; flex-shrink:0; border:2px solid var(--border); border-radius:7px; display:inline-block; position:relative; align-self:center;}
+.marcado .sel-box{background:var(--primary); border-color:var(--primary);}
+.marcado .sel-box::after{content:''; position:absolute; left:6px; top:2px; width:5px; height:10px; border:solid var(--on-primary); border-width:0 2.5px 2.5px 0; transform:rotate(45deg);}
+.mov.selmodo, .list-item.selmodo{cursor:pointer;}
+.mov.marcado, .list-item.marcado{border-color:var(--primary); background:var(--primary-soft);}
+.sel-bar{position:fixed; left:14px; right:14px; z-index:45; display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:10px 12px; box-shadow:0 14px 30px -14px rgba(16,18,24,.5);}
+.sel-bar[hidden]{display:none;}
+.sb-esq{flex:1; min-width:0;}
+.sb-esq b{display:block; font-size:12px; font-weight:700; color:var(--muted);}
+.sb-esq span{display:flex; flex-wrap:wrap; gap:6px 9px; margin-top:2px;}
+.sb-esq i{font-style:normal; font-size:12.5px; font-weight:700; white-space:nowrap;}
+.sb-esq i.in{color:var(--success);}
+.sb-esq i.out{color:var(--danger);}
+.sb-esq i.tot{color:var(--text);}
+.sb-btn{flex-shrink:0; border:none; background:var(--primary); color:var(--on-primary); border-radius:14px; padding:8px 12px; font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer;}
+.sb-btn.ghost{background:var(--surface-2); color:var(--text);}
 .contas-box{background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:4px 14px 6px; margin-top:8px;}
 .cb-total{display:flex; width:100%; align-items:center; justify-content:space-between; gap:10px; background:none; border:none; padding:12px 0 11px; font-family:inherit; color:var(--text); cursor:pointer; text-align:left;}
 .cb-lb{font-size:12px; font-weight:700; color:var(--muted);}
@@ -423,7 +446,10 @@ input.is-locked{opacity:.85;}
 .rec-more{font-size:12px; color:var(--muted); padding:6px 0 2px;}
 .badge.today{background:var(--warn-soft); color:var(--warn);}
 .badge.parcial{background:var(--info-soft); color:var(--info);}
-.vendas-bar{display:flex; align-items:center; gap:8px; margin-bottom:16px;}
+.vendas-bar{display:flex; align-items:center; gap:7px; margin-bottom:16px;}
+.vendas-bar .tabs{flex:1; min-width:0; gap:6px;}
+.vendas-bar .tabs button{padding:7px 11px; font-size:12.5px;}
+.vendas-bar .filter-btn{padding:7px 10px; font-size:12.5px;}
 .vendas-bar .tabs{margin-bottom:0; flex:1; min-width:0;}
 .filter-btn{position:relative; display:inline-flex; align-items:center; gap:6px; flex-shrink:0; border:1px solid var(--border); background:var(--surface); color:var(--text); padding:8px 12px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer;}
 .filter-btn svg{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2;}
@@ -678,8 +704,11 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
       <div class="tabs" id="vendasTabs">
         <button data-vendas="mes" class="active">Este mês</button>
         <button data-vendas="tudo">Tudo</button>
+        <button data-vendas="periodo" id="vendasTabPeriodo">Período</button>
       </div>
-      <label class="filter-btn" id="vendasFiltroBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" stroke-linejoin="round"/></svg><span id="vendasStatusLabel">Filtrar</span><span class="caret">▾</span><select id="vendasStatus" aria-label="Filtrar vendas por status"></select></label>
+      <button type="button" class="filter-btn" id="vendasFiltroBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" stroke-linejoin="round"/></svg><span id="vendasStatusLabel">Filtrar</span><span class="caret">▾</span></button>
+      <select id="vendasStatus" aria-label="Filtrar vendas por status" style="display:none"></select>
+      <button type="button" class="sel-btn" id="vendasSelBtn" aria-label="Selecionar para somar" title="Selecionar para somar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
       <div id="vendasList"></div>
     </section>
@@ -691,8 +720,11 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
           <button data-caixa="hoje">Hoje</button>
           <button data-caixa="mes" class="active">Este mês</button>
           <button data-caixa="tudo">Tudo</button>
+          <button data-caixa="periodo" id="caixaTabPeriodo">Período</button>
         </div>
-        <label class="filter-btn" id="caixaFiltroBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" stroke-linejoin="round"/></svg><span id="caixaTipoLabel">Filtrar</span><span class="caret">▾</span><select id="caixaTipo" aria-label="Filtrar o caixa"></select></label>
+        <button type="button" class="filter-btn" id="caixaFiltroBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" stroke-linejoin="round"/></svg><span id="caixaTipoLabel">Filtrar</span><span class="caret">▾</span></button>
+        <select id="caixaTipo" aria-label="Filtrar o caixa" style="display:none"></select>
+        <button type="button" class="sel-btn" id="caixaSelBtn" aria-label="Selecionar para somar" title="Selecionar para somar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
       <div id="caixaAlerta"></div>
       <div class="contas-box" id="caixaContas"></div>
@@ -1038,6 +1070,34 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
   </div>
 </div>
 
+<div class="sheet-overlay" id="sheetPeriodo">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Escolher período</h3>
+    <p class="sheet-sub">Veja tudo entre duas datas.</p>
+    <div class="per-atalhos">
+      <button type="button" data-atalho="7">Últimos 7 dias</button>
+      <button type="button" data-atalho="30">Últimos 30 dias</button>
+      <button type="button" data-atalho="mes">Este mês</button>
+      <button type="button" data-atalho="mespassado">Mês passado</button>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>De</label>
+        <input type="date" id="perDe">
+      </div>
+      <div class="field">
+        <label>Até</label>
+        <input type="date" id="perAte">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="perCancelar">Cancelar</button>
+      <button class="btn primary" id="perAplicar">Aplicar</button>
+    </div>
+  </div>
+</div>
+
 <div class="sheet-overlay" id="sheetSeletor">
   <div class="sheet">
     <div class="handle"></div>
@@ -1048,6 +1108,15 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
     <div id="selLista" class="sel-lista"></div>
     <button class="btn ghost" id="selFechar" style="margin-top:10px">Fechar</button>
   </div>
+</div>
+
+<div class="sel-bar" id="selBar" hidden>
+  <div class="sb-esq">
+    <b id="selBarQtd">0 selecionados</b>
+    <span id="selBarVal">—</span>
+  </div>
+  <button type="button" class="sb-btn" id="selBarTudo">Tudo</button>
+  <button type="button" class="sb-btn ghost" id="selBarLimpar">Limpar</button>
 </div>
 
 <div class="sheet-overlay" id="sheetCaixaRapido">
@@ -1963,6 +2032,7 @@ function viewAtual(){ const v = document.querySelector('.view.active'); return v
 function fecharSheets(){ document.querySelectorAll('.sheet-overlay.open').forEach(function(o){ if(o.id!=='sheetConfirm') o.classList.remove('open'); }); }
 function switchView(name){
   fecharSheets();
+  esconderSelBar();
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.getElementById('view-'+name).classList.add('active');
   const navAlvo = SUBTELAS[name] ? 'mais' : name;
@@ -2111,6 +2181,7 @@ function renderDashboard(){
 /* ================= VENDAS ================= */
 document.querySelectorAll('#vendasTabs button').forEach(function(btn){
   btn.onclick = function(){
+    if(btn.dataset.vendas==='periodo'){ abrirPeriodo('vendas'); return; }
     vendasFiltro = btn.dataset.vendas;
     document.querySelectorAll('#vendasTabs button').forEach(function(b){ b.classList.toggle('active', b===btn); });
     renderVendas();
@@ -2131,9 +2202,14 @@ function renderVendas(){
   const box = document.getElementById('vendasList');
   if(!box) return;
   const mesAtual = todayISO().slice(0,7);
+  document.querySelectorAll('#vendasTabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.vendas===vendasFiltro); });
+  const tabPerV = document.getElementById('vendasTabPeriodo');
+  if(tabPerV) tabPerV.textContent = vendasFiltro==='periodo' ? rotuloPeriodo('vendas') : 'Período';
+  focarAba('#vendasTabs');
 
   let itens = listarVendas();
   if(vendasFiltro==='mes') itens = itens.filter(function(i){ return i.data.slice(0,7)===mesAtual; });
+  else if(vendasFiltro==='periodo') itens = itens.filter(function(i){ return dentroDoPeriodo('vendas', i.data); });
   const cont = {todos:itens.length, vencido:0, hoje:0, avencer:0, pago:0};
   itens.forEach(function(i){ cont[statusTitulo(i.ref)]++; });
   cont.pendentes = cont.vencido + cont.hoje + cont.avencer;
@@ -2150,6 +2226,7 @@ function renderVendas(){
 
   if(itens.length===0){
     box.innerHTML = '<div class="empty"><div class="display">Nenhuma venda</div>Toque no + pra registrar a primeira venda do período.</div>';
+    selBarFora('vendas');
     return;
   }
   box.innerHTML = itens.map(function(i){
@@ -2158,12 +2235,29 @@ function renderVendas(){
     const verCliente = i.clienteId ? ('<button class="chip-btn" data-vercliente="'+i.clienteId+'">Ver cliente</button>') : '';
     const icones = iconEditBtn('data-editar-tipo="'+i.tipo+'" data-editar-id="'+i.id+'"')
       + iconDeleteBtn('data-excluir-tipo="'+i.tipo+'" data-excluir-id="'+i.id+'"');
-    return '<div class="list-item">'
+    const modo = selModo.vendas, chave = i.tipo+':'+i.id;
+    return '<div class="list-item'+(modo?' selmodo':'')+(modo&&selMarcado('vendas',chave)?' marcado':'')+'" data-sel="'+chave+'">'
+      +(modo ? selCaixinha('vendas', chave) : '')
       +'<div class="stripe" style="background:'+corTitulo(i.ref)+'"></div>'
       +'<div class="main"><div class="title">'+esc(i.descricao)+'</div><div class="meta">'+esc(quem)+' · '+fmtDateBR(i.data)+' · '+badge+'</div>'
-      +(verCliente ? '<div class="action-row">'+verCliente+'</div>' : '')+'</div>'
-      +'<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;"><div class="right">'+fmtMoney(i.valor)+'</div><div class="icon-row" style="margin-top:0">'+icones+'</div></div></div>';
+      +(!modo && verCliente ? '<div class="action-row">'+verCliente+'</div>' : '')+'</div>'
+      +'<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;"><div class="right">'+fmtMoney(i.valor)+'</div>'
+      +(modo?'':'<div class="icon-row" style="margin-top:0">'+icones+'</div>')+'</div></div>';
   }).join('');
+  if(selModo.vendas){
+    const marcados = itens.filter(function(i){ return selMarcado('vendas', i.tipo+':'+i.id); });
+    const totalSel = marcados.reduce(function(s,i){ return s+Number(i.valor||0); }, 0);
+    const abertoSel = marcados.reduce(function(s,i){ return s + (i.ref && i.ref.status!=='pago' ? saldoTitulo(i.ref) : 0); }, 0);
+    const html = '<i class="tot">'+fmtMoney(totalSel)+'</i>' + (abertoSel>0 ? '<i class="out">em aberto '+fmtMoney(abertoSel)+'</i>' : '');
+    selBarPara('vendas', marcados.length, html,
+      function(){ const todos = marcados.length===itens.length; selLimpar('vendas'); if(!todos) itens.forEach(function(i){ selIds.vendas[i.tipo+':'+i.id]=true; }); renderVendas(); },
+      function(){ selLimpar('vendas'); renderVendas(); });
+    box.querySelectorAll('[data-sel]').forEach(function(el){
+      el.onclick = function(){ selAlternar('vendas', el.dataset.sel); renderVendas(); };
+    });
+    return;
+  }
+  selBarFora('vendas');
   box.querySelectorAll('[data-vercliente]').forEach(function(el){
     el.onclick = function(){ openFicha(el.dataset.vercliente); };
   });
@@ -2180,11 +2274,62 @@ function renderVendas(){
 
 /* ================= CAIXA ================= */
 (function(){
+  const fecha = function(){ document.getElementById('sheetPeriodo').classList.remove('open'); };
+  document.getElementById('perCancelar').onclick = fecha;
+  document.querySelectorAll('#sheetPeriodo [data-atalho]').forEach(function(b){
+    b.onclick = function(){
+      const hoje = todayISO(), a = b.dataset.atalho;
+      let de = hoje, ate = hoje;
+      if(a==='7') de = somarDias(hoje,-6);
+      else if(a==='30') de = somarDias(hoje,-29);
+      else if(a==='mes'){ de = hoje.slice(0,8)+'01'; }
+      else if(a==='mespassado'){
+        const d = dataISOparaDate(hoje.slice(0,8)+'01');
+        d.setMonth(d.getMonth()-1);
+        de = isoLocal(d);
+        const fim = dataISOparaDate(de); fim.setMonth(fim.getMonth()+1); fim.setDate(0);
+        ate = isoLocal(fim);
+      }
+      document.getElementById('perDe').value = de;
+      document.getElementById('perAte').value = ate;
+      atualizarBotoesData();
+    };
+  });
+  document.getElementById('perAplicar').onclick = function(){
+    let de = document.getElementById('perDe').value, ate = document.getElementById('perAte').value;
+    if(!de || !ate){ toast('Escolha as duas datas.'); return; }
+    if(de > ate){ const t = de; de = ate; ate = t; }
+    periodos[periodoAlvo] = {de:de, ate:ate};
+    if(periodoAlvo==='caixa'){ caixaFiltro = 'periodo'; renderCaixa(); }
+    else { vendasFiltro = 'periodo'; renderVendas(); }
+    fecha();
+  };
+  const fc = document.getElementById('caixaFiltroBtn');
+  if(fc) fc.onclick = function(){ abrirSeletor({id:'caixaTipo', titulo:'Filtrar o caixa', vazio:'Filtrar', semBusca:true}); };
+  const fv = document.getElementById('vendasFiltroBtn');
+  if(fv) fv.onclick = function(){ abrirSeletor({id:'vendasStatus', titulo:'Filtrar vendas', vazio:'Filtrar', semBusca:true}); };
+  const bcx = document.getElementById('caixaSelBtn');
+  if(bcx) bcx.onclick = function(){
+    selModo.caixa = !selModo.caixa;
+    if(!selModo.caixa){ selLimpar('caixa'); esconderSelBar(); }
+    bcx.classList.toggle('on', selModo.caixa);
+    renderCaixa();
+  };
+  const bvd = document.getElementById('vendasSelBtn');
+  if(bvd) bvd.onclick = function(){
+    selModo.vendas = !selModo.vendas;
+    if(!selModo.vendas){ selLimpar('vendas'); esconderSelBar(); }
+    bvd.classList.toggle('on', selModo.vendas);
+    renderVendas();
+  };
+})();
+(function(){
   const bc = document.getElementById('buscaCaixa');
   if(bc) bc.addEventListener('input', function(){ caixaBusca = bc.value.trim(); renderCaixa(); });
 })();
 document.querySelectorAll('#caixaTabs button').forEach(function(btn){
   btn.onclick = function(){
+    if(btn.dataset.caixa==='periodo'){ abrirPeriodo('caixa'); return; }
     caixaFiltro = btn.dataset.caixa;
     document.querySelectorAll('#caixaTabs button').forEach(function(b){ b.classList.toggle('active', b===btn); });
     renderCaixa();
@@ -2192,12 +2337,68 @@ document.querySelectorAll('#caixaTabs button').forEach(function(btn){
 });
 let caixaTipo = 'todos';
 let caixaConta = '';
+const periodos = {caixa:{de:'', ate:''}, vendas:{de:'', ate:''}};
+let periodoAlvo = 'caixa';
+function focarAba(seletor){
+  const box = document.querySelector(seletor);
+  if(!box) return;
+  const ativo = box.querySelector('button.active');
+  if(!ativo || box.scrollWidth <= box.clientWidth) return;
+  const alvo = ativo.offsetLeft - (box.clientWidth - ativo.offsetWidth)/2;
+  box.scrollTo({left: Math.max(0, alvo), behavior:'smooth'});
+}
+function periodoValido(tela){ const p = periodos[tela]; return !!(p.de && p.ate); }
+function rotuloPeriodo(tela){
+  const p = periodos[tela];
+  if(!periodoValido(tela)) return 'Período';
+  return fmtDateBR(p.de).slice(0,5)+' a '+fmtDateBR(p.ate).slice(0,5);
+}
+function dentroDoPeriodo(tela, iso){
+  const p = periodos[tela];
+  if(!p.de || !p.ate) return true;
+  return iso >= p.de && iso <= p.ate;
+}
+function abrirPeriodo(tela){
+  periodoAlvo = tela;
+  const p = periodos[tela], hoje = todayISO();
+  document.getElementById('perDe').value = p.de || somarDias(hoje,-30);
+  document.getElementById('perAte').value = p.ate || hoje;
+  atualizarBotoesData();
+  document.getElementById('sheetPeriodo').classList.add('open');
+}
+const selModo = {caixa:false, vendas:false};
+const selIds = {caixa:{}, vendas:{}};
+function selLimpar(tela){ selIds[tela] = {}; }
+function selMarcado(tela, id){ return !!selIds[tela][id]; }
+function selAlternar(tela, id){ if(selIds[tela][id]) delete selIds[tela][id]; else selIds[tela][id] = true; }
+function selCaixinha(tela, id){ return '<span class="sel-box'+(selMarcado(tela,id)?' on':'')+'" aria-hidden="true"></span>'; }
+function esconderSelBar(){ const b = document.getElementById('selBar'); if(b) b.hidden = true; }
+function selBarFora(tela){ if(viewAtual()===tela) esconderSelBar(); }
+function selBarPara(tela, qtd, html, aoTudo, aoLimpar){ if(viewAtual()!==tela) return; mostrarSelBar(qtd, html, aoTudo, aoLimpar); }
+function mostrarSelBar(qtd, valorHTML, aoTudo, aoLimpar){
+  const bar = document.getElementById('selBar');
+  if(!bar) return;
+  bar.hidden = false;
+  const nav = document.querySelector('nav.bottomnav');
+  bar.style.bottom = ((nav ? nav.offsetHeight : 64) + 10)+'px';
+  document.getElementById('selBarQtd').textContent = qtd+' selecionado'+(qtd===1?'':'s');
+  document.getElementById('selBarVal').innerHTML = valorHTML;
+  document.getElementById('selBarTudo').onclick = aoTudo;
+  document.getElementById('selBarLimpar').onclick = aoLimpar;
+}
+function somaSelHTML(ent, sai){
+  if(ent && sai) return '<i class="in">+ '+fmtMoney(ent)+'</i><i class="out">- '+fmtMoney(sai)+'</i><i class="tot">= '+((ent-sai)<0?'- ':'')+fmtMoney(Math.abs(ent-sai))+'</i>';
+  if(ent) return '<i class="in">+ '+fmtMoney(ent)+'</i>';
+  if(sai) return '<i class="out">- '+fmtMoney(sai)+'</i>';
+  return '<i class="tot">'+fmtMoney(0)+'</i>';
+}
 let caixaBusca = '';
 document.getElementById('caixaTipo').onchange = function(e){ caixaTipo = e.target.value; renderCaixa(); };
 function movDoPeriodo(m){
   const hoje = todayISO();
   if(caixaFiltro==='hoje') return m.data===hoje;
   if(caixaFiltro==='mes') return m.data.slice(0,7)===hoje.slice(0,7);
+  if(caixaFiltro==='periodo') return dentroDoPeriodo('caixa', m.data);
   return true;
 }
 function cardContaPagar(c){
@@ -2247,15 +2448,20 @@ function cardMovimentacao(m){
   const acoes = m.tipo==='transferencia'
     ? '<div class="icon-row">'+iconDeleteBtn('data-excluir-transf="'+m.id+'"')+'</div>'
     : (m.origem==='manual' ? '<div class="icon-row">'+iconEditBtn('data-editar-mov="'+m.id+'"')+iconDeleteBtn('data-excluir-mov="'+m.id+'"')+'</div>' : '');
-  return '<div class="mov'+(acoes?' tem-acoes':'')+'">'
+  const modo = selModo.caixa;
+  return '<div class="mov'+(acoes&&!modo?' tem-acoes':'')+(modo?' selmodo':'')+(modo&&selMarcado('caixa',m.id)?' marcado':'')+'" data-sel="'+m.id+'">'
+    +(modo ? selCaixinha('caixa', m.id) : '')
     +'<span class="mv-ic '+cls+'">'+ic+'</span>'
-    +'<div class="mv-tx"><div class="mv-ti">'+titulo+'</div><div class="mv-me">'+meta+'</div>'+acoes+'</div>'
+    +'<div class="mv-tx"><div class="mv-ti">'+titulo+'</div><div class="mv-me">'+meta+'</div>'+(modo?'':acoes)+'</div>'
     +valor+'</div>';
 }
 function renderCaixa(){
   const box = document.getElementById('caixaList');
   if(!box) return;
   document.querySelectorAll('#caixaTabs button').forEach(function(b){ b.classList.toggle('active', b.dataset.caixa===caixaFiltro); });
+  const tabPerC = document.getElementById('caixaTabPeriodo');
+  if(tabPerC) tabPerC.textContent = caixaFiltro==='periodo' ? rotuloPeriodo('caixa') : 'Período';
+  focarAba('#caixaTabs');
 
   const movs = state.movimentacoes.filter(movDoPeriodo);
   const aPagar = state.contasPagar.filter(function(c){return c.status!=='pago';});
@@ -2324,6 +2530,7 @@ function renderCaixa(){
         + lista.map(cardContaPagar).join('')
       : '<div class="empty"><div class="display">Nenhuma conta a pagar</div>Toque no + e escolha "Compra parcelada" para lançar uma compra.</div>';
     ligarAcoesContaPagar(box);
+    selBarFora('caixa');
     return;
   }
 
@@ -2335,6 +2542,7 @@ function renderCaixa(){
     box.innerHTML = caixaBusca
       ? '<div class="empty"><div class="display">Nada encontrado</div>Nenhum lançamento com "'+esc(caixaBusca)+'".</div>'
       : '<div class="empty"><div class="display">Nenhuma movimentação</div>Toque no + para lançar uma entrada, uma saída ou uma compra parcelada.</div>';
+    selBarFora('caixa');
     return;
   }
 
@@ -2352,6 +2560,19 @@ function renderCaixa(){
       + g.itens.map(cardMovimentacao).join('') + '</div>';
   }).join('');
 
+  if(selModo.caixa){
+    const marcados = list.filter(function(m){ return selMarcado('caixa', m.id); });
+    const entSel = marcados.filter(function(m){return m.tipo==='entrada';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
+    const saiSel = marcados.filter(function(m){return m.tipo==='saida';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
+    selBarPara('caixa', marcados.length, somaSelHTML(entSel, saiSel),
+      function(){ const todos = marcados.length===list.length; selLimpar('caixa'); if(!todos) list.forEach(function(m){ selIds.caixa[m.id]=true; }); renderCaixa(); },
+      function(){ selLimpar('caixa'); renderCaixa(); });
+    box.querySelectorAll('[data-sel]').forEach(function(el){
+      el.onclick = function(){ selAlternar('caixa', el.dataset.sel); renderCaixa(); };
+    });
+    return;
+  }
+  selBarFora('caixa');
   box.querySelectorAll('.mov.tem-acoes').forEach(function(el){
     el.onclick = function(ev){
       if(ev.target.closest('.icon-row')) return;
@@ -3615,11 +3836,13 @@ function abrirSeletor(reg){
   document.getElementById('selTitulo').textContent = reg.titulo;
   const busca = document.getElementById('selBusca');
   busca.value = '';
+  const campoBusca = busca.parentNode;
+  if(campoBusca) campoBusca.style.display = reg.semBusca ? 'none' : '';
   desenharListaSeletor();
   document.getElementById('sheetSeletor').classList.add('open');
   const marcado = document.querySelector('#selLista .sel-item.sel');
   if(marcado) marcado.scrollIntoView({block:'center'});
-  setTimeout(function(){ busca.focus(); }, 60);
+  if(!reg.semBusca) setTimeout(function(){ busca.focus(); }, 60);
 }
 function desenharListaSeletor(){
   if(!seletorAtivo) return;
@@ -3729,7 +3952,7 @@ document.getElementById('dtFechar').onclick = function(){ document.getElementByI
 document.querySelectorAll('#dtAtalhos button').forEach(function(b){
   b.onclick = function(){ escolherData(b.dataset.dt==='hoje' ? todayISO() : b.dataset.dt==='amanha' ? somarDias(todayISO(),1) : somarDias(todayISO(),7)); };
 });
-[['agData','Data do atendimento'],['vdData','Data da venda'],['cobVencimento','Vencimento'],['movData','Data do lançamento'],['trfData','Data da transferência'],['evData','Data'],['ccVencimento','Vencimento'],['cpVencimento','Vencimento da 1ª parcela'],['pcData','Data do pagamento'],['pgData','Data do recebimento'],['pgVencimento','Novo vencimento do saldo']].forEach(function(x){ tornarData(x[0], x[1]); });
+[['agData','Data do atendimento'],['vdData','Data da venda'],['cobVencimento','Vencimento'],['movData','Data do lançamento'],['trfData','Data da transferência'],['evData','Data'],['ccVencimento','Vencimento'],['cpVencimento','Vencimento da 1ª parcela'],['pcData','Data do pagamento'],['pgData','Data do recebimento'],['pgVencimento','Novo vencimento do saldo'],['perDe','Início do período'],['perAte','Fim do período']].forEach(function(x){ tornarData(x[0], x[1]); });
 
 /* ---- telefone: (48) 99999-9999 enquanto digita ---- */
 function mascaraFone(v){
