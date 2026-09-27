@@ -174,6 +174,8 @@ nav.bottomnav button.active{color:var(--primary);}
 .st-vl.bad{color:var(--danger);}
 .st-sb{display:block; font-size:10.5px; color:var(--muted); margin-top:2px;}
 .bloco{background:var(--surface); border:1px solid var(--border); border-radius:22px; padding:14px 14px 8px; margin-top:14px;}
+.bloco-sub{font-size:11.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin:6px 2px 8px;}
+.bloco-sub:first-of-type{margin-top:0;}
 .bloco-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:10px;}
 .bloco-top h3{font-family:'Fraunces',serif; font-size:16.5px; font-weight:600;}
 .bloco-link{border:none; background:none; color:var(--primary); font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer; padding:0; white-space:nowrap;}
@@ -254,6 +256,21 @@ nav.bottomnav button.active{color:var(--primary);}
 .mn-seta:active{background:var(--surface-2);}
 .mn-label{flex:1; min-width:0; display:flex; align-items:center; justify-content:center; gap:5px; border:none; background:none; font-family:inherit; font-size:13px; font-weight:700; color:var(--text); cursor:pointer; padding:6px 2px;}
 .mn-label span:not(.caret){white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.caixa-linha{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
+.caixa-linha .seg{flex:1; min-width:0; margin-bottom:0;}
+.caixa-linha .filter-btn{flex-shrink:0; padding:9px 12px;}
+.mv-bd{margin-top:5px;}
+.mov .action-row{margin-top:8px;}
+.mov.previsto{border-style:dashed; background:var(--surface); align-items:flex-start;}
+.mov.previsto .mv-ti{white-space:normal;}
+.mov.previsto .mv-vl{align-self:flex-start; margin-top:2px;}
+.mov.previsto .mv-ic{margin-top:1px;}
+.esc-opcoes{display:flex; flex-direction:column; gap:10px;}
+.esc-op{text-align:left; background:var(--surface-2); border:1px solid var(--border); border-radius:16px; padding:14px 16px; font-family:inherit; color:var(--text); cursor:pointer;}
+.esc-op b{display:block; font-size:15px; font-weight:700;}
+.esc-op small{display:block; font-size:12.5px; color:var(--muted); margin-top:3px;}
+.esc-op.perigo b{color:var(--danger);}
+.ck-vl.warn{color:var(--warn);}
 .seg-caixa{margin-bottom:12px;}
 .seg-caixa button{padding:10px 4px; font-size:12.5px;}
 .seg button.active{background:var(--primary-soft); color:var(--primary);}
@@ -659,35 +676,20 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
         </div>
       </div>
 
-      <div class="mini-stats">
-        <button type="button" class="mini-stat" data-ir="clientes"><span>Clientes</span><b id="kpiClientes">0</b></button>
-        <button type="button" class="mini-stat" data-ir="agenda"><span>Agenda hoje</span><b id="kpiAgHoje">0</b></button>
-        <button type="button" class="mini-stat" data-ir="caixa" data-caixa-apagar="1"><span>A pagar</span><b id="kpiAPagar">R$ 0,00</b></button>
-      </div>
-
       <div class="dash-cols">
         <div>
           <div class="bloco">
-            <div class="bloco-top"><h3>Agenda de hoje</h3><button type="button" class="bloco-link" data-ir="agenda">Ver agenda ›</button></div>
+            <div class="bloco-top"><h3>Agendamentos</h3><button type="button" class="bloco-link" data-ir="agenda">Ver agenda ›</button></div>
+            <div class="bloco-sub">Hoje</div>
             <div id="dashAgendaHoje"></div>
-          </div>
-          <div class="bloco">
-            <div class="bloco-top"><h3>Próximos atendimentos</h3></div>
+            <div class="bloco-sub">Próximos</div>
             <div id="dashProximos"></div>
           </div>
         </div>
         <div>
           <div class="bloco">
-            <div class="bloco-top"><h3>Recebimentos pendentes</h3><button type="button" class="bloco-link" data-ir="vendas" data-filtro="pendentes">Ver todos ›</button></div>
-            <div id="dashRecebimentos"></div>
-          </div>
-          <div class="bloco">
-            <div class="bloco-top"><h3>Clientes em atraso</h3></div>
+            <div class="bloco-top"><h3>Clientes em atraso</h3><button type="button" class="bloco-link" data-ir="clientes">Ver clientes ›</button></div>
             <div id="dashInadim"></div>
-          </div>
-          <div class="bloco">
-            <div class="bloco-top"><h3>Saídas do mês por categoria</h3><span class="bloco-tot" id="dashCatTotal"></span></div>
-            <div id="dashCategorias"></div>
           </div>
         </div>
       </div>
@@ -732,11 +734,13 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
         </div>
         <button type="button" class="sel-btn" id="caixaSelBtn" aria-label="Selecionar para somar" title="Selecionar para somar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
-      <div class="seg seg-caixa" id="caixaSeg">
-        <button type="button" class="active" data-cx="todos">Tudo</button>
-        <button type="button" data-cx="entrada">Entradas</button>
-        <button type="button" data-cx="saida">Saídas</button>
-        <button type="button" data-cx="apagar">A pagar</button>
+      <div class="caixa-linha">
+        <div class="seg seg-caixa" id="caixaSeg">
+          <button type="button" class="active in" data-cx="entrada">Entradas</button>
+          <button type="button" data-cx="saida">Saídas</button>
+        </div>
+        <button type="button" class="filter-btn" id="caixaFiltroBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z" stroke-linejoin="round"/></svg><span id="caixaVerLabel">Filtrar</span><span class="caret">▾</span></button>
+        <select id="caixaVer" aria-label="Filtrar o caixa" style="display:none"></select>
       </div>
       <div id="caixaAlerta"></div>
       <div class="contas-box" id="caixaContas"></div>
@@ -1079,6 +1083,77 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
     </div>
     <div id="dtGrade"></div>
     <button class="btn ghost" id="dtFechar" style="margin-top:14px">Fechar</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetQuitar">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="qtTitulo">Marcar como pago</h3>
+    <p class="sheet-sub" id="qtSub"></p>
+    <input type="hidden" id="qtId">
+    <div class="field-row">
+      <div class="field">
+        <label id="qtDataLabel">Data do pagamento</label>
+        <input type="date" id="qtData">
+      </div>
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input type="text" id="qtValor" inputmode="decimal" data-moeda="1">
+      </div>
+    </div>
+    <div class="field">
+      <label>Conta</label>
+      <select id="qtConta"></select>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarQuitar">Cancelar</button>
+      <button class="btn primary" id="btnConfirmarQuitar">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetContaEdit">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Editar conta a pagar</h3>
+    <input type="hidden" id="ceId">
+    <div class="field">
+      <label>Descrição</label>
+      <input type="text" id="ceDescricao">
+    </div>
+    <div class="field">
+      <label>Fornecedor (opcional)</label>
+      <input type="text" id="ceFornecedor">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor (R$)</label>
+        <input type="text" id="ceValor" inputmode="decimal" data-moeda="1">
+      </div>
+      <div class="field">
+        <label>Vencimento</label>
+        <input type="date" id="ceVencimento">
+      </div>
+    </div>
+    <div class="field">
+      <label>Categoria</label>
+      <select id="ceCategoria"></select>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCancelarContaEdit">Cancelar</button>
+      <button class="btn primary" id="btnSalvarContaEdit">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetEscolha">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="escTitulo">Escolha</h3>
+    <p class="sheet-sub" id="escSub"></p>
+    <div id="escOpcoes" class="esc-opcoes"></div>
+    <button class="btn ghost" id="btnEscCancelar" style="margin-top:12px">Cancelar</button>
   </div>
 </div>
 
@@ -1572,6 +1647,10 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
       <button type="button" class="active in" data-tipo="entrada">Entrada</button>
       <button type="button" data-tipo="saida">Saída</button>
     </div>
+    <div class="seg" id="movPagoSeg">
+      <button type="button" class="active" data-pago="1" id="movPagoSim">Já foi recebido</button>
+      <button type="button" data-pago="0">Provisionar</button>
+    </div>
     <div class="field">
       <label>Descrição</label>
       <input type="text" id="movDescricao" placeholder="Ex: Compra de materiais, despesa com transporte...">
@@ -1586,7 +1665,7 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
         <input data-moeda="1" inputmode="decimal" type="text" id="movValor">
       </div>
       <div class="field">
-        <label>Data</label>
+        <label id="movDataLabel">Data</label>
         <input type="date" id="movData">
       </div>
     </div>
@@ -1782,6 +1861,7 @@ function contaSaldo(contaId){
   if(!conta) return 0;
   let saldo = Number(conta.saldoInicial||0);
   state.movimentacoes.forEach(function(m){
+    if(m.pago===false) return;   // provisionado ainda não mexe no saldo
     if(m.tipo==='entrada' && m.contaId===contaId) saldo += Number(m.valor||0);
     else if(m.tipo==='saida' && m.contaId===contaId) saldo -= Number(m.valor||0);
     else if(m.tipo==='transferencia'){
@@ -1829,7 +1909,7 @@ function garantirContaPadrao(){
 
 /* ---------------- MIGRAÇÃO SEGURA DOS DADOS ----------------
    Só ACRESCENTA campos que faltam. Nunca apaga registros nem troca valores existentes. */
-const VERSAO_DADOS = 3;
+const VERSAO_DADOS = 4;
 const CATEGORIAS_SERVICO_PADRAO = [
   {id:'csv-cabelo', nome:'Cabelo'}, {id:'csv-barba', nome:'Barba'}, {id:'csv-estetica', nome:'Estética'},
   {id:'csv-unhas', nome:'Unhas'}, {id:'csv-massagem', nome:'Massagem'}, {id:'csv-consultoria', nome:'Consultoria'},
@@ -1896,6 +1976,9 @@ function migrarDados(){
     if(!Array.isArray(t.pagamentos)) t.pagamentos = [];
   });
   state.contasPagar.forEach(function(c){ if(!c.status) c.status = 'pendente'; });
+  state.movimentacoes.forEach(function(m){
+    if(m.tipo!=='transferencia' && m.pago===undefined) m.pago = true;   // tudo que já existia continua realizado
+  });
   state.categoriasServico.forEach(function(c){ if(c.ativo===undefined) c.ativo = true; });
   state.servicos.forEach(function(sv){
     if(sv.categoriaId===undefined) sv.categoriaId = null;
@@ -2076,7 +2159,7 @@ document.addEventListener('click', function(e){
   if(!alvo) return;
   if(alvo.dataset.filtro==='pendentes'){ vendasFiltro='tudo'; vendasStatus='pendentes'; }
   if(alvo.dataset.sub) servicosTab = alvo.dataset.sub;
-  if(alvo.dataset.caixaApagar){ caixaTipo = 'apagar'; caixaFiltro = 'tudo'; }
+  if(alvo.dataset.caixaApagar){ caixaTipo = 'saida'; caixaVer = 'previstos'; caixaFiltro = 'tudo'; }
   switchView(alvo.dataset.ir);
 });
 function openFicha(clienteId){
@@ -2157,24 +2240,6 @@ function renderDashboard(){
   const clientesAtrasoIds = Object.keys(porCliente);
   document.getElementById('kpiInadim').textContent = fmtMoney(totalAtraso);
   document.getElementById('kpiInadimSub').textContent = clientesAtrasoIds.length+' cliente(s) em atraso';
-
-  const porCat = {};
-  movMes.filter(function(m){return m.tipo==='saida';}).forEach(function(m){ const k = m.categoriaId||''; porCat[k] = (porCat[k]||0) + Number(m.valor||0); });
-  const catIds = Object.keys(porCat).sort(function(a,b){return porCat[b]-porCat[a];});
-  const boxCat = document.getElementById('dashCategorias');
-  const totCat = document.getElementById('dashCatTotal');
-  if(totCat){ totCat.textContent = saidasMes ? fmtMoney(saidasMes) : ''; }
-  if(catIds.length===0){
-    boxCat.innerHTML = '<div class="empty" style="padding:20px">Nenhuma saída lançada neste mês.</div>';
-  } else {
-    const maiorCat = Math.max.apply(null, catIds.map(function(k){ return porCat[k]; }));
-    boxCat.innerHTML = catIds.map(function(k){
-      const pct = saidasMes ? Math.round(porCat[k]/saidasMes*100) : 0;
-      const larg = maiorCat ? Math.max(4, Math.round(porCat[k]/maiorCat*100)) : 0;
-      return '<div class="cat-row"><div class="top"><span>'+esc(catNome(k))+'</span><span><b>'+fmtMoney(porCat[k])+'</b> · '+pct+'%</span></div>'
-        +'<div class="bar"><span style="width:'+larg+'%"></span></div></div>';
-    }).join('');
-  }
 
   renderDashboardExtras();
   const box = document.getElementById('dashInadim');
@@ -2299,8 +2364,12 @@ function renderVendas(){
     fecha();
   };
   document.querySelectorAll('#caixaSeg button').forEach(function(b){
-    b.onclick = function(){ caixaTipo = b.dataset.cx; renderCaixa(); };
+    b.onclick = function(){ caixaTipo = b.dataset.cx; if(caixaVer==='transferencias') caixaVer='todos'; renderCaixa(); };
   });
+  const fcx = document.getElementById('caixaFiltroBtn');
+  if(fcx) fcx.onclick = function(){ abrirSeletor({id:'caixaVer', titulo:'Filtrar o caixa', vazio:'Filtrar', semBusca:true}); };
+  const selVer = document.getElementById('caixaVer');
+  if(selVer) selVer.onchange = function(){ caixaVer = selVer.value; renderCaixa(); };
   document.querySelectorAll('.mes-nav [data-mes]').forEach(function(b){
     b.onclick = function(){ andarMes(Number(b.dataset.mes)); };
   });
@@ -2326,7 +2395,8 @@ function renderVendas(){
   if(bc) bc.addEventListener('input', function(){ caixaBusca = bc.value.trim(); renderCaixa(); });
 })();
 document.getElementById('caixaPeriodoBtn').onclick = function(){ abrirPeriodo('caixa'); };
-let caixaTipo = 'todos';
+let caixaTipo = 'entrada';
+let caixaVer = 'todos';
 let caixaConta = '';
 const periodos = {caixa:{de:'', ate:''}, vendas:{de:'', ate:''}};
 let periodoAlvo = 'caixa';
@@ -2472,25 +2542,10 @@ function movDaBusca(m){
     m.tipo==='transferencia' ? contaNome(m.contaOrigemId)+' '+contaNome(m.contaDestinoId) : ''].join(' ');
   return semAcento(alvo).indexOf(semAcento(caixaBusca))>=0;
 }
-function previstosDoMes(mes){
-  const rec = state.titulos.filter(function(t){ return t.status!=='pago' && String(t.vencimento||'').slice(0,7)===mes; })
-    .map(function(t){ return {data:t.vencimento, tipo:'entrada', titulo:t.descricao, sub:(t.clienteId?clienteNome(t.clienteId):'Venda avulsa'), valor:saldoTitulo(t), id:t.id, kind:'titulo'}; });
-  const pag = state.contasPagar.filter(function(c){ return c.status!=='pago' && String(c.vencimento||'').slice(0,7)===mes; })
-    .map(function(c){ return {data:c.vencimento, tipo:'saida', titulo:c.descricao, sub:'Conta a pagar', valor:Number(c.valor||0), id:c.id, kind:'conta'}; });
-  return rec.concat(pag).sort(function(a,b){ return a.data.localeCompare(b.data); });
-}
-function cardPrevisto(p){
-  const entrada = p.tipo==='entrada';
-  return '<div class="mov previsto" data-prev="'+p.kind+':'+p.id+'">'
-    +'<span class="mv-ic '+(entrada?'in':'out')+'">'+(entrada?'↑':'↓')+'</span>'
-    +'<div class="mv-tx"><div class="mv-ti">'+esc(p.titulo)+'</div><div class="mv-me">'+esc(p.sub)+' · previsto</div></div>'
-    +'<div class="mv-vl '+(entrada?'in':'out')+'">'+(entrada?'+ ':'- ')+fmtMoney(p.valor)+'</div></div>';
-}
 function caberTexto(el, maxPx, minPx){
   if(!el) return;
   el.style.fontSize = '';
-  let t = maxPx;
-  let guarda = 0;
+  let t = maxPx, guarda = 0;
   while(el.scrollWidth > el.clientWidth && t > minPx && guarda < 60){
     t -= 0.5; guarda++;
     el.style.fontSize = t+'px';
@@ -2506,66 +2561,215 @@ function mostrarBuscaCaixa(ver){
   const campo = document.getElementById('buscaCaixa');
   if(campo && campo.parentNode) campo.parentNode.style.display = ver ? '' : 'none';
 }
-function renderPrevisao(box){
-  const mes = mesDoCaixa();
-  mostrarBuscaCaixa(false);
-  const todosItens = previstosDoMes(mes);
-  const itens = caixaTipo==='todos' ? todosItens : todosItens.filter(function(p){ return p.tipo===caixaTipo; });
-  const receber = todosItens.filter(function(p){return p.tipo==='entrada';}).reduce(function(s,p){return s+Number(p.valor||0);},0);
-  const pagar = todosItens.filter(function(p){return p.tipo==='saida';}).reduce(function(s,p){return s+Number(p.valor||0);},0);
-  const saldo = receber - pagar;
-  document.getElementById('caixaAlerta').innerHTML =
-    '<div class="caixa-alerta previsao"><span class="al-ic">🔮</span><span class="al-tx"><b>Mês futuro</b>'
-    +'<small>Ainda não houve movimento. Estes são os valores previstos.</small></span></div>';
-  document.getElementById('caixaResumo').innerHTML =
-    '<div class="ck in"><span class="ck-lb">A receber</span><b class="ck-vl">'+fmtMoney(receber)+'</b></div>'
-    +'<div class="ck out"><span class="ck-lb">A pagar</span><b class="ck-vl">'+fmtMoney(pagar)+'</b></div>'
-    +'<div class="ck res"><span class="ck-lb">Previsto</span><b class="ck-vl '+(saldo<0?'neg':'pos')+'">'+(saldo<0?'- ':'')+fmtMoney(Math.abs(saldo))+'</b></div>';
-  ajustarValores();
-  if(itens.length===0){
-    box.innerHTML = '<div class="empty"><div class="display">Nada previsto para '+nomeMes(mes)+'</div>Cobranças a vencer e parcelas de compras aparecem aqui.</div>';
-    return;
-  }
-  const dias = [];
-  itens.forEach(function(p){
-    let g = dias[dias.length-1];
-    if(!g || g.data!==p.data){ g = {data:p.data, itens:[]}; dias.push(g); }
-    g.itens.push(p);
+function itensDoCaixa(){
+  const lista = [];
+  state.movimentacoes.forEach(function(m){
+    if(m.tipo==='transferencia'){
+      lista.push({fonte:'mov', tipo:'transferencia', data:m.data, previsto:false, valor:Number(m.valor||0),
+        titulo: contaNome(m.contaOrigemId)+' → '+contaNome(m.contaDestinoId),
+        sub: m.descricao || 'Transferência entre contas', chave:'mov:'+m.id, id:m.id, ref:m, editavel:false});
+      return;
+    }
+    lista.push({fonte:'mov', tipo:m.tipo, data:m.data, previsto:m.pago===false, valor:Number(m.valor||0),
+      titulo:m.descricao, sub: contaNome(m.contaId)+' · '+catNome(m.categoriaId), contaId:m.contaId,
+      chave:'mov:'+m.id, id:m.id, ref:m, editavel: m.origem==='manual'});
   });
-  box.innerHTML = dias.map(function(g){
-    return '<div class="dia-grupo"><div class="dia-head"><span>'+rotuloDia(g.data)+'</span></div>'
-      + g.itens.map(cardPrevisto).join('') + '</div>';
+  state.titulos.forEach(function(t){
+    if(t.status==='pago') return;
+    lista.push({fonte:'titulo', tipo:'entrada', data:t.vencimento, previsto:true, valor:saldoTitulo(t),
+      titulo:t.descricao, sub:(t.clienteId ? clienteNome(t.clienteId) : 'Venda avulsa'),
+      chave:'titulo:'+t.id, id:t.id, ref:t, editavel:true});
+  });
+  state.contasPagar.forEach(function(c){
+    if(c.status==='pago') return;
+    lista.push({fonte:'conta', tipo:'saida', data:c.vencimento, previsto:true, valor:Number(c.valor||0),
+      titulo:c.descricao, sub:(c.fornecedor ? esc(c.fornecedor)+' · ' : '')+catNome(c.categoriaId),
+      chave:'conta:'+c.id, id:c.id, ref:c, editavel:true});
+  });
+  return lista;
+}
+function itemDoPeriodo(it){
+  const hoje = todayISO();
+  if(caixaFiltro==='hoje') return it.data===hoje;
+  if(caixaFiltro==='mes') return String(it.data).slice(0,7)===mesDoCaixa();
+  if(caixaFiltro==='periodo') return dentroDoPeriodo('caixa', it.data);
+  return true;
+}
+function itemDaConta(it){
+  if(!caixaConta) return true;
+  if(it.tipo==='transferencia') return it.ref.contaOrigemId===caixaConta || it.ref.contaDestinoId===caixaConta;
+  if(it.fonte!=='mov') return false;           // previsto de venda/compra ainda não tem conta
+  return it.contaId===caixaConta;
+}
+function itemDaBusca(it){
+  if(!caixaBusca) return true;
+  return semAcento([it.titulo, it.sub].join(' ')).indexOf(semAcento(caixaBusca))>=0;
+}
+function badgePrevisto(it){
+  const dias = diffDias(it.data);
+  if(dias>0) return '<span class="badge late">'+dias+'d atraso</span>';
+  if(dias===0) return '<span class="badge today">'+(it.tipo==='entrada'?'Recebe hoje':'Vence hoje')+'</span>';
+  return '<span class="badge pending">'+(it.tipo==='entrada'?'A receber':'A pagar')+'</span>';
+}
+function cardItemCaixa(it){
+  const modo = selModo.caixa, marcado = modo && selMarcado('caixa', it.chave);
+  const entrada = it.tipo==='entrada';
+  const cls = it.tipo==='transferencia' ? 'tr' : (entrada ? 'in' : 'out');
+  const ic = it.tipo==='transferencia' ? '⇄' : (entrada ? '↑' : '↓');
+  const valor = it.tipo==='transferencia'
+    ? '<div class="mv-vl">'+fmtMoney(it.valor)+'</div>'
+    : '<div class="mv-vl '+cls+'">'+(entrada?'+ ':'- ')+fmtMoney(it.valor)+'</div>';
+  const acaoPagar = it.previsto
+    ? '<div class="action-row"><button class="chip-btn on-success" data-quitar="'+it.chave+'">'+(entrada?'Marcar como recebido':'Marcar como pago')+'</button></div>'
+    : '';
+  const icones = it.editavel || it.fonte!=='mov'
+    ? '<div class="icon-row">'+iconEditBtn('data-edit-item="'+it.chave+'"')+iconDeleteBtn('data-del-item="'+it.chave+'"')+'</div>'
+    : (it.tipo==='transferencia' ? '<div class="icon-row">'+iconDeleteBtn('data-del-item="'+it.chave+'"')+'</div>' : '');
+  const temAcoes = !!icones && !modo;
+  return '<div class="mov'+(it.previsto?' previsto':'')+(temAcoes?' tem-acoes':'')+(modo?' selmodo':'')+(marcado?' marcado':'')+'" data-sel="'+it.chave+'">'
+    +(modo ? selCaixinha('caixa', it.chave) : '')
+    +'<span class="mv-ic '+cls+'">'+ic+'</span>'
+    +'<div class="mv-tx"><div class="mv-ti">'+esc(it.titulo)+'</div>'
+    +'<div class="mv-me">'+it.sub+(it.previsto ? ' · '+fmtDateBR(it.data) : '')+'</div>'
+    +(it.previsto ? '<div class="mv-bd">'+badgePrevisto(it)+'</div>' : '')
+    +(modo?'':acaoPagar)+(modo?'':icones)+'</div>'
+    +valor+'</div>';
+}
+function partesChave(chave){ const i = chave.indexOf(':'); return [chave.slice(0,i), chave.slice(i+1)]; }
+function askEscolha(titulo, sub, opcoes){
+  document.getElementById('escTitulo').textContent = titulo;
+  document.getElementById('escSub').textContent = sub || '';
+  const box = document.getElementById('escOpcoes');
+  box.innerHTML = opcoes.map(function(o,i){
+    return '<button type="button" class="esc-op'+(o.perigo?' perigo':'')+'" data-esc="'+i+'"><b>'+esc(o.titulo)+'</b>'+(o.sub?'<small>'+esc(o.sub)+'</small>':'')+'</button>';
   }).join('');
-  box.querySelectorAll('[data-prev]').forEach(function(el){
-    el.onclick = function(){
-      const p = el.dataset.prev.split(':'), id = p.slice(1).join(':');
-      if(p[0]==='conta') abrirPagarConta(id); else abrirPagamento(id);
+  box.querySelectorAll('[data-esc]').forEach(function(b){
+    b.onclick = function(){
+      document.getElementById('sheetEscolha').classList.remove('open');
+      const fn = opcoes[Number(b.dataset.esc)].acao;
+      if(fn) fn();
     };
   });
+  document.getElementById('sheetEscolha').classList.add('open');
 }
-function cardMovimentacao(m){
-  let ic, cls, titulo, meta, valor;
-  if(m.tipo==='transferencia'){
-    ic = '⇄'; cls = 'tr';
-    titulo = contaNome(m.contaOrigemId)+' → '+contaNome(m.contaDestinoId);
-    meta = m.descricao ? esc(m.descricao) : 'Transferência entre contas';
-    valor = '<div class="mv-vl">'+fmtMoney(m.valor)+'</div>';
-  } else {
-    const entrada = m.tipo==='entrada';
-    ic = entrada ? '↑' : '↓'; cls = entrada ? 'in' : 'out';
-    titulo = esc(m.descricao);
-    meta = contaNome(m.contaId)+' · '+catNome(m.categoriaId);
-    valor = '<div class="mv-vl '+cls+'">'+(entrada?'+ ':'- ')+fmtMoney(m.valor)+'</div>';
+document.getElementById('btnEscCancelar').onclick = function(){ document.getElementById('sheetEscolha').classList.remove('open'); };
+
+/* --- marcar lançamento provisionado como pago --- */
+function abrirQuitarMov(id){
+  const m = state.movimentacoes.find(function(x){return x.id===id;});
+  if(!m) return;
+  const entrada = m.tipo==='entrada';
+  document.getElementById('qtTitulo').textContent = entrada ? 'Marcar como recebido' : 'Marcar como pago';
+  document.getElementById('qtDataLabel').textContent = entrada ? 'Data do recebimento' : 'Data do pagamento';
+  document.getElementById('qtSub').textContent = m.descricao + ' · previsto para ' + fmtDateBR(m.data);
+  document.getElementById('qtId').value = id;
+  document.getElementById('qtData').value = todayISO();
+  porValor('qtValor', m.valor);
+  const sel = document.getElementById('qtConta');
+  sel.innerHTML = state.contas.map(function(k){ return '<option value="'+k.id+'">'+esc(k.nome)+'</option>'; }).join('');
+  sel.value = m.contaId || contaPadraoId() || '';
+  atualizarBotoesSeletor(); atualizarBotoesData();
+  document.getElementById('sheetQuitar').classList.add('open');
+}
+document.getElementById('btnCancelarQuitar').onclick = function(){ document.getElementById('sheetQuitar').classList.remove('open'); };
+document.getElementById('btnConfirmarQuitar').onclick = function(){
+  const id = document.getElementById('qtId').value;
+  const m = state.movimentacoes.find(function(x){return x.id===id;});
+  if(!m) return;
+  const valor = valorDo('qtValor') || Number(m.valor||0);
+  const data = document.getElementById('qtData').value || todayISO();
+  const contaId = document.getElementById('qtConta').value || m.contaId;
+  if(!contaId){ toast('Selecione a conta.'); return; }
+  setDoc('movimentacoes', id, {pago:true, pagoEm:data, data:data, valor:valor, contaId:contaId, vencimentoOriginal: m.vencimentoOriginal || m.data});
+  document.getElementById('sheetQuitar').classList.remove('open');
+  toast(m.tipo==='entrada' ? 'Recebimento registrado.' : 'Pagamento registrado.');
+};
+
+/* --- editar conta a pagar --- */
+function preencherCategoriasConta(sel){
+  const box = document.getElementById('ceCategoria');
+  const lista = (state.categorias||[]).filter(function(c){ return c.tipo==='saida'; }).sort(function(a,b){return a.nome.localeCompare(b.nome);});
+  box.innerHTML = '<option value="">Sem categoria</option>' + lista.map(function(c){ return '<option value="'+c.id+'">'+esc(c.nome)+'</option>'; }).join('');
+  box.value = sel || '';
+}
+function abrirEditarConta(id){
+  const c = state.contasPagar.find(function(x){return x.id===id;});
+  if(!c) return;
+  document.getElementById('ceId').value = id;
+  document.getElementById('ceDescricao').value = c.descricao || '';
+  document.getElementById('ceFornecedor').value = c.fornecedor || '';
+  porValor('ceValor', c.valor);
+  document.getElementById('ceVencimento').value = c.vencimento;
+  preencherCategoriasConta(c.categoriaId||'');
+  atualizarBotoesSeletor(); atualizarBotoesData();
+  document.getElementById('sheetContaEdit').classList.add('open');
+}
+document.getElementById('btnCancelarContaEdit').onclick = function(){ document.getElementById('sheetContaEdit').classList.remove('open'); };
+document.getElementById('btnSalvarContaEdit').onclick = function(){
+  const id = document.getElementById('ceId').value;
+  const descricao = document.getElementById('ceDescricao').value.trim();
+  const valor = valorDo('ceValor');
+  const vencimento = document.getElementById('ceVencimento').value;
+  if(!descricao || !valor){ toast('Preencha descrição e valor.'); return; }
+  if(!vencimento){ toast('Informe o vencimento.'); return; }
+  setDoc('contasPagar', id, {descricao:descricao, fornecedor:document.getElementById('ceFornecedor').value.trim(),
+    valor:valor, vencimento:vencimento, categoriaId:document.getElementById('ceCategoria').value});
+  document.getElementById('sheetContaEdit').classList.remove('open');
+  toast('Conta atualizada.');
+};
+
+/* --- ações dos itens do caixa --- */
+function quitarItem(chave){
+  const p = partesChave(chave);
+  if(p[0]==='conta') abrirPagarConta(p[1]);
+  else if(p[0]==='titulo') abrirPagamento(p[1]);
+  else abrirQuitarMov(p[1]);
+}
+function editarItemCaixa(chave){
+  const p = partesChave(chave);
+  if(p[0]==='conta') abrirEditarConta(p[1]);
+  else if(p[0]==='titulo') openEditarVendaSheet('titulo', p[1]);
+  else openMovimentacaoSheet(p[1]);
+}
+function excluirItemCaixa(chave){
+  const p = partesChave(chave), tipo = p[0], id = p[1];
+  if(tipo==='titulo'){
+    const t = state.titulos.find(function(x){return x.id===id;});
+    if(!t) return;
+    askConfirm('Esta cobrança faz parte de uma venda. Para apagá-la, exclua a venda — assim o histórico do cliente fica certo.',
+      function(){ vendasStatus='pendentes'; vendasFiltro='tudo'; switchView('vendas'); },
+      'Abrir em Vendas');
+    return;
   }
-  const acoes = m.tipo==='transferencia'
-    ? '<div class="icon-row">'+iconDeleteBtn('data-excluir-transf="'+m.id+'"')+'</div>'
-    : (m.origem==='manual' ? '<div class="icon-row">'+iconEditBtn('data-editar-mov="'+m.id+'"')+iconDeleteBtn('data-excluir-mov="'+m.id+'"')+'</div>' : '');
-  const modo = selModo.caixa;
-  return '<div class="mov'+(acoes&&!modo?' tem-acoes':'')+(modo?' selmodo':'')+(modo&&selMarcado('caixa',m.id)?' marcado':'')+'" data-sel="'+m.id+'">'
-    +(modo ? selCaixinha('caixa', m.id) : '')
-    +'<span class="mv-ic '+cls+'">'+ic+'</span>'
-    +'<div class="mv-tx"><div class="mv-ti">'+titulo+'</div><div class="mv-me">'+meta+'</div>'+(modo?'':acoes)+'</div>'
-    +valor+'</div>';
+  if(tipo==='conta'){
+    const c = state.contasPagar.find(function(x){return x.id===id;});
+    if(!c) return;
+    const futuras = c.compraId ? state.contasPagar.filter(function(x){
+      return x.compraId===c.compraId && x.status!=='pago' && x.id!==c.id && x.vencimento > c.vencimento;
+    }) : [];
+    if(futuras.length){
+      askEscolha('Excluir parcela', c.descricao+' · vence '+fmtDateBR(c.vencimento), [
+        {titulo:'Excluir só esta parcela', sub:'As outras '+futuras.length+' continuam', acao:function(){
+          deleteDoc('contasPagar', id); toast('Parcela excluída.');
+        }},
+        {titulo:'Excluir esta e as próximas', sub:(futuras.length+1)+' parcelas em aberto', perigo:true, acao:function(){
+          deleteDoc('contasPagar', id);
+          futuras.forEach(function(x){ deleteDoc('contasPagar', x.id); });
+          toast((futuras.length+1)+' parcelas excluídas.');
+        }}
+      ]);
+      return;
+    }
+    askConfirm('Excluir esta conta a pagar? Essa ação não pode ser desfeita.', function(){
+      deleteDoc('contasPagar', id); toast('Conta excluída.');
+    });
+    return;
+  }
+  const m = state.movimentacoes.find(function(x){return x.id===id;});
+  if(!m) return;
+  const texto = m.tipo==='transferencia' ? 'Excluir esta transferência? Essa ação não pode ser desfeita.'
+    : (m.pago===false ? 'Excluir este lançamento provisionado?' : 'Excluir este lançamento? Essa ação não pode ser desfeita.');
+  askConfirm(texto, function(){ deleteDoc('movimentacoes', id); toast('Lançamento excluído.'); });
 }
 function renderCaixa(){
   const box = document.getElementById('caixaList');
@@ -2573,22 +2777,23 @@ function renderCaixa(){
   atualizarBotaoPeriodo('caixa');
   mostrarBuscaCaixa(true);
   document.querySelectorAll('#caixaSeg button').forEach(function(b){
-    const alvo = (caixaTipo==='transferencia' ? 'todos' : caixaTipo);
-    b.classList.toggle('active', b.dataset.cx===alvo);
+    b.classList.toggle('active', b.dataset.cx===caixaTipo);
     b.classList.toggle('in', b.dataset.cx==='entrada');
     b.classList.toggle('out', b.dataset.cx==='saida');
   });
 
-  const movs = state.movimentacoes.filter(movDoPeriodo);
+  const entradaAba = caixaTipo==='entrada';
   const aPagar = state.contasPagar.filter(function(c){return c.status!=='pago';});
-  const totalAPagar = aPagar.reduce(function(s,c){return s+Number(c.valor||0);},0);
 
-  // --- aviso de contas a pagar ---
+  // --- aviso de contas vencidas / vencendo ---
   const hoje = todayISO(), limite = somarDias(hoje, 7);
   const proximas = aPagar.filter(function(c){ return c.vencimento <= limite; });
   const vencidas = aPagar.filter(function(c){ return c.vencimento < hoje; });
   const alerta = document.getElementById('caixaAlerta');
-  if(proximas.length && caixaTipo!=='apagar'){
+  if(mesFuturo()){
+    alerta.innerHTML = '<div class="caixa-alerta previsao"><span class="al-ic">🔮</span><span class="al-tx"><b>Mês futuro</b>'
+      +'<small>Ainda não houve movimento. Estes são os valores previstos.</small></span></div>';
+  } else if(proximas.length && caixaVer!=='previstos'){
     const foco = vencidas.length ? vencidas : proximas;
     const totalFoco = foco.reduce(function(s,c){return s+Number(c.valor||0);},0);
     const extra = vencidas.length && proximas.length>vencidas.length
@@ -2597,7 +2802,7 @@ function renderCaixa(){
       +'<span class="al-ic">'+(vencidas.length?'⚠️':'📌')+'</span>'
       +'<span class="al-tx"><b>'+(vencidas.length ? vencidas.length+' conta(s) vencida(s)' : proximas.length+' conta(s) vencem esta semana')+'</b>'
       +'<small>'+fmtMoney(totalFoco)+extra+'</small></span><span class="al-ch">›</span></button>';
-    document.getElementById('btnVerAPagar').onclick = function(){ caixaTipo = 'apagar'; renderCaixa(); };
+    document.getElementById('btnVerAPagar').onclick = function(){ caixaTipo='saida'; caixaVer='previstos'; caixaFiltro='tudo'; renderCaixa(); };
   } else { alerta.innerHTML = ''; }
 
   // --- saldo por conta ---
@@ -2617,73 +2822,66 @@ function renderCaixa(){
     b.onclick = function(){ caixaConta = b.dataset.contaFiltro; renderCaixa(); };
   });
 
-  if(mesFuturo() && caixaTipo!=='apagar'){
-    renderPrevisao(box);
-    selBarFora('caixa');
-    return;
-  }
+  // --- itens do período ---
+  const base = itensDoCaixa().filter(itemDoPeriodo).filter(itemDaConta);
+  const daAba = base.filter(function(it){ return it.tipo===caixaTipo; });
+  const realizados = daAba.filter(function(it){ return !it.previsto; });
+  const previstos = daAba.filter(function(it){ return it.previsto; });
+  const transf = base.filter(function(it){ return it.tipo==='transferencia'; });
 
-  // --- resumo do período ---
-  const doPeriodo = movs.filter(movDaConta);
-  const entradas = doPeriodo.filter(function(m){return m.tipo==='entrada';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
-  const saidas = doPeriodo.filter(function(m){return m.tipo==='saida';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
-  const sobrou = entradas - saidas;
+  const totalReal = realizados.reduce(function(s,it){ return s+it.valor; }, 0);
+  const totalPrev = previstos.reduce(function(s,it){ return s+it.valor; }, 0);
+  const entradasReal = base.filter(function(it){ return it.tipo==='entrada' && !it.previsto; }).reduce(function(s,it){ return s+it.valor; }, 0);
+  const saidasReal = base.filter(function(it){ return it.tipo==='saida' && !it.previsto; }).reduce(function(s,it){ return s+it.valor; }, 0);
+  const sobrou = entradasReal - saidasReal;
   document.getElementById('caixaResumo').innerHTML =
-    '<div class="ck in"><span class="ck-lb">Entradas</span><b class="ck-vl">'+fmtMoney(entradas)+'</b></div>'
-    +'<div class="ck out"><span class="ck-lb">Saídas</span><b class="ck-vl">'+fmtMoney(saidas)+'</b></div>'
+    '<div class="ck '+(entradaAba?'in':'out')+'"><span class="ck-lb">'+(entradaAba?'Recebido':'Pago')+'</span><b class="ck-vl">'+fmtMoney(totalReal)+'</b></div>'
+    +'<div class="ck"><span class="ck-lb">'+(entradaAba?'A receber':'A pagar')+'</span><b class="ck-vl '+(totalPrev?'warn':'')+'">'+fmtMoney(totalPrev)+'</b></div>'
     +'<div class="ck res"><span class="ck-lb">Sobrou</span><b class="ck-vl '+(sobrou<0?'neg':'pos')+'">'+(sobrou<0?'- ':'')+fmtMoney(Math.abs(sobrou))+'</b></div>';
   ajustarValores();
 
-  if(caixaTipo==='apagar'){
-    const hojeAP = todayISO();
-    const vencidasAP = aPagar.filter(function(c){ return c.vencimento < hojeAP; }).reduce(function(s,c){ return s+Number(c.valor||0); }, 0);
-    const pagasMes = state.contasPagar.filter(function(c){ return c.status==='pago' && String(c.pagoEm||c.vencimento).slice(0,7)===mesDoCaixa(); })
-      .reduce(function(s,c){ return s+Number(c.valor||0); }, 0);
-    document.getElementById('caixaResumo').innerHTML =
-      '<div class="ck out"><span class="ck-lb">Em aberto</span><b class="ck-vl">'+fmtMoney(totalAPagar)+'</b></div>'
-      +'<div class="ck"><span class="ck-lb">Vencidas</span><b class="ck-vl '+(vencidasAP?'neg':'')+'">'+fmtMoney(vencidasAP)+'</b></div>'
-      +'<div class="ck"><span class="ck-lb">Pagas no mês</span><b class="ck-vl pos">'+fmtMoney(pagasMes)+'</b></div>';
-    ajustarValores();
-    const lista = state.contasPagar.slice().sort(function(a,b){ return (a.status==='pago')-(b.status==='pago') || a.vencimento.localeCompare(b.vencimento); });
-    box.innerHTML = lista.length
-      ? '<div class="rec-group" style="margin-bottom:12px"><div class="rec-head" style="--c:var(--warn)"><span><i></i>Em aberto · '+aPagar.length+'</span><b>'+fmtMoney(totalAPagar)+'</b></div></div>'
-        + lista.map(cardContaPagar).join('')
-      : '<div class="empty"><div class="display">Nenhuma conta a pagar</div>Toque no + e escolha "Compra parcelada" para lançar uma compra.</div>';
-    ligarAcoesContaPagar(box);
-    selBarFora('caixa');
-    return;
-  }
+  // --- filtro ---
+  const opcoes = [['todos','Tudo ('+daAba.length+')'],
+    ['realizados',(entradaAba?'Recebidas':'Pagas')+' ('+realizados.length+')'],
+    ['previstos',(entradaAba?'A receber':'A pagar')+' ('+previstos.length+')'],
+    ['transferencias','Transferências ('+transf.length+')']];
+  const sel = document.getElementById('caixaVer');
+  sel.innerHTML = opcoes.map(function(o){ return '<option value="'+o[0]+'">'+o[1]+'</option>'; }).join('');
+  sel.value = caixaVer;
+  const rotulos = {todos:'Filtrar', realizados:(entradaAba?'Recebidas':'Pagas'), previstos:(entradaAba?'A receber':'A pagar'), transferencias:'Transferências'};
+  document.getElementById('caixaVerLabel').textContent = rotulos[caixaVer] || 'Filtrar';
+  document.getElementById('caixaFiltroBtn').classList.toggle('on', caixaVer!=='todos');
 
-  let list = doPeriodo.slice();
-  if(caixaTipo!=='todos') list = list.filter(function(m){ return m.tipo===caixaTipo; });
-  list = list.filter(movDaBusca);
-  list.sort(function(a,b){ return b.data.localeCompare(a.data) || (b.criadoEm||0)-(a.criadoEm||0); });
+  let list = caixaVer==='transferencias' ? transf
+    : (caixaVer==='realizados' ? realizados : (caixaVer==='previstos' ? previstos : daAba));
+  list = list.filter(itemDaBusca);
+  list.sort(function(a,b){ return b.data.localeCompare(a.data) || (b.ref.criadoEm||0)-(a.ref.criadoEm||0); });
+
   if(list.length===0){
     box.innerHTML = caixaBusca
       ? '<div class="empty"><div class="display">Nada encontrado</div>Nenhum lançamento com "'+esc(caixaBusca)+'".</div>'
-      : '<div class="empty"><div class="display">Nenhuma movimentação</div>Toque no + para lançar uma entrada, uma saída ou uma compra parcelada.</div>';
+      : '<div class="empty"><div class="display">Nada por aqui</div>Toque no + para lançar '+(entradaAba?'uma entrada':'uma saída')+' — pode ser já paga ou provisionada.</div>';
     selBarFora('caixa');
     return;
   }
 
-  // --- agrupado por dia ---
   const dias = [];
-  list.forEach(function(m){
+  list.forEach(function(it){
     let g = dias[dias.length-1];
-    if(!g || g.data!==m.data){ g = {data:m.data, itens:[]}; dias.push(g); }
-    g.itens.push(m);
+    if(!g || g.data!==it.data){ g = {data:it.data, itens:[]}; dias.push(g); }
+    g.itens.push(it);
   });
   box.innerHTML = dias.map(function(g){
     return '<div class="dia-grupo"><div class="dia-head"><span>'+rotuloDia(g.data)+'</span></div>'
-      + g.itens.map(cardMovimentacao).join('') + '</div>';
+      + g.itens.map(cardItemCaixa).join('') + '</div>';
   }).join('');
 
   if(selModo.caixa){
-    const marcados = list.filter(function(m){ return selMarcado('caixa', m.id); });
-    const entSel = marcados.filter(function(m){return m.tipo==='entrada';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
-    const saiSel = marcados.filter(function(m){return m.tipo==='saida';}).reduce(function(s,m){return s+Number(m.valor||0);},0);
+    const marcados = list.filter(function(it){ return selMarcado('caixa', it.chave); });
+    const entSel = marcados.filter(function(it){return it.tipo==='entrada';}).reduce(function(s,it){return s+it.valor;},0);
+    const saiSel = marcados.filter(function(it){return it.tipo==='saida';}).reduce(function(s,it){return s+it.valor;},0);
     selBarPara('caixa', marcados.length, somaSelHTML(entSel, saiSel),
-      function(){ const todos = marcados.length===list.length; selLimpar('caixa'); if(!todos) list.forEach(function(m){ selIds.caixa[m.id]=true; }); renderCaixa(); },
+      function(){ const todos = marcados.length===list.length; selLimpar('caixa'); if(!todos) list.forEach(function(it){ selIds.caixa[it.chave]=true; }); renderCaixa(); },
       function(){ selLimpar('caixa'); renderCaixa(); });
     box.querySelectorAll('[data-sel]').forEach(function(el){
       el.onclick = function(){ selAlternar('caixa', el.dataset.sel); renderCaixa(); };
@@ -2691,34 +2889,23 @@ function renderCaixa(){
     return;
   }
   selBarFora('caixa');
+
   box.querySelectorAll('.mov.tem-acoes').forEach(function(el){
     el.onclick = function(ev){
-      if(ev.target.closest('.icon-row')) return;
+      if(ev.target.closest('.icon-row') || ev.target.closest('.action-row')) return;
       const aberto = el.classList.contains('aberto');
       box.querySelectorAll('.mov.aberto').forEach(function(o){ o.classList.remove('aberto'); });
       if(!aberto) el.classList.add('aberto');
     };
   });
-  box.querySelectorAll('[data-editar-mov]').forEach(function(el){
-    el.onclick = function(){ openMovimentacaoSheet(el.dataset.editarMov); };
+  box.querySelectorAll('[data-quitar]').forEach(function(el){
+    el.onclick = function(ev){ ev.stopPropagation(); quitarItem(el.dataset.quitar); };
   });
-  box.querySelectorAll('[data-excluir-mov]').forEach(function(el){
-    el.onclick = function(){
-      const id = el.dataset.excluirMov;
-      askConfirm('Excluir esta movimentação? Essa ação não pode ser desfeita.', function(){
-        deleteDoc('movimentacoes', id);
-        toast('Movimentação excluída.');
-      });
-    };
+  box.querySelectorAll('[data-edit-item]').forEach(function(el){
+    el.onclick = function(ev){ ev.stopPropagation(); editarItemCaixa(el.dataset.editItem); };
   });
-  box.querySelectorAll('[data-excluir-transf]').forEach(function(el){
-    el.onclick = function(){
-      const id = el.dataset.excluirTransf;
-      askConfirm('Excluir esta transferência? Essa ação não pode ser desfeita.', function(){
-        deleteDoc('movimentacoes', id);
-        toast('Transferência excluída.');
-      });
-    };
+  box.querySelectorAll('[data-del-item]').forEach(function(el){
+    el.onclick = function(ev){ ev.stopPropagation(); excluirItemCaixa(el.dataset.delItem); };
   });
 }
 
@@ -2737,13 +2924,27 @@ function ligarAcoesContaPagar(box){
 }
 const sheetMov = document.getElementById('sheetMovimentacao');
 let movTipoAtual = 'entrada';
+let movPagoAtual = true;
 document.querySelectorAll('#movSeg button').forEach(function(btn){
   btn.onclick = function(){
     movTipoAtual = btn.dataset.tipo;
     document.querySelectorAll('#movSeg button').forEach(function(b){ b.classList.remove('active','in','out'); });
     btn.classList.add('active', movTipoAtual==='entrada'?'in':'out');
     preencherCategoriasMov();
+    atualizarRotulosMov();
   };
+});
+function atualizarRotulosMov(){
+  const sim = document.getElementById('movPagoSim');
+  if(sim) sim.textContent = movTipoAtual==='entrada' ? 'Já foi recebido' : 'Já foi pago';
+  const lbl = document.getElementById('movDataLabel');
+  if(lbl) lbl.textContent = movPagoAtual ? 'Data' : 'Vencimento';
+  document.querySelectorAll('#movPagoSeg button').forEach(function(b){
+    b.classList.toggle('active', (b.dataset.pago==='1')===movPagoAtual);
+  });
+}
+document.querySelectorAll('#movPagoSeg button').forEach(function(btn){
+  btn.onclick = function(){ movPagoAtual = btn.dataset.pago==='1'; atualizarRotulosMov(); };
 });
 function preencherCategoriasMov(selecionada){
   const sel = document.getElementById('movCategoria');
@@ -2761,6 +2962,7 @@ function openMovimentacaoSheet(id){
 
   const m = editando ? state.movimentacoes.find(function(x){return x.id===id;}) : null;
   movTipoAtual = m ? m.tipo : 'entrada';
+  movPagoAtual = m ? m.pago!==false : true;
   document.querySelectorAll('#movSeg button').forEach(function(b){ b.classList.remove('active','in','out'); });
   document.querySelector('#movSeg button[data-tipo="'+movTipoAtual+'"]').classList.add('active', movTipoAtual==='entrada'?'in':'out');
   document.getElementById('movDescricao').value = m ? m.descricao : '';
@@ -2768,6 +2970,7 @@ function openMovimentacaoSheet(id){
   document.getElementById('movData').value = m ? m.data : todayISO();
   document.getElementById('movConta').value = m ? m.contaId : contaPadraoId();
   preencherCategoriasMov(m ? (m.categoriaId||'') : '');
+  atualizarRotulosMov();
   atualizarBotoesSeletor();
   sheetMov.classList.add('open');
 }
@@ -2782,11 +2985,11 @@ document.getElementById('btnSalvarMov').onclick = function(){
   if(!descricao || !valor){ toast('Preencha descrição e valor.'); return; }
   if(!contaId){ toast('Selecione a conta.'); return; }
   if(id){
-    setDoc('movimentacoes', id, {tipo:movTipoAtual, descricao:descricao, valor:valor, data:data, contaId:contaId, categoriaId:categoriaId});
-    toast('Movimentação atualizada.');
+    setDoc('movimentacoes', id, {tipo:movTipoAtual, descricao:descricao, valor:valor, data:data, contaId:contaId, categoriaId:categoriaId, pago:movPagoAtual});
+    toast('Lançamento atualizado.');
   } else {
-    addDoc('movimentacoes', {tipo:movTipoAtual, descricao:descricao, valor:valor, data:data, contaId:contaId, categoriaId:categoriaId, origem:'manual'});
-    toast('Movimentação lançada.');
+    addDoc('movimentacoes', {tipo:movTipoAtual, descricao:descricao, valor:valor, data:data, contaId:contaId, categoriaId:categoriaId, origem:'manual', pago:movPagoAtual});
+    toast(movPagoAtual ? 'Lançamento registrado.' : 'Lançamento provisionado.');
   }
   sheetMov.classList.remove('open');
 };
@@ -3741,11 +3944,7 @@ function renderDashboardExtras(){
   document.getElementById('kpiFatDiaSub').textContent = vDia.length+' venda(s)';
   document.getElementById('kpiFatMes').textContent = fmtMoney(vMes.reduce(function(s,v){return s+Number(v.valor||0);},0));
   document.getElementById('kpiFatMesSub').textContent = vMes.length+' venda(s)';
-  document.getElementById('kpiClientes').textContent = state.clientes.length;
   const agHoje = agDoDia(hoje);
-  document.getElementById('kpiAgHoje').textContent = agHoje.filter(agAtivo).length;
-  const aPagarAbertas = state.contasPagar.filter(function(c){return c.status!=='pago';});
-  document.getElementById('kpiAPagar').textContent = fmtMoney(aPagarAbertas.reduce(function(s,c){return s+Number(c.valor||0);},0));
 
   const boxHoje = document.getElementById('dashAgendaHoje');
   boxHoje.innerHTML = agHoje.length ? agHoje.map(function(a){return cardAgendamento(a,false);}).join('') : '<div class="empty" style="padding:20px">Nenhum atendimento hoje.</div>';
@@ -3756,19 +3955,6 @@ function renderDashboardExtras(){
   boxProx.innerHTML = prox.length ? prox.map(function(a){return cardAgendamento(a,true);}).join('') : '<div class="empty" style="padding:20px">Sem próximos agendamentos.</div>';
   ligarCardsAg(boxProx);
 
-  const pend = state.titulos.filter(function(t){return t.status!=='pago' && saldoTitulo(t)>0;}).sort(function(a,b){return a.vencimento.localeCompare(b.vencimento);});
-  const grupos = [['vencido','Vencidos'],['hoje','Vencem hoje'],['avencer','A vencer']];
-  const boxRec = document.getElementById('dashRecebimentos');
-  const html = grupos.map(function(g){
-    const lista = pend.filter(function(t){return statusTitulo(t)===g[0];});
-    if(!lista.length) return '';
-    const total = lista.reduce(function(s,t){return s+saldoTitulo(t);},0);
-    return '<div class="rec-group"><div class="rec-head" style="--c:'+corTitulo(lista[0])+'"><span><i></i>'+g[1]+' · '+lista.length+'</span><b>'+fmtMoney(total)+'</b></div>'
-      + lista.slice(0,4).map(function(t){ return '<div class="rec-row" data-cliente="'+t.clienteId+'"><span>'+esc(clienteNome(t.clienteId))+'<small>'+esc(t.descricao)+' · '+fmtDateBR(t.vencimento)+'</small></span><b>'+fmtMoney(saldoTitulo(t))+'</b></div>'; }).join('')
-      + (lista.length>4 ? '<div class="rec-more">+ '+(lista.length-4)+' outro(s)</div>' : '') + '</div>';
-  }).join('');
-  boxRec.innerHTML = html || '<div class="empty" style="padding:20px">Nenhum recebimento pendente. 🎉</div>';
-  boxRec.querySelectorAll('[data-cliente]').forEach(function(el){ el.onclick = function(){ openFicha(el.dataset.cliente); }; });
 }
 
 /* ================= PACOTES E MENSALIDADES (todos os clientes) ================= */
@@ -4150,7 +4336,7 @@ document.querySelectorAll('#sheetCaixaRapido [data-caixa-acao]').forEach(functio
     if(a==='mov') openMovimentacaoSheet();
     else if(a==='compra') abrirCompra();
     else if(a==='transf') document.getElementById('btnTransferir').click();
-    else { caixaTipo = 'apagar'; renderCaixa(); }
+    else { caixaTipo = 'saida'; caixaVer = 'previstos'; renderCaixa(); }
   };
 });
 
@@ -4218,7 +4404,7 @@ document.getElementById('btnSalvarCompra').onclick = function(){
       categoriaId: document.getElementById('cpCategoria').value || null, valor: parcela, vencimento: proximoVencimento(venc, i), status:'pendente', parcela:i+1, totalParcelas:n});
   }
   sheetCompra.classList.remove('open');
-  caixaTipo = 'apagar'; caixaFiltro = 'tudo';
+  caixaTipo = 'saida'; caixaVer = 'previstos'; caixaFiltro = 'tudo';
   switchView('caixa');
   toast(n>1 ? n+' parcelas criadas em Contas a pagar.' : 'Conta a pagar criada.');
 };
