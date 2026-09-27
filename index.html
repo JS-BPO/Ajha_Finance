@@ -2572,7 +2572,7 @@ function itensDoCaixa(){
     }
     lista.push({fonte:'mov', tipo:m.tipo, data:m.data, previsto:m.pago===false, valor:Number(m.valor||0),
       titulo:m.descricao, sub: contaNome(m.contaId)+' · '+catNome(m.categoriaId), contaId:m.contaId,
-      chave:'mov:'+m.id, id:m.id, ref:m, editavel: m.origem==='manual'});
+      chave:'mov:'+m.id, id:m.id, ref:m, editavel: m.origem==='manual' || !!m.contaPagarId});
   });
   state.titulos.forEach(function(t){
     if(t.status==='pago') return;
@@ -2622,9 +2622,9 @@ function cardItemCaixa(it){
   const acaoPagar = it.previsto
     ? '<div class="action-row"><button class="chip-btn on-success" data-quitar="'+it.chave+'">'+(entrada?'Marcar como recebido':'Marcar como pago')+'</button></div>'
     : '';
-  const icones = it.editavel || it.fonte!=='mov'
-    ? '<div class="icon-row">'+iconEditBtn('data-edit-item="'+it.chave+'"')+iconDeleteBtn('data-del-item="'+it.chave+'"')+'</div>'
-    : (it.tipo==='transferencia' ? '<div class="icon-row">'+iconDeleteBtn('data-del-item="'+it.chave+'"')+'</div>' : '');
+  const icones = '<div class="icon-row">'
+    + (it.editavel ? iconEditBtn('data-edit-item="'+it.chave+'"') : '')
+    + iconDeleteBtn('data-del-item="'+it.chave+'"') + '</div>';
   const temAcoes = !!icones && !modo;
   return '<div class="mov'+(it.previsto?' previsto':'')+(temAcoes?' tem-acoes':'')+(modo?' selmodo':'')+(marcado?' marcado':'')+'" data-sel="'+it.chave+'">'
     +(modo ? selCaixinha('caixa', it.chave) : '')
@@ -2729,7 +2729,11 @@ function editarItemCaixa(chave){
   const p = partesChave(chave);
   if(p[0]==='conta') abrirEditarConta(p[1]);
   else if(p[0]==='titulo') openEditarVendaSheet('titulo', p[1]);
-  else openMovimentacaoSheet(p[1]);
+  else {
+    const m = state.movimentacoes.find(function(x){return x.id===p[1];});
+    if(m && m.contaPagarId) abrirEditarConta(m.contaPagarId);
+    else openMovimentacaoSheet(p[1]);
+  }
 }
 function excluirItemCaixa(chave){
   const p = partesChave(chave), tipo = p[0], id = p[1];
@@ -2767,8 +2771,48 @@ function excluirItemCaixa(chave){
   }
   const m = state.movimentacoes.find(function(x){return x.id===id;});
   if(!m) return;
+
+  // pagamento de uma parcela / conta a pagar
+  if(m.contaPagarId){
+    const c = state.contasPagar.find(function(x){return x.id===m.contaPagarId;});
+    const futuras = (c && c.compraId) ? state.contasPagar.filter(function(x){
+      return x.compraId===c.compraId && x.status!=='pago' && x.id!==c.id && x.vencimento > c.vencimento;
+    }) : [];
+    const opcoes = [
+      {titulo:'Desfazer o pagamento', sub:'Volta para "A pagar" e sai do caixa', acao:function(){
+        deleteDoc('movimentacoes', id);
+        if(c) setDoc('contasPagar', c.id, {status:'pendente', pagoEm:'', movimentacaoId:'', valorPago:0});
+        toast('Pagamento desfeito. A parcela voltou para A pagar.');
+      }},
+      {titulo:'Excluir pagamento e parcela', sub:'Apaga também a parcela'+(c&&c.totalParcelas>1?' '+c.parcela+'/'+c.totalParcelas:''), perigo:true, acao:function(){
+        deleteDoc('movimentacoes', id);
+        if(c) deleteDoc('contasPagar', c.id);
+        toast('Pagamento e parcela excluídos.');
+      }}
+    ];
+    if(futuras.length){
+      opcoes.push({titulo:'Excluir esta e as próximas', sub:(futuras.length+1)+' parcelas (1 paga + '+futuras.length+' em aberto)', perigo:true, acao:function(){
+        deleteDoc('movimentacoes', id);
+        if(c) deleteDoc('contasPagar', c.id);
+        futuras.forEach(function(x){ deleteDoc('contasPagar', x.id); });
+        toast('Parcelas excluídas.');
+      }});
+    }
+    askEscolha('Parcela já paga', m.descricao+' · pago em '+fmtDateBR(m.data), opcoes);
+    return;
+  }
+
+  // entrada gerada por uma cobrança de venda
+  if(m.tituloId){
+    askConfirm('Este recebimento faz parte de uma venda. Para apagá-lo, exclua a venda — assim o histórico do cliente fica certo.',
+      function(){ vendasStatus='todos'; vendasFiltro='tudo'; switchView('vendas'); },
+      'Abrir em Vendas');
+    return;
+  }
+
   const texto = m.tipo==='transferencia' ? 'Excluir esta transferência? Essa ação não pode ser desfeita.'
-    : (m.pago===false ? 'Excluir este lançamento provisionado?' : 'Excluir este lançamento? Essa ação não pode ser desfeita.');
+    : (m.origem==='venda' ? 'Esta entrada é uma venda avulsa. Excluir aqui apaga a venda também. Continuar?'
+    : (m.pago===false ? 'Excluir este lançamento provisionado?' : 'Excluir este lançamento? Essa ação não pode ser desfeita.'));
   askConfirm(texto, function(){ deleteDoc('movimentacoes', id); toast('Lançamento excluído.'); });
 }
 function renderCaixa(){
