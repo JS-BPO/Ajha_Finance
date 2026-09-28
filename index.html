@@ -256,6 +256,12 @@ nav.bottomnav button.active{color:var(--primary);}
 .mn-seta:active{background:var(--surface-2);}
 .mn-label{flex:1; min-width:0; display:flex; align-items:center; justify-content:center; gap:5px; border:none; background:none; font-family:inherit; font-size:13px; font-weight:700; color:var(--text); cursor:pointer; padding:6px 2px;}
 .mn-label span:not(.caret){white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.cli-resumo{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px 14px; background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:13px 15px; margin-bottom:10px;}
+.cli-resumo.atraso{background:var(--danger-soft); border-color:transparent;}
+.cli-resumo > div{min-width:0;}
+.cli-resumo span{display:block; font-size:11px; font-weight:700; color:var(--muted);}
+.cli-resumo b{display:block; font-family:'Fraunces',serif; font-size:18px; font-weight:600; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.cli-resumo.atraso > div:first-child b{color:var(--danger);}
 .caixa-linha{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
 .caixa-linha .seg{flex:1; min-width:0; margin-bottom:0;}
 .caixa-linha .filter-btn{flex-shrink:0; padding:9px 12px;}
@@ -759,6 +765,12 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
 
     <section class="view" id="view-clientes">
       <div class="section-title" style="margin-top:4px">Clientes</div>
+      <div class="seg seg-caixa" id="clientesSeg">
+        <button type="button" class="active" data-cli="todos">Todos</button>
+        <button type="button" data-cli="atraso">Em atraso</button>
+        <button type="button" data-cli="aberto">A receber</button>
+      </div>
+      <div id="clientesResumo"></div>
       <div class="busca-fixa">
         <div class="field">
           <input type="search" id="buscaCliente" placeholder="Buscar cliente..." autocomplete="off">
@@ -3212,26 +3224,112 @@ function clienteEmAberto(clienteId){
 function clienteAtrasado(clienteId){
   return state.titulos.some(function(t){return t.clienteId===clienteId && t.status!=='pago' && saldoTitulo(t)>0 && diffDias(t.vencimento)>0;});
 }
+let clientesAba = 'todos';
+function titulosAbertos(clienteId){
+  return state.titulos.filter(function(t){ return t.clienteId===clienteId && t.status!=='pago' && saldoTitulo(t)>0; });
+}
+function titulosVencidos(clienteId){
+  return titulosAbertos(clienteId).filter(function(t){ return diffDias(t.vencimento)>0; });
+}
+function resumoCliente(clienteId){
+  const abertos = titulosAbertos(clienteId);
+  const vencidos = abertos.filter(function(t){ return diffDias(t.vencimento)>0; });
+  const totalAberto = abertos.reduce(function(s,t){ return s+saldoTitulo(t); }, 0);
+  const totalVencido = vencidos.reduce(function(s,t){ return s+saldoTitulo(t); }, 0);
+  const maiorAtraso = vencidos.reduce(function(m,t){ return Math.max(m, diffDias(t.vencimento)); }, 0);
+  const proximo = abertos.filter(function(t){ return diffDias(t.vencimento)<=0; })
+    .sort(function(a,b){ return a.vencimento.localeCompare(b.vencimento); })[0];
+  return {abertos:abertos, vencidos:vencidos, totalAberto:totalAberto, totalVencido:totalVencido, maiorAtraso:maiorAtraso, proximo:proximo};
+}
+function cobrarClienteWhats(clienteId, somenteVencidas){
+  const c = clienteById(clienteId);
+  if(!c) return;
+  const lista = (somenteVencidas ? titulosVencidos(clienteId) : titulosAbertos(clienteId))
+    .sort(function(a,b){ return a.vencimento.localeCompare(b.vencimento); });
+  if(lista.length===0){ toast('Nada em aberto para cobrar.'); return; }
+  if(lista.length===1){ cobrarWhatsApp(lista[0]); return; }
+  const fone = foneWhats(c.telefone);
+  const linhas = lista.map(function(t){
+    const venceu = diffDias(t.vencimento)>0 ? 'venceu ' : 'vence ';
+    return '• '+t.descricao+' — '+fmtMoney(saldoTitulo(t))+' ('+venceu+fmtDateBR(t.vencimento)+')';
+  }).join('\n');
+  const total = lista.reduce(function(s,t){ return s+saldoTitulo(t); }, 0);
+  const msg = preencherModelo(modeloMensagem('cobVarias'), dadosCobranca(c.id, {lista:linhas, total:fmtMoney(total)}));
+  const url = fone ? ('https://wa.me/'+fone+'?text='+encodeURIComponent(msg)) : ('https://wa.me/?text='+encodeURIComponent(msg));
+  window.open(url, '_blank');
+}
+document.querySelectorAll('#clientesSeg button').forEach(function(b){
+  b.onclick = function(){ clientesAba = b.dataset.cli; renderClientes(); };
+});
 function renderClientes(){
-  const busca = (document.getElementById('buscaCliente').value||'').toLowerCase();
-  const list = state.clientes
-    .filter(function(c){return c.nome.toLowerCase().includes(busca);})
-    .sort(function(a,b){return a.nome.localeCompare(b.nome);});
+  const busca = semAcento((document.getElementById('buscaCliente').value||''));
+  document.querySelectorAll('#clientesSeg button').forEach(function(b){ b.classList.toggle('active', b.dataset.cli===clientesAba); });
+
+  let list = state.clientes.filter(function(c){ return semAcento(c.nome).indexOf(busca)>=0; });
+  const dados = {};
+  list.forEach(function(c){ dados[c.id] = resumoCliente(c.id); });
+
+  if(clientesAba==='atraso') list = list.filter(function(c){ return dados[c.id].vencidos.length>0; });
+  else if(clientesAba==='aberto') list = list.filter(function(c){ return dados[c.id].abertos.length>0; });
+
+  if(clientesAba==='todos') list.sort(function(a,b){ return a.nome.localeCompare(b.nome); });
+  else list.sort(function(a,b){
+    const va = clientesAba==='atraso' ? dados[a.id].totalVencido : dados[a.id].totalAberto;
+    const vb = clientesAba==='atraso' ? dados[b.id].totalVencido : dados[b.id].totalAberto;
+    return vb-va || a.nome.localeCompare(b.nome);
+  });
+
+  const resumoBox = document.getElementById('clientesResumo');
+  if(clientesAba==='todos' || list.length===0){
+    resumoBox.innerHTML = '';
+  } else {
+    const soma = list.reduce(function(s,c){ return s + (clientesAba==='atraso' ? dados[c.id].totalVencido : dados[c.id].totalAberto); }, 0);
+    const qtd = list.reduce(function(s,c){ return s + (clientesAba==='atraso' ? dados[c.id].vencidos.length : dados[c.id].abertos.length); }, 0);
+    const pior = list.reduce(function(m,c){ return Math.max(m, dados[c.id].maiorAtraso); }, 0);
+    resumoBox.innerHTML = '<div class="cli-resumo'+(clientesAba==='atraso'?' atraso':'')+'">'
+      +'<div><span>'+(clientesAba==='atraso'?'Total em atraso':'Total a receber')+'</span><b>'+fmtMoney(soma)+'</b></div>'
+      +'<div><span>Clientes</span><b>'+list.length+'</b></div>'
+      +'<div><span>Cobranças</span><b>'+qtd+'</b></div>'
+      +(clientesAba==='atraso' && pior ? '<div><span>Maior atraso</span><b>'+pior+' dias</b></div>' : '')+'</div>';
+  }
+
   const box = document.getElementById('clientesList');
   if(list.length===0){
-    box.innerHTML = '<div class="empty"><div class="display">Nenhum cliente</div>Toque no + para cadastrar.</div>';
+    box.innerHTML = clientesAba==='atraso'
+      ? '<div class="empty"><div class="display">Tudo em dia 🎉</div>Nenhum cliente com pagamento atrasado.</div>'
+      : (clientesAba==='aberto'
+        ? '<div class="empty"><div class="display">Nada a receber</div>Nenhuma cobrança em aberto no momento.</div>'
+        : '<div class="empty"><div class="display">Nenhum cliente</div>Toque no + para cadastrar.</div>');
     return;
   }
+
   box.innerHTML = list.map(function(c){
-    const atrasado = clienteAtrasado(c.id);
-    const aberto = clienteEmAberto(c.id);
-    const badge = atrasado ? '<span class="badge late">Em atraso</span>' : (aberto>0 ? '<span class="badge pending">A receber</span>' : '<span class="badge ok">Em dia</span>');
+    const d = dados[c.id];
+    const atrasado = d.vencidos.length>0;
+    const badge = atrasado ? '<span class="badge late">'+d.maiorAtraso+'d atraso</span>'
+      : (d.totalAberto>0 ? '<span class="badge pending">A receber</span>' : '<span class="badge ok">Em dia</span>');
     const icones = iconEditBtn('data-editar-cliente="'+c.id+'"') + iconDeleteBtn('data-excluir-cliente="'+c.id+'"');
+    let meta, direita, acao = '';
+    if(clientesAba==='todos'){
+      meta = esc(c.telefone||'sem telefone');
+      direita = badge;
+    } else {
+      const qtd = clientesAba==='atraso' ? d.vencidos.length : d.abertos.length;
+      const valor = clientesAba==='atraso' ? d.totalVencido : d.totalAberto;
+      meta = qtd+' cobrança'+(qtd>1?'s':'')+(clientesAba==='atraso' ? ' vencida'+(qtd>1?'s':'') : ' em aberto')
+        + (clientesAba==='atraso' ? ' · '+d.maiorAtraso+' dias' : (d.proximo ? ' · vence '+fmtDateBR(d.proximo.vencimento) : ''));
+      direita = '<div class="right '+(clientesAba==='atraso'?'out':'')+'">'+fmtMoney(valor)+'</div>';
+      acao = '<div class="action-row"><button class="chip-btn" data-cobrar-cli="'+c.id+'">Cobrar no WhatsApp</button></div>';
+    }
     return '<div class="list-item clickable" data-id="'+c.id+'">'
-      +'<div class="stripe" style="background:'+(atrasado?'var(--danger)':'var(--primary)')+'"></div>'
-      +'<div class="main"><div class="title">'+c.nome+'</div><div class="meta">'+(c.telefone||'sem telefone')+'</div></div>'
-      +'<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;"><div class="right">'+badge+'</div><div class="icon-row" style="margin-top:0">'+icones+'</div></div></div>';
+      +'<div class="stripe" style="background:'+(atrasado?'var(--danger)':(d.totalAberto>0?'var(--warn)':'var(--primary)'))+'"></div>'
+      +'<div class="main"><div class="title">'+esc(c.nome)+'</div><div class="meta">'+meta+'</div>'+acao+'</div>'
+      +'<div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">'+direita
+      +'<div class="icon-row" style="margin-top:0">'+icones+'</div></div></div>';
   }).join('');
+  box.querySelectorAll('[data-cobrar-cli]').forEach(function(el){
+    el.onclick = function(e){ e.stopPropagation(); cobrarClienteWhats(el.dataset.cobrarCli, clientesAba==='atraso'); };
+  });
   box.querySelectorAll('.list-item').forEach(function(item){
     item.onclick = function(){ openFicha(item.dataset.id); };
   });
