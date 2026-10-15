@@ -352,6 +352,7 @@ nav.bottomnav button.active{color:var(--primary);}
 .mv-tx{flex:1; min-width:0;}
 .mv-ti{font-weight:600; font-size:14.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .mv-me{font-size:12px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.mv-me.fraca{font-size:11px; opacity:.8; margin-top:1px;}
 .mov .icon-row{display:none;}
 .mov.aberto .icon-row{display:flex;}
 .mov.aberto .mv-ti{white-space:normal;}
@@ -2573,6 +2574,12 @@ function mostrarBuscaCaixa(ver){
   const campo = document.getElementById('buscaCaixa');
   if(campo && campo.parentNode) campo.parentNode.style.display = ver ? '' : 'none';
 }
+function semNomeNoFim(descricao, nome){
+  const d = String(descricao||'').trim();
+  const sufixo = ' — '+nome;
+  if(nome && d.length>sufixo.length && d.slice(-sufixo.length)===sufixo) return d.slice(0, -sufixo.length).trim();
+  return d;
+}
 function itensDoCaixa(){
   const lista = [];
   state.movimentacoes.forEach(function(m){
@@ -2582,20 +2589,30 @@ function itensDoCaixa(){
         sub: m.descricao || 'Transferência entre contas', chave:'mov:'+m.id, id:m.id, ref:m, editavel:false});
       return;
     }
+    const cliId = m.clienteId || (m.tituloId ? (function(){ const t = state.titulos.find(function(x){return x.id===m.tituloId;}); return t ? t.clienteId : null; })() : null);
+    const nomeCli = cliId ? clienteNome(cliId) : '';
     lista.push({fonte:'mov', tipo:m.tipo, data:m.data, previsto:m.pago===false, valor:Number(m.valor||0),
-      titulo:m.descricao, sub: contaNome(m.contaId)+' · '+catNome(m.categoriaId), contaId:m.contaId,
+      titulo: nomeCli || m.descricao,
+      sub: nomeCli ? semNomeNoFim(m.descricao, nomeCli) : (contaNome(m.contaId)+' · '+catNome(m.categoriaId)),
+      sub2: nomeCli ? (contaNome(m.contaId)+' · '+catNome(m.categoriaId)) : '',
+      contaId:m.contaId, clienteId:cliId,
       chave:'mov:'+m.id, id:m.id, ref:m, editavel: m.origem==='manual' || !!m.contaPagarId});
   });
   state.titulos.forEach(function(t){
     if(t.status==='pago') return;
+    const nomeT = t.clienteId ? clienteNome(t.clienteId) : '';
     lista.push({fonte:'titulo', tipo:'entrada', data:t.vencimento, previsto:true, valor:saldoTitulo(t),
-      titulo:t.descricao, sub:(t.clienteId ? clienteNome(t.clienteId) : 'Venda avulsa'),
+      titulo: nomeT || t.descricao,
+      sub: nomeT ? semNomeNoFim(t.descricao, nomeT) : 'Venda avulsa',
+      clienteId: t.clienteId || null,
       chave:'titulo:'+t.id, id:t.id, ref:t, editavel:true});
   });
   state.contasPagar.forEach(function(c){
     if(c.status==='pago') return;
     lista.push({fonte:'conta', tipo:'saida', data:c.vencimento, previsto:true, valor:Number(c.valor||0),
-      titulo:c.descricao, sub:(c.fornecedor ? esc(c.fornecedor)+' · ' : '')+catNome(c.categoriaId),
+      titulo: c.fornecedor ? c.fornecedor : c.descricao,
+      sub: c.fornecedor ? c.descricao : catNome(c.categoriaId),
+      sub2: c.fornecedor ? catNome(c.categoriaId) : '',
       chave:'conta:'+c.id, id:c.id, ref:c, editavel:true});
   });
   return lista;
@@ -2615,7 +2632,7 @@ function itemDaConta(it){
 }
 function itemDaBusca(it){
   if(!caixaBusca) return true;
-  return semAcento([it.titulo, it.sub].join(' ')).indexOf(semAcento(caixaBusca))>=0;
+  return semAcento([it.titulo, it.sub, it.sub2||''].join(' ')).indexOf(semAcento(caixaBusca))>=0;
 }
 function badgePrevisto(it){
   const dias = diffDias(it.data);
@@ -2642,7 +2659,11 @@ function cardItemCaixa(it){
     +(modo ? selCaixinha('caixa', it.chave) : '')
     +'<span class="mv-ic '+cls+'">'+ic+'</span>'
     +'<div class="mv-tx"><div class="mv-ti">'+esc(it.titulo)+'</div>'
-    +'<div class="mv-me">'+it.sub+(it.previsto ? ' · '+fmtDateBR(it.data) : '')+'</div>'
+    + (function(){
+        const linhas = [it.sub, it.sub2].filter(function(x){ return !!x; });
+        if(it.previsto) linhas[linhas.length-1] = (linhas[linhas.length-1]||'') + ' · ' + fmtDateBR(it.data);
+        return linhas.map(function(l,i){ return '<div class="mv-me'+(i?' fraca':'')+'">'+esc(l)+'</div>'; }).join('');
+      })()
     +(it.previsto ? '<div class="mv-bd">'+badgePrevisto(it)+'</div>' : '')
     +(modo?'':acaoPagar)+(modo?'':icones)+'</div>'
     +valor+'</div>';
