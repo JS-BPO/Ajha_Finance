@@ -30,6 +30,12 @@ const PALETAS = {
   dourado:      {nome:'Dourado',  claro:{primary:'#94661C', secondary:'#3D2A0B', accent:'#2F6F6A'}, escuro:{primary:'#E0B25A', secondary:'#2B1E08', accent:'#5CC2B8'}},
   grafite:      {nome:'Grafite',  claro:{primary:'#2F3440', secondary:'#14171D', accent:'#4F6BED'}, escuro:{primary:'#C9CED8', secondary:'#0B0D11', accent:'#7C95FF'}}
 };
+const CORES_CATEGORIA = [
+  {claro:'#2458C6', escuro:'#5B86E8'},
+  {claro:'#B8621B', escuro:'#C07A36'},
+  {claro:'#1F7A53', escuro:'#35A371'},
+  {claro:'#8E44AD', escuro:'#B85FC0'}
+];
 const APARENCIA_PADRAO = {tema:'sistema', paleta:'profissional', personalizada:{primary:'#7A2436', secondary:'#3B1220', accent:'#A9813F'}};
 function luminancia(hex){
   const h = String(hex||'#000').replace('#',''); const n = h.length===3 ? h.split('').map(function(c){return c+c;}).join('') : h;
@@ -57,6 +63,7 @@ function aplicarAparencia(ap){
   tokens['on-primary'] = ((L+0.05)/0.0565) > (1.05/(L+0.05)) ? '#111318' : '#FFFFFF';
   const root = document.documentElement;
   Object.keys(tokens).forEach(function(k){ root.style.setProperty('--'+k, tokens[k]); });
+  CORES_CATEGORIA.forEach(function(c,i){ root.style.setProperty('--cat'+i, c[modo]); });
   root.setAttribute('data-modo', modo);
   const meta = document.querySelector('meta[name="theme-color"]');
   if(meta) meta.setAttribute('content', modo==='escuro' ? tokens.background : tokens.secondary);
@@ -353,6 +360,11 @@ nav.bottomnav button.active{color:var(--primary);}
 .mv-ti{font-weight:600; font-size:14.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .mv-me{font-size:12px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .mv-me.fraca{font-size:11px; opacity:.8; margin-top:1px;}
+.mv-me.linha-cat{display:flex; flex-wrap:wrap; align-items:center; gap:5px 7px; opacity:1; margin-top:5px; white-space:normal;}
+.cat-tag{display:inline-block; max-width:100%; font-size:11px; font-weight:700; line-height:1.3; padding:3px 8px; border-radius:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  color:var(--c); background:color-mix(in srgb, var(--c) 14%, transparent);}
+.cat-tag.vazia{color:var(--muted); background:var(--surface-2); font-weight:600;}
+.mv-ap{font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .mov .icon-row{display:none;}
 .mov.aberto .icon-row{display:flex;}
 .mov.aberto .mv-ti{white-space:normal;}
@@ -1901,6 +1913,19 @@ const CATEGORIAS_PADRAO = [
 ];
 function catById(id){ return (state.categorias||[]).find(function(c){return c.id===id;}); }
 function catNome(id){ const c = catById(id); return c ? c.nome : 'Sem categoria'; }
+function catCorIdx(id){
+  const c = catById(id);
+  if(!c) return -1;
+  if(typeof c.cor === 'number') return ((c.cor % CORES_CATEGORIA.length) + CORES_CATEGORIA.length) % CORES_CATEGORIA.length;
+  const mesmas = (state.categorias||[]).filter(function(x){ return x.tipo===c.tipo; });
+  const pos = mesmas.findIndex(function(x){ return x.id===c.id; });
+  return (pos<0 ? 0 : pos) % CORES_CATEGORIA.length;
+}
+function tagCategoria(id){
+  const i = catCorIdx(id);
+  if(i<0) return '<span class="cat-tag vazia">Sem categoria</span>';
+  return '<span class="cat-tag" style="--c:var(--cat'+i+')">'+esc(catNome(id))+'</span>';
+}
 function catVendaId(){
   if(catById('cat-servicos')) return 'cat-servicos';
   const e = (state.categorias||[]).find(function(c){return c.tipo==='entrada';});
@@ -1922,7 +1947,7 @@ function garantirContaPadrao(){
 
 /* ---------------- MIGRAÇÃO SEGURA DOS DADOS ----------------
    Só ACRESCENTA campos que faltam. Nunca apaga registros nem troca valores existentes. */
-const VERSAO_DADOS = 4;
+const VERSAO_DADOS = 5;
 const CATEGORIAS_SERVICO_PADRAO = [
   {id:'csv-cabelo', nome:'Cabelo'}, {id:'csv-barba', nome:'Barba'}, {id:'csv-estetica', nome:'Estética'},
   {id:'csv-unhas', nome:'Unhas'}, {id:'csv-massagem', nome:'Massagem'}, {id:'csv-consultoria', nome:'Consultoria'},
@@ -1991,6 +2016,13 @@ function migrarDados(){
   state.contasPagar.forEach(function(c){ if(!c.status) c.status = 'pendente'; });
   state.movimentacoes.forEach(function(m){
     if(m.tipo!=='transferencia' && m.pago===undefined) m.pago = true;   // tudo que já existia continua realizado
+  });
+  ['entrada','saida'].forEach(function(tp){
+    let i = 0;
+    state.categorias.filter(function(c){ return c.tipo===tp; }).forEach(function(c){
+      if(typeof c.cor !== 'number'){ c.cor = i % CORES_CATEGORIA.length; }
+      i++;
+    });
   });
   state.categoriasServico.forEach(function(c){ if(c.ativo===undefined) c.ativo = true; });
   state.servicos.forEach(function(sv){
@@ -2593,8 +2625,8 @@ function itensDoCaixa(){
     const nomeCli = cliId ? clienteNome(cliId) : '';
     lista.push({fonte:'mov', tipo:m.tipo, data:m.data, previsto:m.pago===false, valor:Number(m.valor||0),
       titulo: nomeCli || m.descricao,
-      sub: nomeCli ? semNomeNoFim(m.descricao, nomeCli) : (contaNome(m.contaId)+' · '+catNome(m.categoriaId)),
-      sub2: nomeCli ? (contaNome(m.contaId)+' · '+catNome(m.categoriaId)) : '',
+      sub: nomeCli ? semNomeNoFim(m.descricao, nomeCli) : '',
+      catId: m.categoriaId||'', contaTxt: contaNome(m.contaId),
       contaId:m.contaId, clienteId:cliId,
       chave:'mov:'+m.id, id:m.id, ref:m, editavel: m.origem==='manual' || !!m.contaPagarId});
   });
@@ -2603,7 +2635,7 @@ function itensDoCaixa(){
     const nomeT = t.clienteId ? clienteNome(t.clienteId) : '';
     lista.push({fonte:'titulo', tipo:'entrada', data:t.vencimento, previsto:true, valor:saldoTitulo(t),
       titulo: nomeT || t.descricao,
-      sub: nomeT ? semNomeNoFim(t.descricao, nomeT) : 'Venda avulsa',
+      sub: nomeT ? semNomeNoFim(t.descricao, nomeT) : (t.descricao || 'Venda avulsa'),
       clienteId: t.clienteId || null,
       chave:'titulo:'+t.id, id:t.id, ref:t, editavel:true});
   });
@@ -2611,8 +2643,8 @@ function itensDoCaixa(){
     if(c.status==='pago') return;
     lista.push({fonte:'conta', tipo:'saida', data:c.vencimento, previsto:true, valor:Number(c.valor||0),
       titulo: c.fornecedor ? c.fornecedor : c.descricao,
-      sub: c.fornecedor ? c.descricao : catNome(c.categoriaId),
-      sub2: c.fornecedor ? catNome(c.categoriaId) : '',
+      sub: c.fornecedor ? c.descricao : '',
+      catId: c.categoriaId||'', contaTxt:'',
       chave:'conta:'+c.id, id:c.id, ref:c, editavel:true});
   });
   return lista;
@@ -2632,7 +2664,7 @@ function itemDaConta(it){
 }
 function itemDaBusca(it){
   if(!caixaBusca) return true;
-  return semAcento([it.titulo, it.sub, it.sub2||''].join(' ')).indexOf(semAcento(caixaBusca))>=0;
+  return semAcento([it.titulo, it.sub||'', it.contaTxt||'', (it.catId!==undefined ? catNome(it.catId) : '')].join(' ')).indexOf(semAcento(caixaBusca))>=0;
 }
 function badgePrevisto(it){
   const dias = diffDias(it.data);
@@ -2660,9 +2692,13 @@ function cardItemCaixa(it){
     +'<span class="mv-ic '+cls+'">'+ic+'</span>'
     +'<div class="mv-tx"><div class="mv-ti">'+esc(it.titulo)+'</div>'
     + (function(){
-        const linhas = [it.sub, it.sub2].filter(function(x){ return !!x; });
-        if(it.previsto) linhas[linhas.length-1] = (linhas[linhas.length-1]||'') + ' · ' + fmtDateBR(it.data);
-        return linhas.map(function(l,i){ return '<div class="mv-me'+(i?' fraca':'')+'">'+esc(l)+'</div>'; }).join('');
+        let html = '';
+        if(it.sub) html += '<div class="mv-me">'+esc(it.sub)+'</div>';
+        if(it.catId!==undefined){
+          html += '<div class="mv-me fraca linha-cat">'+tagCategoria(it.catId)
+            + (it.contaTxt ? '<span class="mv-ap">'+esc(it.contaTxt)+'</span>' : '') + '</div>';
+        }
+        return html;
       })()
     +(it.previsto ? '<div class="mv-bd">'+badgePrevisto(it)+'</div>' : '')
     +(modo?'':acaoPagar)+(modo?'':icones)+'</div>'
@@ -3858,7 +3894,7 @@ document.getElementById('btnSalvarCategoria').onclick = function(){
   const nome = document.getElementById('categoriaNome').value.trim();
   if(!nome){ toast('Informe o nome da categoria.'); return; }
   if(id){ setDoc('categorias', id, {nome:nome, tipo:catTipoAtual}); toast('Categoria atualizada.'); }
-  else { addDoc('categorias', {nome:nome, tipo:catTipoAtual}); toast('Categoria criada.'); }
+  else { addDoc('categorias', {nome:nome, tipo:catTipoAtual, cor: state.categorias.filter(function(c){return c.tipo===catTipoAtual;}).length % CORES_CATEGORIA.length}); toast('Categoria criada.'); }
   sheetCategoria.classList.remove('open');
 };
 
