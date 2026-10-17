@@ -226,6 +226,7 @@ nav.bottomnav button.active{color:var(--primary);}
 
 .sheet-overlay{position:fixed; inset:0; background:var(--overlay); z-index:80; display:none; align-items:flex-end; justify-content:center;}
 #sheetConfirm{z-index:200;}
+#sheetCalc{z-index:150;}
 #sheetCliente{z-index:90;}
 .sheet-overlay.open{display:flex;}
 .sheet{background:var(--surface); width:100%; max-width:520px; border-radius:24px 24px 0 0; padding:18px 20px calc(24px + var(--safe-bottom)); max-height:88vh; overflow-y:auto; animation:slideUp .22s ease;}
@@ -278,6 +279,25 @@ nav.bottomnav button.active{color:var(--primary);}
 .mov.previsto .mv-ti{white-space:normal;}
 .mov.previsto .mv-vl{align-self:flex-start; margin-top:2px;}
 .mov.previsto .mv-ic{margin-top:1px;}
+.campo-calc{position:relative;}
+.campo-calc input{padding-right:46px;}
+.calc-btn{position:absolute; right:6px; top:50%; transform:translateY(-50%); width:34px; height:34px; display:flex; align-items:center; justify-content:center; border:none; border-radius:11px; background:var(--primary-soft); cursor:pointer; padding:0;}
+.calc-btn svg{width:18px; height:18px; fill:none; stroke:var(--primary); stroke-width:2.4;}
+.calc-visor{background:var(--surface-2); border-radius:18px; padding:14px 16px; text-align:right;}
+.cv-lb{display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; text-align:left;}
+.calc-visor b{display:block; font-family:'Fraunces',serif; font-size:32px; font-weight:600; letter-spacing:-.02em; margin-top:2px;}
+.calc-itens{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px;}
+.calc-chip{display:inline-flex; align-items:center; gap:6px; background:var(--primary-soft); color:var(--primary); border:none; border-radius:999px; padding:6px 10px; font-family:inherit; font-size:12.5px; font-weight:700; cursor:pointer;}
+.calc-chip span{opacity:.7; font-size:13px;}
+.calc-total{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin:12px 0 10px; padding-top:10px; border-top:1px solid var(--border);}
+.calc-total span{font-size:12px; font-weight:600; color:var(--muted);}
+.calc-total b{font-family:'Fraunces',serif; font-size:21px; font-weight:600;}
+.calc-teclas{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px;}
+.calc-teclas button{border:1px solid var(--border); background:var(--surface); color:var(--text); border-radius:14px; padding:14px 0; font-family:inherit; font-size:19px; font-weight:700; cursor:pointer;}
+.calc-teclas button:active{background:var(--surface-2);}
+.calc-teclas button.aux{background:var(--surface-2); color:var(--muted); font-size:17px;}
+.calc-teclas button.zero{grid-column:span 2;}
+.calc-teclas button.mais{grid-column:4; grid-row:3 / span 2; background:var(--primary); color:var(--on-primary); border-color:transparent; font-size:24px;}
 .esc-opcoes{display:flex; flex-direction:column; gap:10px;}
 .esc-op{text-align:left; background:var(--surface-2); border:1px solid var(--border); border-radius:16px; padding:14px 16px; font-family:inherit; color:var(--text); cursor:pointer;}
 .esc-op b{display:block; font-size:15px; font-weight:700;}
@@ -1108,6 +1128,40 @@ input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner
     </div>
     <div id="dtGrade"></div>
     <button class="btn ghost" id="dtFechar" style="margin-top:14px">Fechar</button>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="sheetCalc">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3 id="calcTitulo">Somar valores</h3>
+    <p class="sheet-sub">Para juntar mais de uma compra do mesmo fornecedor em um lançamento só.</p>
+    <div class="calc-visor">
+      <span class="cv-lb">Valor</span>
+      <b id="calcAtual">0,00</b>
+    </div>
+    <div class="calc-itens" id="calcItens"></div>
+    <div class="calc-total"><span id="calcQtd">Nenhum valor somado</span><b id="calcTotal">R$ 0,00</b></div>
+    <div class="calc-teclas" id="calcTeclas">
+      <button type="button" data-k="7">7</button>
+      <button type="button" data-k="8">8</button>
+      <button type="button" data-k="9">9</button>
+      <button type="button" data-k="apagar" class="aux">⌫</button>
+      <button type="button" data-k="4">4</button>
+      <button type="button" data-k="5">5</button>
+      <button type="button" data-k="6">6</button>
+      <button type="button" data-k="limpar" class="aux">C</button>
+      <button type="button" data-k="1">1</button>
+      <button type="button" data-k="2">2</button>
+      <button type="button" data-k="3">3</button>
+      <button type="button" data-k="add" class="mais">+</button>
+      <button type="button" data-k="0" class="zero">0</button>
+      <button type="button" data-k="00">00</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn ghost" id="btnCalcCancelar">Cancelar</button>
+      <button class="btn primary" id="btnCalcUsar">Usar total</button>
+    </div>
   </div>
 </div>
 
@@ -2681,7 +2735,9 @@ function cardItemCaixa(it){
     ? '<div class="mv-vl">'+fmtMoney(it.valor)+'</div>'
     : '<div class="mv-vl '+cls+'">'+(entrada?'+ ':'- ')+fmtMoney(it.valor)+'</div>';
   const acaoPagar = it.previsto
-    ? '<div class="action-row"><button class="chip-btn on-success" data-quitar="'+it.chave+'">'+(entrada?'Marcar como recebido':'Marcar como pago')+'</button></div>'
+    ? '<div class="action-row"><button class="chip-btn on-success" data-quitar="'+it.chave+'">'+(entrada?'Marcar como recebido':'Marcar como pago')+'</button>'
+      + (it.fonte==='conta' ? '<button class="chip-btn" data-somar="'+it.id+'">+ Somar compra</button>' : '')
+      + '</div>'
     : '';
   const icones = '<div class="icon-row">'
     + (it.editavel ? iconEditBtn('data-edit-item="'+it.chave+'"') : '')
@@ -2704,6 +2760,86 @@ function cardItemCaixa(it){
     +(modo?'':acaoPagar)+(modo?'':icones)+'</div>'
     +valor+'</div>';
 }
+/* ---- calculadora de soma (vários valores em um lançamento) ---- */
+let calcAlvo = null, calcDigitos = '', calcItens = [], calcAplicar = null;
+function calcValorAtual(){ return calcDigitos ? Number(calcDigitos)/100 : 0; }
+function calcTotal(){ return arred(calcItens.reduce(function(s,v){ return s+v; }, 0) + calcValorAtual()); }
+function desenharCalc(){
+  document.getElementById('calcAtual').textContent = fmtNumeroBR(calcValorAtual());
+  const box = document.getElementById('calcItens');
+  box.innerHTML = calcItens.map(function(v,i){
+    return '<button type="button" class="calc-chip" data-rm="'+i+'">'+fmtMoney(v)+'<span>×</span></button>';
+  }).join('');
+  box.querySelectorAll('[data-rm]').forEach(function(b){
+    b.onclick = function(){ calcItens.splice(Number(b.dataset.rm),1); desenharCalc(); };
+  });
+  const n = calcItens.length;
+  document.getElementById('calcQtd').textContent = n===0 ? 'Nenhum valor somado' : (n+' valor'+(n>1?'es':'')+' somado'+(n>1?'s':''));
+  document.getElementById('calcTotal').textContent = fmtMoney(calcTotal());
+}
+function abrirCalculadora(id, titulo, opcoes){
+  opcoes = opcoes || {};
+  calcAlvo = id;
+  calcAplicar = opcoes.aplicar || null;
+  calcDigitos = '';
+  const atual = id ? valorDo(id) : Number(opcoes.inicial||0);
+  calcItens = atual>0 ? [atual] : [];
+  document.getElementById('calcTitulo').textContent = titulo || 'Somar valores';
+  desenharCalc();
+  document.getElementById('sheetCalc').classList.add('open');
+}
+document.querySelectorAll('#calcTeclas button').forEach(function(b){
+  b.onclick = function(){
+    const k = b.dataset.k;
+    if(k==='apagar'){ calcDigitos = calcDigitos.slice(0,-1); }
+    else if(k==='limpar'){ if(calcDigitos) calcDigitos=''; else calcItens=[]; }
+    else if(k==='add'){
+      if(calcValorAtual()>0){ calcItens.push(calcValorAtual()); calcDigitos=''; }
+    }
+    else { if(calcDigitos.length < 9) calcDigitos = (calcDigitos + k).replace(/^0+(?=\d)/,''); }
+    desenharCalc();
+  };
+});
+document.getElementById('btnCalcCancelar').onclick = function(){ document.getElementById('sheetCalc').classList.remove('open'); };
+document.getElementById('btnCalcUsar').onclick = function(){
+  const total = calcTotal();
+  if(total<=0){ toast('Digite ao menos um valor.'); return; }
+  const somou = calcItens.length>1 || (calcItens.length===1 && calcValorAtual()>0);
+  document.getElementById('sheetCalc').classList.remove('open');
+  if(calcAplicar){ calcAplicar(total); calcAplicar = null; return; }
+  if(!calcAlvo) return;
+  porValor(calcAlvo, total);
+  const el = document.getElementById(calcAlvo);
+  el.dispatchEvent(new Event('input', {bubbles:true}));
+  el.dispatchEvent(new Event('change', {bubbles:true}));
+  if(somou) toast('Total somado: '+fmtMoney(total));
+};
+function abrirSomaConta(id){
+  const c = state.contasPagar.find(function(x){return x.id===id;});
+  if(!c) return;
+  abrirCalculadora(null, 'Somar em ' + (c.fornecedor || c.descricao), {inicial: Number(c.valor||0), aplicar: function(total){
+    setDoc('contasPagar', id, {valor: total});
+    toast('Agora são '+fmtMoney(total)+' nesta conta.');
+  }});
+}
+function tornarSomavel(id, titulo){
+  const inp = document.getElementById(id);
+  if(!inp) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'campo-calc';
+  inp.parentNode.insertBefore(wrap, inp);
+  wrap.appendChild(inp);
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'calc-btn';
+  btn.title = 'Somar vários valores';
+  btn.setAttribute('aria-label','Somar vários valores');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5v14" stroke-linecap="round"/></svg>';
+  wrap.appendChild(btn);
+  btn.onclick = function(){ abrirCalculadora(id, titulo); };
+}
+[['cpTotal','Somar compras'],['ceValor','Somar valores'],['movValor','Somar valores'],['pcValor','Somar valores']].forEach(function(x){ tornarSomavel(x[0], x[1]); });
+
 function partesChave(chave){ const i = chave.indexOf(':'); return [chave.slice(0,i), chave.slice(i+1)]; }
 function askEscolha(titulo, sub, opcoes){
   document.getElementById('escTitulo').textContent = titulo;
@@ -3013,6 +3149,9 @@ function renderCaixa(){
   });
   box.querySelectorAll('[data-quitar]').forEach(function(el){
     el.onclick = function(ev){ ev.stopPropagation(); quitarItem(el.dataset.quitar); };
+  });
+  box.querySelectorAll('[data-somar]').forEach(function(el){
+    el.onclick = function(ev){ ev.stopPropagation(); abrirSomaConta(el.dataset.somar); };
   });
   box.querySelectorAll('[data-edit-item]').forEach(function(el){
     el.onclick = function(ev){ ev.stopPropagation(); editarItemCaixa(el.dataset.editItem); };
